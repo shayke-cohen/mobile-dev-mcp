@@ -204,6 +204,16 @@ Once configured, you can ask Cursor things like:
 | `clear_app_data` | Clear app data (Android) |
 | `get_device_logs` | Get system logs |
 
+### Build & Run (no SDK required)
+
+| Tool | Description |
+|------|-------------|
+| `build_app` | Build iOS, Android, or React Native app |
+| `run_app` | Build and run app on simulator |
+| `run_demo_app` | Run one of the MCP demo apps |
+| `get_build_status` | Check status of a running build |
+| `clean_build` | Clean build artifacts |
+
 ## 🔌 Auto-Instrumentation
 
 Add automatic function tracing with our Babel plugin:

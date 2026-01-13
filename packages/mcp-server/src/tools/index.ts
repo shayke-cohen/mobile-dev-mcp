@@ -16,6 +16,7 @@ import { uiTools, handleUiTool } from './ui.js';
 import { logsTools, handleLogsTool } from './logs.js';
 import { deviceTools, handleDeviceTool } from './device.js';
 import { simulatorTools, handleSimulatorTool } from './simulator.js';
+import { buildTools, handleBuildTool } from './build.js';
 
 // Tools that require a connected device
 const deviceRequiredTools = [
@@ -29,6 +30,7 @@ const deviceRequiredTools = [
 // Tools that work without a connected device (local tools)
 const localTools = [
   ...simulatorTools,
+  ...buildTools,
 ];
 
 // Combine all tools
@@ -55,6 +57,19 @@ export function registerAllTools(server: Server, deviceManager: DeviceManager): 
       // Check if this is a simulator/local tool (doesn't require device connection)
       if (simulatorTools.some(t => t.name === name)) {
         result = await handleSimulatorTool(name, args || {});
+        
+        const text = typeof result === 'string'
+          ? result
+          : JSON.stringify(result, null, 2);
+
+        return {
+          content: [{ type: 'text', text }],
+        };
+      }
+
+      // Check if this is a build tool (doesn't require device connection)
+      if (buildTools.some(t => t.name === name)) {
+        result = await handleBuildTool(name, args || {});
         
         const text = typeof result === 'string'
           ? result
