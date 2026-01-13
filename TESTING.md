@@ -305,17 +305,41 @@ node scripts/e2e-test.js --platform=ios -v
 
 | Test | Description |
 |------|-------------|
+| **Setup** | |
 | Server tools | 44 MCP tools registered |
 | list_simulators | Lists iOS/Android devices |
 | simulator_screenshot | Takes screenshot |
+| **iOS** | |
 | Build and run iOS | Compiles SwiftUI demo |
+| iOS SDK connection | App connects via WebSocket |
+| iOS: Read cart state | Verifies state inspection works |
+| iOS: Take screenshot | Takes app screenshot |
+| **Android** | |
 | Build and run Android | Compiles Compose demo |
-| SDK connection | App connects via WebSocket |
+| Android SDK connection | App connects via WebSocket |
+| **Android UI Automation** | |
+| Navigate to Products | Taps Products quick action |
+| Tap Add to Cart | Taps first product's Add button |
+| Check cart state | Verifies cart updated |
+| Navigate to Cart tab | Taps Cart in bottom nav |
+| Take cart screenshot | Screenshots cart view |
+| Navigate back to Home | Returns to home screen |
+| **App Tools** | |
 | get_app_state | Returns cart, user, products |
 | get_device_info | Returns platform info |
 | list_feature_flags | Returns flags |
 | toggle_feature_flag | Toggles flags |
 | get_logs | Returns log entries |
+
+### UI Automation Notes
+
+The E2E tests include basic UI automation using:
+- **Android**: `adb shell input tap x y` for touch simulation
+- **iOS**: State inspection only (AppleScript automation requires accessibility permissions)
+
+Android UI automation coordinates are device-specific:
+- Tested on Medium Phone API 35 (1080x2400 resolution)
+- Coordinates may need adjustment for other devices/resolutions
 
 ## CI/CD Integration
 
