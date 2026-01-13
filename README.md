@@ -295,6 +295,38 @@ export async function fetchUser(id: string) {
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## 🔄 SDK Features
+
+### Automatic Reconnection
+
+All SDKs include automatic reconnection with exponential backoff:
+- **3-second retry interval** when server is unavailable
+- **Automatic reconnect** on connection loss
+- **Manual reconnect** button in demo apps
+
+### Activity Logging & Status
+
+SDKs expose real-time status for debugging:
+
+```typescript
+// React Native
+MCPBridge.subscribe((state) => {
+  console.log(state.isConnected);    // true/false
+  console.log(state.lastActivity);    // "[12:30:45] Connected!"
+  console.log(state.reconnectCount);  // Number of retry attempts
+  console.log(state.activityLog);     // Last 50 activity entries
+});
+
+// Manual reconnect
+MCPBridge.reconnect();
+```
+
+Demo apps include an **MCP Status Banner** showing:
+- Connection status (green/red indicator)
+- Reconnect attempts counter
+- Last activity message
+- "Reconnect" and "Activity Log" buttons
+
 ## 🔐 Security
 
 - **Development Only**: All SDK functionality is wrapped in `__DEV__` / `DEBUG` checks

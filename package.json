@@ -16,6 +16,12 @@
     "dev": "turbo run dev",
     "dev:server": "pnpm --filter @mobile-dev-mcp/server dev",
     "test": "turbo run test",
+    "test:server": "./scripts/test-server.sh",
+    "test:client": "node scripts/test-client.js",
+    "test:client:auto": "node scripts/test-client.js --mode=test",
+    "test:e2e": "node scripts/e2e-test.js",
+    "test:e2e:ios": "node scripts/e2e-test.js --platform=ios",
+    "test:e2e:android": "node scripts/e2e-test.js --platform=android",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
     "typecheck": "turbo run typecheck"
@@ -24,7 +30,8 @@
     "turbo": "^2.3.0",
     "typescript": "^5.7.0",
     "prettier": "^3.4.0",
-    "eslint": "^9.17.0"
+    "eslint": "^9.17.0",
+    "ws": "^8.18.0"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {

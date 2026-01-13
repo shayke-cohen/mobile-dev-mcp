@@ -8,6 +8,7 @@ package com.mobiledevmcp.demo
 
 import android.app.Application
 import android.util.Log
+import com.mobiledevmcp.demo.mcp.MCPBridge
 
 class MCPDemoApplication : Application() {
     
@@ -20,17 +21,25 @@ class MCPDemoApplication : Application() {
     }
     
     private fun initializeMCPSDK() {
-        // MCP SDK initialization would go here
-        // MCPBridge.initialize(context = this, serverUrl = "ws://localhost:8765")
+        // Initialize the MCP SDK
+        MCPBridge.initialize(
+            context = this,
+            serverUrl = "ws://localhost:8765",
+            debug = true
+        )
         
-        Log.i(TAG, "MCP SDK would be initialized here (connect to ws://localhost:8765)")
-        Log.i(TAG, "To enable: Add sdk-android dependency and uncomment initialization")
+        // Enable features
+        MCPBridge.enableLogCapture()
+        MCPBridge.enableNetworkInterception()
         
-        // Example of what would be exposed:
-        // MCPBridge.exposeState("user") { AppState.currentUser }
-        // MCPBridge.exposeState("cart") { AppState.cart }
-        // MCPBridge.enableNetworkInterception()
-        // MCPBridge.registerFeatureFlags(mapOf("dark_mode" to false, "new_checkout" to false))
+        // Register feature flags
+        MCPBridge.registerFeatureFlags(mapOf(
+            "dark_mode" to false,
+            "new_checkout" to false,
+            "show_recommendations" to true
+        ))
+        
+        Log.i(TAG, "MCP SDK initialized, connecting to ws://localhost:8765")
     }
     
     companion object {

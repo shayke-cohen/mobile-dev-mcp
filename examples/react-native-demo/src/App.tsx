@@ -5,7 +5,7 @@
  * Features: Tab navigation, Products, Cart, User Profile
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,6 +17,9 @@ import {
   useColorScheme,
   FlatList,
 } from 'react-native';
+
+// MCP SDK Integration
+import { MCPBridge } from './mcp/MCPBridge';
 
 // Sample products data
 const PRODUCTS = [
@@ -38,6 +41,57 @@ function App(): React.JSX.Element {
   const [currentTab, setCurrentTab] = useState<Tab>('home');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [user, setUser] = useState<User>(null);
+  const [mcpState, setMcpState] = useState({
+    isConnected: false,
+    lastActivity: '',
+    reconnectCount: 0,
+    activityLog: [] as Array<{timestamp: string; message: string}>,
+  });
+  const [showActivityLog, setShowActivityLog] = useState(false);
+
+  // Initialize MCP SDK
+  useEffect(() => {
+    if (__DEV__) {
+      // Initialize the MCP SDK
+      MCPBridge.initialize({
+        serverUrl: 'ws://localhost:8765',
+        debug: true,
+      });
+
+      // Enable features
+      MCPBridge.enableLogCapture();
+      MCPBridge.enableNetworkInterception();
+
+      // Register feature flags
+      MCPBridge.registerFeatureFlags({
+        dark_mode: false,
+        new_checkout: false,
+        show_recommendations: true,
+      });
+
+      // Subscribe to state changes
+      const unsubscribe = MCPBridge.subscribe((state) => {
+        setMcpState(state);
+      });
+
+      return () => {
+        unsubscribe();
+        MCPBridge.disconnect();
+      };
+    }
+  }, []);
+
+  // Expose app state to MCP (update when state changes)
+  useEffect(() => {
+    if (__DEV__) {
+      MCPBridge.exposeState('cart', () => cart);
+      MCPBridge.exposeState('user', () => user);
+      MCPBridge.exposeState('currentTab', () => currentTab);
+      MCPBridge.exposeState('products', () => PRODUCTS);
+      MCPBridge.exposeState('cartTotal', () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+      MCPBridge.exposeState('cartCount', () => cart.reduce((sum, item) => sum + item.quantity, 0));
+    }
+  }, [cart, user, currentTab]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -146,10 +200,77 @@ function App(): React.JSX.Element {
       ))}
 
       {__DEV__ && (
-        <View style={styles.debugBanner}>
-          <Text style={styles.debugTitle}>🔧 Debug Mode</Text>
-          <Text style={styles.debugText}>MCP SDK connects to ws://localhost:8765</Text>
-          <Text style={styles.debugText}>Try: "What's in the user's cart?"</Text>
+        <View style={[styles.debugBanner, mcpState.isConnected && styles.debugBannerConnected]}>
+          <View style={styles.debugHeader}>
+            <Text style={styles.debugTitle}>🔧 MCP SDK</Text>
+            <View style={[styles.connectionDot, mcpState.isConnected ? styles.connected : styles.disconnected]} />
+            <Text style={styles.connectionText}>
+              {mcpState.isConnected ? 'Connected' : 'Disconnected'}
+              {mcpState.reconnectCount > 0 && !mcpState.isConnected ? ` (${mcpState.reconnectCount})` : ''}
+            </Text>
+          </View>
+          {mcpState.lastActivity ? (
+            <Text style={styles.activityText} numberOfLines={1}>{mcpState.lastActivity}</Text>
+          ) : null}
+          <Text style={styles.debugText}>Server: ws://localhost:8765</Text>
+          <View style={styles.debugActions}>
+            <TouchableOpacity 
+              style={[styles.debugButton, mcpState.isConnected && styles.debugButtonDisabled]}
+              onPress={() => MCPBridge.reconnect()}
+              disabled={mcpState.isConnected}>
+              <Text style={styles.debugButtonText}>🔄 Reconnect</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.debugButton}
+              onPress={() => setShowActivityLog(true)}>
+              <Text style={styles.debugButtonText}>📋 Activity Log</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+      
+      {/* Activity Log Modal */}
+      {showActivityLog && (
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, isDarkMode && styles.modalContentDark]}>
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, isDarkMode && styles.textLight]}>MCP SDK Activity</Text>
+              <TouchableOpacity onPress={() => setShowActivityLog(false)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.statusRow}>
+              <Text style={[styles.statusLabel, isDarkMode && styles.textLight]}>Status:</Text>
+              <View style={[styles.connectionDot, mcpState.isConnected ? styles.connected : styles.disconnected]} />
+              <Text style={[styles.statusValue, isDarkMode && styles.textLight]}>
+                {mcpState.isConnected ? 'Connected' : 'Disconnected'}
+              </Text>
+            </View>
+            {mcpState.reconnectCount > 0 && (
+              <View style={styles.statusRow}>
+                <Text style={[styles.statusLabel, isDarkMode && styles.textLight]}>Reconnect Attempts:</Text>
+                <Text style={styles.reconnectCount}>{mcpState.reconnectCount}</Text>
+              </View>
+            )}
+            <Text style={[styles.logHeader, isDarkMode && styles.textLight]}>Activity Log:</Text>
+            <ScrollView style={styles.logContainer}>
+              {mcpState.activityLog.length === 0 ? (
+                <Text style={styles.noLogs}>No activity yet</Text>
+              ) : (
+                mcpState.activityLog.slice().reverse().map((entry, index) => (
+                  <Text key={index} style={[
+                    styles.logEntry,
+                    entry.message.includes('Error') && styles.logError,
+                    entry.message.includes('Connected!') && styles.logSuccess,
+                    entry.message.includes('Command') && styles.logCommand,
+                    entry.message.includes('Response') && styles.logResponse,
+                  ]}>
+                    {entry.timestamp} {entry.message}
+                  </Text>
+                ))
+              )}
+            </ScrollView>
+          </View>
         </View>
       )}
     </ScrollView>
@@ -522,15 +643,156 @@ const createStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderColor: '#6200EE',
     },
+    debugBannerConnected: {
+      borderColor: '#4CAF50',
+    },
+    debugHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
     debugTitle: {
       fontSize: 14,
       fontWeight: '600',
       color: '#6200EE',
+    },
+    connectionDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginLeft: 8,
+      marginRight: 4,
+    },
+    connected: {
+      backgroundColor: '#4CAF50',
+    },
+    disconnected: {
+      backgroundColor: '#F44336',
+    },
+    connectionText: {
+      fontSize: 12,
+      color: isDark ? '#ccc' : '#666',
+    },
+    activityText: {
+      fontSize: 10,
+      color: isDark ? '#999' : '#888',
       marginBottom: 4,
     },
     debugText: {
       fontSize: 12,
       color: isDark ? '#ccc' : '#666',
+    },
+    debugActions: {
+      flexDirection: 'row',
+      marginTop: 8,
+      gap: 8,
+    },
+    debugButton: {
+      backgroundColor: isDark ? '#4a4a6a' : '#ddd',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 6,
+    },
+    debugButtonDisabled: {
+      opacity: 0.5,
+    },
+    debugButtonText: {
+      fontSize: 12,
+      color: isDark ? '#fff' : '#333',
+    },
+    modalOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      borderRadius: 16,
+      padding: 20,
+      width: '90%',
+      maxHeight: '80%',
+    },
+    modalContentDark: {
+      backgroundColor: '#2d2d44',
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: '#333',
+    },
+    modalClose: {
+      fontSize: 24,
+      color: '#999',
+    },
+    statusRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    statusLabel: {
+      fontSize: 14,
+      color: '#666',
+      marginRight: 8,
+    },
+    statusValue: {
+      fontSize: 14,
+      color: '#333',
+      marginLeft: 4,
+    },
+    reconnectCount: {
+      fontSize: 14,
+      color: '#FF9800',
+      fontWeight: '600',
+    },
+    textLight: {
+      color: '#fff',
+    },
+    logHeader: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#333',
+      marginTop: 12,
+      marginBottom: 8,
+    },
+    logContainer: {
+      backgroundColor: isDark ? '#1a1a2e' : '#f5f5f5',
+      borderRadius: 8,
+      padding: 12,
+      maxHeight: 200,
+    },
+    noLogs: {
+      color: '#999',
+      fontStyle: 'italic',
+    },
+    logEntry: {
+      fontSize: 11,
+      fontFamily: 'monospace',
+      color: isDark ? '#ccc' : '#333',
+      marginBottom: 4,
+    },
+    logError: {
+      color: '#F44336',
+    },
+    logSuccess: {
+      color: '#4CAF50',
+    },
+    logCommand: {
+      color: '#2196F3',
+    },
+    logResponse: {
+      color: '#9C27B0',
     },
     listContent: {
       padding: 16,

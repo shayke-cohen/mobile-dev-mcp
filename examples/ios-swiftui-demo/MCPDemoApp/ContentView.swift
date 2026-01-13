@@ -38,6 +38,7 @@ struct ContentView: View {
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var mcpBridge: MCPBridge
     
     var body: some View {
         NavigationStack {
@@ -79,19 +80,8 @@ struct HomeView: View {
                     .cornerRadius(16)
                     .shadow(radius: 2)
                     
-                    // Debug Info
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("MCP Demo App", systemImage: "wrench.and.screwdriver")
-                            .font(.headline)
-                            .foregroundColor(.purple)
-                        Text("SwiftUI demo for Mobile Dev MCP SDK")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.purple.opacity(0.1))
-                    .cornerRadius(12)
+                    // MCP SDK Status
+                    MCPStatusBanner()
                 }
                 .padding()
             }
@@ -413,7 +403,154 @@ struct ProfileView: View {
     }
 }
 
+// MARK: - MCP Status Banner
+
+struct MCPStatusBanner: View {
+    @EnvironmentObject var mcpBridge: MCPBridge
+    @State private var showActivityLog = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Header with connection status
+            HStack {
+                Label("MCP SDK", systemImage: "wrench.and.screwdriver")
+                    .font(.headline)
+                    .foregroundColor(.purple)
+                
+                Spacer()
+                
+                // Connection indicator
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(mcpBridge.isConnected ? Color.green : Color.red)
+                        .frame(width: 8, height: 8)
+                    Text(mcpBridge.isConnected ? "Connected" : "Disconnected")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    // Reconnect count
+                    if mcpBridge.reconnectCount > 0 && !mcpBridge.isConnected {
+                        Text("(\(mcpBridge.reconnectCount))")
+                            .font(.caption2)
+                            .foregroundColor(.orange)
+                    }
+                }
+            }
+            
+            // Last activity
+            if !mcpBridge.lastActivity.isEmpty {
+                Text(mcpBridge.lastActivity)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            
+            Text("Server: ws://localhost:8765")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            // Action buttons
+            HStack(spacing: 12) {
+                Button(action: { mcpBridge.reconnect() }) {
+                    Label("Reconnect", systemImage: "arrow.clockwise")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                .disabled(mcpBridge.isConnected)
+                
+                Button(action: { showActivityLog.toggle() }) {
+                    Label("Activity Log", systemImage: "list.bullet")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(.top, 4)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(mcpBridge.isConnected ? Color.green.opacity(0.1) : Color.purple.opacity(0.1))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(mcpBridge.isConnected ? Color.green : Color.purple, lineWidth: 1)
+        )
+        .cornerRadius(12)
+        .sheet(isPresented: $showActivityLog) {
+            MCPActivityLogView()
+                .environmentObject(mcpBridge)
+        }
+    }
+}
+
+// MARK: - Activity Log View
+
+struct MCPActivityLogView: View {
+    @EnvironmentObject var mcpBridge: MCPBridge
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Connection Status") {
+                    HStack {
+                        Text("Status")
+                        Spacer()
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(mcpBridge.isConnected ? Color.green : Color.red)
+                                .frame(width: 8, height: 8)
+                            Text(mcpBridge.isConnected ? "Connected" : "Disconnected")
+                        }
+                    }
+                    
+                    if mcpBridge.reconnectCount > 0 {
+                        HStack {
+                            Text("Reconnect Attempts")
+                            Spacer()
+                            Text("\(mcpBridge.reconnectCount)")
+                                .foregroundColor(.orange)
+                        }
+                    }
+                }
+                
+                Section("Activity Log") {
+                    if mcpBridge.activityLog.isEmpty {
+                        Text("No activity yet")
+                            .foregroundColor(.secondary)
+                    } else {
+                        ForEach(mcpBridge.activityLog.reversed(), id: \.self) { entry in
+                            Text(entry)
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(entryColor(entry))
+                        }
+                    }
+                }
+            }
+            .navigationTitle("MCP SDK Activity")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+    
+    func entryColor(_ entry: String) -> Color {
+        if entry.contains("Error") || entry.contains("failed") {
+            return .red
+        } else if entry.contains("Connected!") {
+            return .green
+        } else if entry.contains("Command") {
+            return .blue
+        } else if entry.contains("Response") {
+            return .purple
+        }
+        return .primary
+    }
+}
+
 #Preview {
     ContentView()
         .environmentObject(AppState())
+        .environmentObject(MCPBridge.shared)
 }

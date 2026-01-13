@@ -5,6 +5,7 @@
 package com.mobiledevmcp.demo.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.mobiledevmcp.demo.mcp.MCPBridge
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,6 +57,22 @@ class AppViewModel : ViewModel() {
     
     init {
         loadMockProducts()
+        exposeStateToMCP()
+    }
+    
+    private fun exposeStateToMCP() {
+        MCPBridge.exposeState("currentUser") { _state.value.currentUser?.let {
+            mapOf("id" to it.id, "name" to it.name, "email" to it.email)
+        }}
+        MCPBridge.exposeState("isLoggedIn") { _state.value.isLoggedIn }
+        MCPBridge.exposeState("products") { _state.value.products.map {
+            mapOf("id" to it.id, "name" to it.name, "price" to it.price, "category" to it.category, "inStock" to it.inStock)
+        }}
+        MCPBridge.exposeState("cart") { _state.value.cartItems.map {
+            mapOf("productId" to it.productId, "name" to it.name, "price" to it.price, "quantity" to it.quantity)
+        }}
+        MCPBridge.exposeState("cartTotal") { _state.value.cartTotal }
+        MCPBridge.exposeState("cartCount") { _state.value.cartItemCount }
     }
     
     private fun loadMockProducts() {

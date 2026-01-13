@@ -15,7 +15,7 @@ describe('DeviceManager', () => {
   beforeEach(async () => {
     // Find available port
     serverPort = 8900 + Math.floor(Math.random() * 100);
-    wsServer = new WebSocketServer(serverPort);
+    wsServer = new WebSocketServer({ port: serverPort });
     deviceManager = new DeviceManager(wsServer);
     
     // Wait for server to start

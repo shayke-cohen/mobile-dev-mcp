@@ -218,11 +218,16 @@ async function buildIOS(projectPath: string, configuration: string, build: Build
   const xcodeproj = fs.readdirSync(projectPath).find(f => f.endsWith('.xcodeproj'));
   const xcworkspace = fs.readdirSync(projectPath).find(f => f.endsWith('.xcworkspace'));
 
+  if (!xcodeproj && !xcworkspace) {
+    throw new Error('No Xcode project or workspace found');
+  }
+
   const project = xcworkspace
     ? `-workspace "${path.join(projectPath, xcworkspace)}"`
-    : `-project "${path.join(projectPath, xcodeproj)}"`;
+    : `-project "${path.join(projectPath, xcodeproj!)}"`;
 
-  const cmd = `xcodebuild ${project} -scheme "${path.basename(xcodeproj || '', '.xcodeproj')}" -configuration ${configuration === 'debug' ? 'Debug' : 'Release'} -destination 'generic/platform=iOS Simulator' build`;
+  const schemeName = xcodeproj ? path.basename(xcodeproj, '.xcodeproj') : 'App';
+  const cmd = `xcodebuild ${project} -scheme "${schemeName}" -configuration ${configuration === 'debug' ? 'Debug' : 'Release'} -destination 'generic/platform=iOS Simulator' build`;
 
   const { stdout, stderr } = await execAsync(cmd, {
     cwd: projectPath,

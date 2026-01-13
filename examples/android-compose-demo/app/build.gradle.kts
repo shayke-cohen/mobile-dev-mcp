@@ -75,6 +75,9 @@ dependencies {
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     
+    // OkHttp for WebSocket (MCP SDK)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

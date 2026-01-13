@@ -1,146 +1,52 @@
 #!/bin/bash
-# Run Android Compose Demo App on Emulator
 
-set -e
+# Run Android Compose Demo App
+# Usage: ./run-android-demo.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-APP_DIR="$PROJECT_ROOT/examples/android-compose-demo"
+PROJECT_DIR="$SCRIPT_DIR/../examples/android-compose-demo"
 
-echo "🤖 Android Compose Demo Runner"
-echo "=============================="
+echo "🤖 Building and running Android demo..."
+echo "   Project: $PROJECT_DIR"
 
-# Check for Android SDK
-if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
-    # Try common locations
-    if [ -d "$HOME/Library/Android/sdk" ]; then
-        export ANDROID_HOME="$HOME/Library/Android/sdk"
-    elif [ -d "$HOME/Android/Sdk" ]; then
-        export ANDROID_HOME="$HOME/Android/Sdk"
-    else
-        echo "❌ Android SDK not found. Please set ANDROID_HOME environment variable."
-        exit 1
-    fi
-fi
+cd "$PROJECT_DIR"
 
-SDK_ROOT="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
-export PATH="$SDK_ROOT/platform-tools:$SDK_ROOT/emulator:$SDK_ROOT/tools/bin:$PATH"
-
-# Check for adb
-if ! command -v adb &> /dev/null; then
-    echo "❌ adb not found. Please install Android SDK platform-tools."
+# Check if gradle wrapper exists
+if [ ! -f "gradlew" ]; then
+    echo "❌ Gradle wrapper not found"
     exit 1
 fi
 
-# Check for running emulator or start one
-echo "📱 Checking for Android emulator..."
-
-DEVICE=$(adb devices | grep -E "emulator|device$" | grep -v "List" | head -1 | awk '{print $1}')
-
-if [ -z "$DEVICE" ]; then
-    echo "🚀 No emulator running. Starting one..."
-    
-    # List available AVDs
-    AVDS=$(emulator -list-avds 2>/dev/null || true)
-    
-    if [ -z "$AVDS" ]; then
-        echo "❌ No Android Virtual Devices found."
-        echo "Please create one in Android Studio: Tools > Device Manager > Create Device"
-        exit 1
-    fi
-    
-    # Use first available AVD
-    AVD=$(echo "$AVDS" | head -1)
-    echo "📱 Starting emulator: $AVD"
-    
-    emulator -avd "$AVD" -no-snapshot-load &
-    
-    echo "⏳ Waiting for emulator to boot..."
-    adb wait-for-device
-    
-    # Wait for boot to complete
-    while [ "$(adb shell getprop sys.boot_completed 2>/dev/null)" != "1" ]; do
-        sleep 2
-    done
-    
-    DEVICE=$(adb devices | grep "emulator" | awk '{print $1}')
-    echo "✅ Emulator ready: $DEVICE"
-fi
-
-echo "✅ Using device: $DEVICE"
-
-# Check if gradlew exists
-if [ ! -f "$APP_DIR/gradlew" ]; then
-    echo "📦 Setting up Gradle wrapper..."
-    cd "$APP_DIR"
-    
-    # Download gradle wrapper
-    GRADLE_VERSION="8.5"
-    WRAPPER_DIR="gradle/wrapper"
-    mkdir -p "$WRAPPER_DIR"
-    
-    cat > "$WRAPPER_DIR/gradle-wrapper.properties" << EOF
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-EOF
-
-    # Create gradlew script
-    cat > gradlew << 'GRADLEW'
-#!/bin/bash
-# Gradle wrapper script
-
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-GRADLE_HOME="$HOME/.gradle/wrapper/dists"
-GRADLE_VERSION=$(grep distributionUrl gradle/wrapper/gradle-wrapper.properties | sed 's/.*gradle-\(.*\)-bin.zip/\1/')
-
-if command -v gradle &> /dev/null; then
-    gradle "$@"
-else
-    echo "Downloading Gradle..."
-    mkdir -p "$GRADLE_HOME"
-    curl -sL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" -o /tmp/gradle.zip
-    unzip -q /tmp/gradle.zip -d "$GRADLE_HOME"
-    "$GRADLE_HOME/gradle-${GRADLE_VERSION}/bin/gradle" "$@"
-fi
-GRADLEW
-    chmod +x gradlew
-    
-    cd "$PROJECT_ROOT"
-fi
-
-# Build the app
-echo "🔨 Building app..."
-cd "$APP_DIR"
-
-./gradlew assembleDebug --warning-mode=none 2>&1 | grep -E "(BUILD|error|warning:|:app:)" || true
-
-APK_PATH="$APP_DIR/app/build/outputs/apk/debug/app-debug.apk"
-
-if [ ! -f "$APK_PATH" ]; then
-    echo "❌ Build failed. APK not found at: $APK_PATH"
-    echo ""
-    echo "💡 Try building in Android Studio:"
-    echo "   1. Open $APP_DIR in Android Studio"
-    echo "   2. Sync Gradle files"
-    echo "   3. Build > Make Project"
+# Check for connected devices/emulators
+DEVICES=$(adb devices | grep -v "List" | grep -v "^$" | wc -l)
+if [ "$DEVICES" -eq 0 ]; then
+    echo "❌ No Android device/emulator connected"
+    echo "Please start an emulator first:"
+    echo "  emulator -list-avds"
+    echo "  emulator -avd <avd_name> &"
     exit 1
 fi
 
-echo "✅ Build successful: $APK_PATH"
+# Set JAVA_HOME if needed
+if [ -z "$JAVA_HOME" ]; then
+    JAVA17=$(/usr/libexec/java_home -v 17 2>/dev/null || true)
+    if [ -n "$JAVA17" ]; then
+        export JAVA_HOME="$JAVA17"
+        echo "   JAVA_HOME: $JAVA_HOME"
+    fi
+fi
 
-# Install the app
-echo "📲 Installing app..."
-adb -s "$DEVICE" install -r "$APK_PATH"
+# Build and install
+echo "🔨 Building..."
+./gradlew installDebug 2>&1 | tail -20
 
-# Launch the app
-echo "🚀 Launching app..."
-adb -s "$DEVICE" shell am start -n com.mobiledevmcp.demo/.MainActivity
+if [ $? -ne 0 ]; then
+    echo "❌ Build failed"
+    exit 1
+fi
 
-echo ""
-echo "✅ Android Demo app is now running!"
-echo "📱 Device: $DEVICE"
-echo "🔗 The app should connect to MCP server at ws://10.0.2.2:8765"
-echo "   (10.0.2.2 is the host machine from Android emulator)"
+# Launch app
+echo "🚀 Launching..."
+adb shell am start -n com.mobiledevmcp.demo/.MainActivity
+
+echo "✅ App launched!"

@@ -7,11 +7,75 @@ import SwiftUI
 @main
 struct MCPDemoAppApp: App {
     @StateObject private var appState = AppState()
+    @StateObject private var mcpBridge = MCPBridge.shared
+    
+    init() {
+        #if DEBUG
+        initializeMCPSDK()
+        #endif
+    }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(appState)
+                .environmentObject(mcpBridge)
+                .onAppear {
+                    exposeStatesToMCP()
+                }
+        }
+    }
+    
+    private func initializeMCPSDK() {
+        MCPBridge.shared.initialize(serverUrl: "ws://localhost:8765", debug: true)
+        MCPBridge.shared.enableLogCapture()
+        MCPBridge.shared.enableNetworkInterception()
+        MCPBridge.shared.registerFeatureFlags([
+            "dark_mode": false,
+            "new_checkout": false,
+            "show_recommendations": true
+        ])
+    }
+    
+    private func exposeStatesToMCP() {
+        MCPBridge.shared.exposeState(key: "currentUser") { [weak appState] in
+            guard let user = appState?.currentUser else { return nil }
+            return ["id": user.id, "name": user.name, "email": user.email]
+        }
+        
+        MCPBridge.shared.exposeState(key: "isLoggedIn") { [weak appState] in
+            return appState?.isLoggedIn ?? false
+        }
+        
+        MCPBridge.shared.exposeState(key: "products") { [weak appState] in
+            return appState?.products.map { product in
+                [
+                    "id": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "category": product.category,
+                    "inStock": product.inStock
+                ]
+            } ?? []
+        }
+        
+        MCPBridge.shared.exposeState(key: "cart") { [weak appState] in
+            return appState?.cartItems.map { item in
+                [
+                    "productId": item.productId,
+                    "name": item.name,
+                    "price": item.price,
+                    "quantity": item.quantity
+                ]
+            } ?? []
+        }
+        
+        MCPBridge.shared.exposeState(key: "cartTotal") { [weak appState] in
+            return appState?.cartTotal ?? 0.0
+        }
+        
+        MCPBridge.shared.exposeState(key: "cartCount") { [weak appState] in
+            return appState?.cartItems.reduce(0) { $0 + $1.quantity } ?? 0
         }
     }
 }
