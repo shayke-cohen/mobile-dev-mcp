@@ -1,0 +1,44 @@
+{
+  "name": "@mobile-dev-mcp/react-native",
+  "version": "0.1.0",
+  "description": "MCP SDK for React Native apps - enables AI-assisted development in Cursor",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "react-native": "src/index.ts",
+  "scripts": {
+    "build": "echo 'React Native package - no build step'",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf lib"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.72.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-native": "^0.73.0",
+    "typescript": "^5.7.0"
+  },
+  "files": [
+    "src",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp.git",
+    "directory": "packages/sdk-react-native"
+  },
+  "keywords": [
+    "react-native",
+    "mcp",
+    "cursor",
+    "ai",
+    "debugging",
+    "development"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
