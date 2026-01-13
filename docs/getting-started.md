@@ -1,39 +1,58 @@
 # Getting Started with Mobile Dev MCP
 
-This guide will help you set up Mobile Dev MCP to enable AI-assisted development for your mobile apps in Cursor.
+This guide will help you set up the Mobile Dev MCP server and integrate the SDK into your mobile application.
 
 ## Prerequisites
 
-- [Cursor IDE](https://cursor.sh) installed
-- Node.js 18+ (for MCP server)
-- A mobile app (React Native, iOS, or Android)
+- Node.js 18+ and pnpm
+- Cursor IDE with MCP support
+- For iOS: macOS with Xcode and iOS Simulator
+- For Android: Android Studio with an emulator or adb
 
-## Step 1: Configure Cursor
+## Installation
+
+### Step 1: Clone and Build
+
+```bash
+git clone https://github.com/shayke-cohen/mobile-dev-mcp.git
+cd mobile-dev-mcp
+pnpm install
+pnpm build
+```
+
+### Step 2: Configure Cursor
 
 Create or edit `~/.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
-    "mobile-dev-mcp": {
-      "command": "npx",
-      "args": ["-y", "@mobile-dev-mcp/server@latest"],
+    "mobile-dev": {
+      "command": "node",
+      "args": ["/absolute/path/to/mobile-dev-mcp/packages/mcp-server/dist/index.js"],
       "env": {
-        "MCP_PORT": "8765",
-        "MCP_LOG_LEVEL": "info"
+        "MCP_PORT": "8765"
       }
     }
   }
 }
 ```
 
-Restart Cursor to load the configuration.
+Restart Cursor to load the new MCP configuration.
 
-## Step 2: Install the SDK
+### Step 3: Verify Installation
 
-Choose the SDK for your platform:
+In Cursor, you can now ask:
+- "List available iOS simulators"
+- "What mobile dev tools are available?"
+
+If the MCP server is working, you'll see responses from the tools.
+
+## SDK Integration
 
 ### React Native
+
+#### Install the SDK
 
 ```bash
 npm install @mobile-dev-mcp/react-native
@@ -41,76 +60,159 @@ npm install @mobile-dev-mcp/react-native
 yarn add @mobile-dev-mcp/react-native
 ```
 
-### iOS (Swift Package Manager)
+#### Add Native Modules (iOS)
 
-Add to your `Package.swift`:
+Add to your `ios/Podfile`:
 
-```swift
-dependencies: [
-    .package(url: "https://github.com/mobile-dev-mcp/sdk-ios.git", from: "1.0.0")
-]
+```ruby
+pod 'MobileDevMCP', :path => '../node_modules/@mobile-dev-mcp/react-native/ios'
 ```
 
-Or in Xcode: File → Add Packages → Enter the URL.
+Then run:
+```bash
+cd ios && pod install
+```
 
-### Android (Gradle)
+#### Add Native Modules (Android)
 
-Add to your `build.gradle.kts`:
+In `android/settings.gradle`:
+```gradle
+include ':mobile-dev-mcp'
+project(':mobile-dev-mcp').projectDir = new File(rootProject.projectDir, '../node_modules/@mobile-dev-mcp/react-native/android')
+```
 
-```kotlin
+In `android/app/build.gradle`:
+```gradle
 dependencies {
-    debugImplementation("com.mobiledevmcp:sdk-android:1.0.0")
+    implementation project(':mobile-dev-mcp')
 }
 ```
 
-## Step 3: Initialize the SDK
+In `MainApplication.java/kt`:
+```kotlin
+import com.mobiledevmcp.MCPNativePackage
 
-### React Native
+// In getPackages():
+packages.add(MCPNativePackage())
+```
+
+#### Initialize in Your App
 
 ```typescript
-// App.tsx
+// App.tsx or index.js
 import { MCPBridge } from '@mobile-dev-mcp/react-native';
-import store from './store';
+import { store } from './store'; // Your Redux/Zustand store
 
 if (__DEV__) {
-  // Initialize with default settings
+  // Initialize connection to MCP server
   MCPBridge.initialize({
-    serverUrl: 'ws://localhost:8765',
-    autoConnect: true,
+    serverUrl: 'ws://localhost:8765', // or your Mac's IP for physical devices
+    appName: 'MyApp',
+    appVersion: '1.0.0',
   });
-  
-  // Expose your Redux/Zustand store
-  MCPBridge.exposeState('store', () => store.getState());
-  
-  // Expose navigation state
-  MCPBridge.setNavigationRef(navigationRef);
-  
-  // Enable automatic network interception
+
+  // Connect your state management
+  MCPBridge.connectStore(store);
+
+  // Enable network interception
   MCPBridge.enableNetworkInterception();
-  
-  // Enable log capturing
+
+  // Enable log capture
   MCPBridge.enableLogCapture();
+
+  // Register feature flags
+  MCPBridge.registerFeatureFlags({
+    newCheckout: false,
+    darkMode: true,
+    betaFeatures: false,
+  });
 }
 ```
 
-### iOS (Swift)
+#### Using with React Navigation
+
+```typescript
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { MCPBridge } from '@mobile-dev-mcp/react-native';
+
+function App() {
+  const navigationRef = useNavigationContainerRef();
+
+  useEffect(() => {
+    if (__DEV__ && navigationRef) {
+      MCPBridge.setNavigationRef(navigationRef);
+    }
+  }, [navigationRef]);
+
+  return (
+    <NavigationContainer ref={navigationRef}>
+      {/* Your screens */}
+    </NavigationContainer>
+  );
+}
+```
+
+#### Auto-Instrumentation (Optional)
+
+Add the Babel plugin for automatic function tracing:
+
+```bash
+npm install --save-dev @mobile-dev-mcp/babel-plugin
+```
+
+Update `babel.config.js`:
+
+```javascript
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    ['@mobile-dev-mcp/babel-plugin', {
+      traceClasses: true,
+      traceAsync: true,
+      minLines: 3,
+    }],
+  ],
+};
+```
+
+### iOS (Swift/SwiftUI)
+
+#### Add Swift Package
+
+In Xcode, go to File > Add Packages and add:
+```
+https://github.com/shayke-cohen/mobile-dev-mcp.git
+```
+
+Select the `MobileDevMCP` product.
+
+#### Initialize
 
 ```swift
-// App.swift
+// AppDelegate.swift or App.swift
 import MobileDevMCP
 
-#if DEBUG
 @main
 struct MyApp: App {
     init() {
-        MCPBridge.shared.initialize(serverUrl: "ws://localhost:8765")
+        #if DEBUG
+        MCPBridge.shared.initialize(
+            serverUrl: "ws://localhost:8765",
+            appName: "MyApp",
+            appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        )
         
-        // Expose view models
-        MCPBridge.shared.exposeState(key: "user") {
-            UserViewModel.shared.currentUser
-        }
-        
+        // Enable features
         MCPBridge.shared.enableNetworkInterception()
+        MCPBridge.shared.enableUIInspection()
+        MCPBridge.shared.enableLogCapture()
+        
+        // Register feature flags
+        MCPBridge.shared.registerFeatureFlags([
+            "newCheckout": false,
+            "darkMode": true
+        ])
+        #endif
     }
     
     var body: some Scene {
@@ -119,77 +221,161 @@ struct MyApp: App {
         }
     }
 }
-#endif
 ```
 
-### Android (Kotlin)
+#### Expose State
+
+```swift
+import MobileDevMCP
+import SwiftUI
+
+class AppState: ObservableObject {
+    @Published var user: User?
+    @Published var cart: [CartItem] = []
+    
+    init() {
+        #if DEBUG
+        MCPBridge.shared.exposeState("user") { [weak self] in
+            return self?.user
+        }
+        MCPBridge.shared.exposeState("cart") { [weak self] in
+            return self?.cart
+        }
+        #endif
+    }
+}
+```
+
+### Android (Kotlin/Jetpack Compose)
+
+#### Add Dependency
+
+In `app/build.gradle.kts`:
 
 ```kotlin
-// MainApplication.kt
+dependencies {
+    implementation(project(":sdk-android"))
+    // or from Maven (when published):
+    // implementation("com.mobiledevmcp:sdk:0.1.0")
+}
+```
+
+#### Initialize
+
+```kotlin
+// Application.kt
 import com.mobiledevmcp.MCPBridge
 
-class MainApplication : Application() {
+class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         
         if (BuildConfig.DEBUG) {
             MCPBridge.initialize(
                 context = this,
-                serverUrl = "ws://localhost:8765"
+                serverUrl = "ws://10.0.2.2:8765", // 10.0.2.2 for emulator localhost
+                appName = "MyApp"
             )
             
-            // Expose ViewModels
-            MCPBridge.exposeState("user") {
-                UserViewModel.currentUser.value
-            }
-            
             MCPBridge.enableNetworkInterception()
+            MCPBridge.enableLogCapture()
+            
+            MCPBridge.registerFeatureFlags(mapOf(
+                "newCheckout" to false,
+                "darkMode" to true
+            ))
         }
     }
 }
 ```
 
-## Step 4: Verify Connection
+#### Add OkHttp Interceptor
 
-1. Start your mobile app
-2. Open Cursor IDE
-3. Ask the AI: "What devices are connected?"
+```kotlin
+import com.mobiledevmcp.MCPBridge
 
-If connected, the AI will list your app. If not, check:
-- Is the MCP server running? (Check Cursor's MCP output)
-- Is your app running in development mode?
-- Is the SDK initialized correctly?
+val okHttpClient = OkHttpClient.Builder()
+    .apply {
+        if (BuildConfig.DEBUG) {
+            addInterceptor(MCPBridge.networkAdapter.createInterceptor())
+        }
+    }
+    .build()
+```
 
-## Step 5: Start Using It!
+#### Expose ViewModel State
 
-Try these prompts in Cursor:
+```kotlin
+import com.mobiledevmcp.MCPBridge
 
-- "What is the current app state?"
-- "Show me recent network requests"
-- "Are there any errors in the logs?"
-- "Take a screenshot of the current screen"
-- "Toggle the 'dark_mode' feature flag"
+class AppViewModel : ViewModel() {
+    private val _state = MutableStateFlow(AppState())
+    val state: StateFlow<AppState> = _state.asStateFlow()
+    
+    init {
+        if (BuildConfig.DEBUG) {
+            MCPBridge.exposeState("app") { _state.value }
+        }
+    }
+}
+```
+
+## Using with Physical Devices
+
+When testing on physical devices, you need to use your Mac's IP address instead of `localhost`:
+
+1. Find your Mac's IP: System Preferences > Network
+2. Update the SDK initialization:
+
+```typescript
+MCPBridge.initialize({
+  serverUrl: 'ws://192.168.1.xxx:8765', // Your Mac's IP
+  appName: 'MyApp',
+});
+```
+
+3. Ensure both devices are on the same network
+
+## Simulator Control
+
+The MCP server can control simulators without an app connection:
+
+```
+User: "Boot the iPhone 15 Pro simulator"
+User: "Install MyApp.app on the simulator"
+User: "Take a screenshot of the simulator"
+User: "Set location to San Francisco"
+User: "Send a push notification to MyApp"
+```
 
 ## Troubleshooting
 
-### "No device connected"
+### App not connecting to MCP server
 
-- Ensure your app is running in development/debug mode
-- Check that the SDK is initialized (look for "MCP SDK initialized" in logs)
-- Verify the WebSocket port (8765) is not blocked
+1. Check the MCP server is running: Look for `[MCP Server] Listening on port 8765` in Cursor's output
+2. Verify the URL is correct (localhost:8765 for simulator, Mac IP for physical device)
+3. Check firewall settings
 
-### Connection keeps dropping
+### Simulator tools not working
 
-- Check your device/emulator network settings
-- Ensure localhost is accessible (for physical devices, use `adb reverse tcp:8765 tcp:8765`)
+1. Ensure Xcode command line tools are installed: `xcode-select --install`
+2. For Android, ensure `adb` is in your PATH: `which adb`
+3. Check simulator/emulator is actually installed
 
 ### State not showing
 
-- Make sure you called `exposeState()` for the state you want to inspect
-- State must be serializable (no circular references, functions, etc.)
+1. Verify `MCPBridge.exposeState()` or `connectStore()` was called
+2. Check the exposed key name matches what you're querying
+3. Ensure SDK initialization completed before state exposure
+
+### Network requests not captured
+
+1. Call `MCPBridge.enableNetworkInterception()` before any network calls
+2. For iOS/Android native, ensure you're using the intercepted HTTP client
+3. Check that requests aren't being made before SDK initialization
 
 ## Next Steps
 
-- Read the [full specification](../SPECIFICATION.md) for detailed API documentation
-- Check out the [sample apps](../examples/) for reference implementations
-- Explore [advanced features](./advanced.md) like auto-instrumentation
+- Read the [Full Specification](../SPECIFICATION.md) for detailed API docs
+- Check out the [Example Apps](../examples/) for reference implementations
+- See the [Babel Plugin README](../packages/babel-plugin-mcp/README.md) for auto-instrumentation options

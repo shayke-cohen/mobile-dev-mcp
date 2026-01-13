@@ -15,14 +15,26 @@ import { networkTools, handleNetworkTool } from './network.js';
 import { uiTools, handleUiTool } from './ui.js';
 import { logsTools, handleLogsTool } from './logs.js';
 import { deviceTools, handleDeviceTool } from './device.js';
+import { simulatorTools, handleSimulatorTool } from './simulator.js';
 
-// Combine all tools
-const allTools = [
+// Tools that require a connected device
+const deviceRequiredTools = [
   ...stateTools,
   ...networkTools,
   ...uiTools,
   ...logsTools,
   ...deviceTools,
+];
+
+// Tools that work without a connected device (local tools)
+const localTools = [
+  ...simulatorTools,
+];
+
+// Combine all tools
+const allTools = [
+  ...deviceRequiredTools,
+  ...localTools,
 ];
 
 export function registerAllTools(server: Server, deviceManager: DeviceManager): void {
@@ -37,21 +49,34 @@ export function registerAllTools(server: Server, deviceManager: DeviceManager): 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
-    // Check device connection
-    if (!deviceManager.hasConnectedDevice()) {
-      return {
-        content: [
-          {
-            type: 'text',
-            text: '❌ No device connected.\n\nPlease ensure:\n1. Your mobile app is running\n2. The MCP SDK is initialized\n3. The app is connected to ws://localhost:8765',
-          },
-        ],
-        isError: true,
-      };
-    }
-
     try {
       let result: unknown;
+
+      // Check if this is a simulator/local tool (doesn't require device connection)
+      if (simulatorTools.some(t => t.name === name)) {
+        result = await handleSimulatorTool(name, args || {});
+        
+        const text = typeof result === 'string'
+          ? result
+          : JSON.stringify(result, null, 2);
+
+        return {
+          content: [{ type: 'text', text }],
+        };
+      }
+
+      // For device-required tools, check connection
+      if (!deviceManager.hasConnectedDevice()) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: '❌ No device connected.\n\nPlease ensure:\n1. Your mobile app is running\n2. The MCP SDK is initialized\n3. The app is connected to ws://localhost:8765\n\n💡 Tip: You can still use simulator tools (list_simulators, boot_simulator, etc.) without an app connection.',
+            },
+          ],
+          isError: true,
+        };
+      }
 
       // Route to appropriate handler
       if (stateTools.some(t => t.name === name)) {
@@ -89,5 +114,5 @@ export function registerAllTools(server: Server, deviceManager: DeviceManager): 
     }
   });
 
-  console.error(`[Tools] Registered ${allTools.length} tools`);
+  console.error(`[Tools] Registered ${allTools.length} tools (${deviceRequiredTools.length} device, ${localTools.length} simulator)`);
 }

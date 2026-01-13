@@ -1,0 +1,45 @@
+{
+  "name": "@mobile-dev-mcp/babel-plugin",
+  "version": "0.1.0",
+  "description": "Babel plugin for automatic MCP SDK instrumentation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp.git",
+    "directory": "packages/babel-plugin-mcp"
+  },
+  "keywords": [
+    "babel-plugin",
+    "mcp",
+    "mobile",
+    "instrumentation",
+    "tracing",
+    "debugging"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/types": "^7.23.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-typescript": "^7.23.0",
+    "@types/babel__core": "^7.20.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
