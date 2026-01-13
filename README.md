@@ -126,14 +126,24 @@ if (BuildConfig.DEBUG) {
 
 ### 4. Start Using with Cursor!
 
-Once configured, you can ask Cursor things like:
+Once configured, you can use slash commands or natural language:
 
-- *"Show me the current app state"*
-- *"What network requests have been made?"*
-- *"Take a screenshot of the app"*
+```
+/simulators                    - List available simulators
+/boot iPhone 15 Pro            - Boot a simulator
+/demo ios                      - Run the iOS demo app
+/state                         - Show app state
+/network                       - Show network requests
+/screenshot                    - Take a screenshot
+```
+
+Or just ask naturally:
+- *"Boot the iPhone 15 simulator and run the demo app"*
+- *"What network requests is the app making?"*
 - *"Mock the /api/users endpoint to return an error"*
-- *"Boot the iPhone 15 simulator"*
 - *"Set the simulator location to San Francisco"*
+
+See [COMMANDS.md](./COMMANDS.md) for the full command reference.
 
 ## 📦 Packages
 
@@ -307,6 +317,7 @@ pnpm --filter @mobile-dev-mcp/react-native test
 
 ## 📚 Documentation
 
+- [**Commands Reference**](./COMMANDS.md) - Quick command reference for Cursor
 - [Getting Started Guide](./docs/getting-started.md)
 - [Full Specification](./SPECIFICATION.md)
 - [Contributing Guide](./CONTRIBUTING.md)

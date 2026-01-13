@@ -1,0 +1,156 @@
+# Mobile Dev MCP - Cursor Rules
+
+## Project Context
+
+Mobile Dev MCP is an MCP server and SDK suite for AI-assisted mobile development in Cursor. It provides 40+ tools for app inspection, simulator control, and build automation.
+
+## Available Commands
+
+When the user types these commands or similar phrases, invoke the corresponding MCP tool:
+
+### Simulator Commands
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/simulators` or "list simulators" | `list_simulators` | `{platform: "all"}` |
+| `/boot <device>` or "boot iPhone 15" | `boot_simulator` | `{platform: "ios", deviceId: "<device>"}` |
+| `/shutdown` or "shutdown simulator" | `shutdown_simulator` | `{platform: "ios"}` |
+| `/screenshot` or "take screenshot" | `simulator_screenshot` | `{platform: "ios"}` |
+| `/record start` | `simulator_record` | `{platform: "ios", action: "start"}` |
+| `/record stop` | `simulator_record` | `{platform: "ios", action: "stop"}` |
+| `/location <lat> <lon>` | `set_location` | `{platform: "ios", latitude, longitude}` |
+| `/push <bundleId>` | `push_notification` | `{bundleId, payload: {...}}` |
+| `/url <url>` or "open deeplink" | `open_url` | `{platform: "ios", url: "<url>"}` |
+
+### App Management Commands  
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/install <path>` | `install_app` | `{platform: "ios", appPath: "<path>"}` |
+| `/launch <bundleId>` | `launch_app` | `{platform: "ios", bundleId: "<bundleId>"}` |
+| `/terminate <bundleId>` | `terminate_app` | `{platform: "ios", bundleId: "<bundleId>"}` |
+| `/uninstall <bundleId>` | `uninstall_app` | `{platform: "ios", bundleId: "<bundleId>"}` |
+| `/logs` or "show device logs" | `get_device_logs` | `{platform: "ios"}` |
+| `/clear <bundleId>` | `clear_app_data` | `{platform: "android", bundleId}` |
+
+### Build Commands
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/build ios` | `build_app` | `{platform: "ios", projectPath: "<cwd>"}` |
+| `/build android` | `build_app` | `{platform: "android", projectPath: "<cwd>"}` |
+| `/run ios` | `run_app` | `{platform: "react-native-ios", projectPath: "<cwd>"}` |
+| `/run android` | `run_app` | `{platform: "react-native-android", projectPath: "<cwd>"}` |
+| `/demo ios` | `run_demo_app` | `{demo: "ios"}` |
+| `/demo android` | `run_demo_app` | `{demo: "android"}` |
+| `/demo rn` | `run_demo_app` | `{demo: "react-native"}` |
+| `/clean` | `clean_build` | `{platform: "react-native", projectPath: "<cwd>"}` |
+| `/status` | `get_build_status` | `{}` |
+
+### App Inspection Commands (requires SDK connection)
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/state` or "show app state" | `get_app_state` | `{}` |
+| `/state <path>` | `get_app_state` | `{path: "<path>"}` |
+| `/storage` or "query storage" | `query_storage` | `{}` |
+| `/nav` or "navigation state" | `get_navigation_state` | `{}` |
+| `/flags` or "feature flags" | `list_feature_flags` | `{}` |
+| `/toggle <flag>` | `toggle_feature_flag` | `{flagName: "<flag>", enabled: true}` |
+
+### Network Commands (requires SDK connection)
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/network` or "show requests" | `list_network_requests` | `{}` |
+| `/mock <url> <response>` | `mock_network_request` | `{urlPattern, mockResponse}` |
+| `/unmock` | `clear_network_mocks` | `{}` |
+
+### UI Commands (requires SDK connection)
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/capture` or "app screenshot" | `capture_screenshot` | `{}` |
+| `/tree` or "view hierarchy" | `get_layout_tree` | `{}` |
+| `/tap <x> <y>` | `simulate_interaction` | `{type: "tap", target: {x, y}}` |
+| `/navigate <route>` | `navigate_to` | `{route: "<route>"}` |
+
+### Logging Commands (requires SDK connection)
+| User Says | MCP Tool | Parameters |
+|-----------|----------|------------|
+| `/logs app` or "app logs" | `get_logs` | `{}` |
+| `/errors` | `get_recent_errors` | `{}` |
+| `/trace` | `get_function_trace` | `{}` |
+
+## Command Interpretation Guidelines
+
+1. **Platform Detection**: If user doesn't specify platform:
+   - If discussing iOS/Swift/SwiftUI → use `platform: "ios"`
+   - If discussing Android/Kotlin/Compose → use `platform: "android"`
+   - If discussing React Native → use `platform: "react-native-ios"` for iOS or `"react-native-android"` for Android
+
+2. **Path Resolution**: When user provides relative paths, resolve from current workspace
+
+3. **Simulator Names**: Accept partial matches (e.g., "15 Pro" → "iPhone 15 Pro")
+
+4. **Chaining**: For complex requests, chain multiple tools:
+   - "Run the iOS demo" → `list_simulators` → `boot_simulator` (if needed) → `run_demo_app`
+   - "Test my app" → `build_app` → `install_app` → `launch_app`
+
+## Code Style
+
+### TypeScript (MCP Server, React Native SDK)
+- Use ES modules with `.js` extensions in imports
+- Use `async/await` for all async operations
+- Use Zod for schema validation
+
+### Swift (iOS SDK)
+- Use Swift 5.9+ features
+- Use `@MainActor` for UI operations
+- Wrap debug code in `#if DEBUG`
+
+### Kotlin (Android SDK)
+- Use coroutines for async operations
+- Use `BuildConfig.DEBUG` for debug-only code
+- Use OkHttp interceptor for network capture
+
+## Project Structure
+
+```
+packages/
+├── mcp-server/          # Node.js MCP server
+├── sdk-react-native/    # RN SDK with native modules
+├── sdk-ios/             # Swift SDK
+├── sdk-android/         # Kotlin SDK
+└── babel-plugin-mcp/    # Auto-instrumentation
+
+examples/
+├── react-native-demo/   # RN sample app
+├── ios-swiftui-demo/    # SwiftUI sample app
+└── android-compose-demo/ # Compose sample app
+
+scripts/
+├── run-ios-demo.sh      # Run iOS demo
+├── run-android-demo.sh  # Run Android demo
+└── run-rn-demo.sh       # Run RN demo
+```
+
+## Common Workflows
+
+### "Help me debug my React Native app"
+1. Check connection: `list_connected_devices`
+2. Get app state: `get_app_state`
+3. Check network: `list_network_requests`
+4. View logs: `get_logs`
+5. Screenshot: `capture_screenshot`
+
+### "Set up for iOS development"
+1. List simulators: `list_simulators`
+2. Boot simulator: `boot_simulator`
+3. Build app: `build_app` or `run_demo_app`
+4. Check connection: Wait for SDK to connect
+
+### "Mock API for testing"
+1. Set up mock: `mock_network_request` with URL pattern and response
+2. Test app behavior
+3. Clear mock: `clear_network_mocks`
+
+## Documentation References
+
+- Full API: `SPECIFICATION.md`
+- Getting Started: `docs/getting-started.md`
+- Contributing: `CONTRIBUTING.md`
