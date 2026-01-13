@@ -22,11 +22,11 @@ class MCPDemoApplication : Application() {
     
     private fun initializeMCPSDK() {
         // Initialize the MCP SDK
-            // Use 10.0.2.2 for Android emulator (maps to host's localhost)
-            // Use localhost for real devices with adb reverse
+            // SDK auto-detects emulator vs real device and uses appropriate host
+            // Emulator: ws://10.0.2.2:8765 (maps to host's localhost)
+            // Real device: ws://localhost:8765 (use `adb reverse tcp:8765 tcp:8765`)
             MCPBridge.initialize(
                 context = this,
-                serverUrl = "ws://10.0.2.2:8765",
                 debug = true
             )
         
@@ -41,7 +41,7 @@ class MCPDemoApplication : Application() {
             "show_recommendations" to true
         ))
         
-        Log.i(TAG, "MCP SDK initialized, connecting to ws://localhost:8765")
+        Log.i(TAG, "MCP SDK initialized")
     }
     
     companion object {

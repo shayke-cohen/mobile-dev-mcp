@@ -27,7 +27,8 @@ struct MCPDemoAppApp: App {
     }
     
     private func initializeMCPSDK() {
-        MCPBridge.shared.initialize(serverUrl: "ws://localhost:8765", debug: true)
+        // SDK uses ws://localhost:8765 by default
+        MCPBridge.shared.initialize(debug: true)
         MCPBridge.shared.enableLogCapture()
         MCPBridge.shared.enableNetworkInterception()
         MCPBridge.shared.registerFeatureFlags([

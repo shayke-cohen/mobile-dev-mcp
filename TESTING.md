@@ -190,9 +190,31 @@ The MCP server shows this when no mobile app is connected via WebSocket:
 ### App Won't Connect
 
 1. Ensure you're in development/debug mode
-2. Check the WebSocket URL matches (`ws://localhost:8765`)
-3. For real devices, you may need to use your computer's IP instead of localhost
+2. The SDK auto-detects the appropriate host:
+   - **iOS Simulator**: `ws://localhost:8765`
+   - **Android Emulator**: `ws://10.0.2.2:8765` (auto-detected)
+   - **Real devices**: Use `adb reverse tcp:8765 tcp:8765` for Android
+3. For devices on different networks, specify custom server URL
 4. All SDKs auto-reconnect every 3 seconds - check the reconnect counter in the status banner
+
+### Custom Server URL
+
+Override the default server URL when needed:
+
+```typescript
+// React Native
+MCPBridge.initialize({ serverUrl: 'ws://192.168.1.100:8765' });
+```
+
+```swift
+// iOS
+MCPBridge.shared.initialize(serverUrl: "ws://192.168.1.100:8765")
+```
+
+```kotlin
+// Android
+MCPBridge.initialize(context = this, serverUrl = "ws://192.168.1.100:8765")
+```
 
 ### SDK Reconnection
 

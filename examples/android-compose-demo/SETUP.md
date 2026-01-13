@@ -113,9 +113,13 @@ Android Gradle plugin requires Java 17
 Set JAVA_HOME to Java 17 as shown above.
 
 ### Emulator can't connect to localhost
-The emulator uses 10.0.2.2 for the host machine. Update `MCPDemoApplication.kt`:
+The SDK auto-detects emulator vs real device:
+- **Emulator**: Uses `ws://10.0.2.2:8765` automatically
+- **Real device**: Uses `ws://localhost:8765` (run `adb reverse tcp:8765 tcp:8765`)
+
+To specify a custom server URL:
 ```kotlin
-MCPBridge.initialize(context = this, serverUrl = "ws://10.0.2.2:8765")
+MCPBridge.initialize(context = this, serverUrl = "ws://192.168.1.100:8765")
 ```
 
 ## Requirements

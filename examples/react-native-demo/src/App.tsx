@@ -53,8 +53,10 @@ function App(): React.JSX.Element {
   useEffect(() => {
     if (__DEV__) {
       // Initialize the MCP SDK
+      // SDK auto-detects platform and uses appropriate host:
+      // - Android emulator: ws://10.0.2.2:8765
+      // - iOS simulator/device: ws://localhost:8765
       MCPBridge.initialize({
-        serverUrl: 'ws://localhost:8765',
         debug: true,
       });
 
@@ -158,7 +160,7 @@ function App(): React.JSX.Element {
           {mcpState.lastActivity ? (
             <Text style={styles.activityText} numberOfLines={1}>{mcpState.lastActivity}</Text>
           ) : null}
-          <Text style={styles.debugText}>Server: ws://localhost:8765</Text>
+          <Text style={styles.debugText}>Server: {MCPBridge.getServerUrl()}</Text>
           <View style={styles.debugActions}>
             <TouchableOpacity 
               style={[styles.debugButton, mcpState.isConnected && styles.debugButtonDisabled]}

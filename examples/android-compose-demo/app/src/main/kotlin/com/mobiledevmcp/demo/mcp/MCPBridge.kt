@@ -38,8 +38,25 @@ object MCPBridge {
     
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var isInitialized = false
-    private var serverUrl = "ws://localhost:8765"
+    private var serverUrl = DEFAULT_SERVER_URL
     private var debug = true
+    
+    // Default server URL - use 10.0.2.2 for emulator, localhost for real devices
+    private const val DEFAULT_PORT = "8765"
+    private val DEFAULT_SERVER_URL: String
+        get() = "ws://${getDefaultHost()}:$DEFAULT_PORT"
+    
+    private fun getDefaultHost(): String {
+        // Check if running on emulator
+        return if (Build.FINGERPRINT.contains("generic") || 
+                   Build.FINGERPRINT.contains("emulator") ||
+                   Build.MODEL.contains("Emulator") ||
+                   Build.MODEL.contains("Android SDK")) {
+            "10.0.2.2" // Emulator -> host machine
+        } else {
+            "localhost" // Real device (use adb reverse)
+        }
+    }
     private var reconnectJob: Job? = null
     private var reconnectAttempts = 0
     
@@ -57,7 +74,7 @@ object MCPBridge {
      */
     fun initialize(
         context: Context,
-        serverUrl: String = "ws://localhost:8765",
+        serverUrl: String? = null,
         debug: Boolean = true
     ) {
         if (!isDebugBuild(context)) {
@@ -71,13 +88,13 @@ object MCPBridge {
         }
         
         contextRef = WeakReference(context.applicationContext)
-        this.serverUrl = serverUrl
+        this.serverUrl = serverUrl ?: DEFAULT_SERVER_URL
         this.debug = debug
         
         connect()
         
         isInitialized = true
-        log("Initialized, connecting to $serverUrl")
+        log("Initialized, connecting to ${this.serverUrl}")
     }
     
     /**
@@ -135,6 +152,11 @@ object MCPBridge {
      * Get activity log for debugging
      */
     fun getActivityLog(): List<String> = activityLog.toList()
+    
+    /**
+     * Get current server URL
+     */
+    fun getServerUrl(): String = serverUrl
     
     /**
      * Manually trigger reconnect

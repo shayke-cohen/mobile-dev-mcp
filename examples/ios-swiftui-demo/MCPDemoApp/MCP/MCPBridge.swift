@@ -27,27 +27,33 @@ final class MCPBridge: ObservableObject {
     private var isInitialized = false
     private var reconnectAttempts = 0
     
-    private var serverUrl: String = "ws://localhost:8765"
+    private static let DEFAULT_PORT = "8765"
+    private static var defaultServerUrl: String {
+        "ws://localhost:\(DEFAULT_PORT)"
+    }
+    
+    private var serverUrl: String = MCPBridge.defaultServerUrl
     private var debug = true
     
     private init() {}
     
     // MARK: - Public API
     
-    func initialize(serverUrl: String = "ws://localhost:8765", debug: Bool = true) {
+    func initialize(serverUrl: String? = nil, debug: Bool = true) {
+        let url = serverUrl ?? MCPBridge.defaultServerUrl
         #if DEBUG
         guard !isInitialized else {
             log("Already initialized")
             return
         }
         
-        self.serverUrl = serverUrl
+        self.serverUrl = url
         self.debug = debug
         
         connect()
         
         isInitialized = true
-        log("Initialized, connecting to \(serverUrl)")
+        log("Initialized, connecting to \(url)")
         #else
         print("[MCP SDK] Only works in DEBUG builds")
         #endif
@@ -97,6 +103,11 @@ final class MCPBridge: ObservableObject {
     /// Get activity log for debugging
     func getActivityLog() -> [String] {
         return activityLog
+    }
+    
+    /// Get current server URL
+    func getServerUrl() -> String {
+        return serverUrl
     }
     
     // MARK: - Private Methods

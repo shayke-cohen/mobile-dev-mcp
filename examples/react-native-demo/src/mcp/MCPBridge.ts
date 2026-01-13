@@ -50,10 +50,19 @@ class MCPBridgeClass {
   }> = [];
   private featureFlags: Map<string, boolean> = new Map();
   private config: Required<MCPConfig> = {
-    serverUrl: 'ws://localhost:8765',
+    serverUrl: this.getDefaultServerUrl(),
     debug: true,
     reconnectInterval: 3000,
   };
+  
+  private getDefaultServerUrl(): string {
+    const { Platform } = require('react-native');
+    const DEFAULT_PORT = '8765';
+    // Android emulator uses 10.0.2.2 to reach host machine
+    // iOS simulator and real devices use localhost
+    const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+    return `ws://${host}:${DEFAULT_PORT}`;
+  }
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private initialized = false;
   private originalFetch: typeof fetch | null = null;
@@ -403,6 +412,13 @@ class MCPBridgeClass {
    */
   getActivityLog(): ActivityEntry[] {
     return [...this._activityLog];
+  }
+  
+  /**
+   * Get current server URL
+   */
+  getServerUrl(): string {
+    return this.config.serverUrl;
   }
 
   /**

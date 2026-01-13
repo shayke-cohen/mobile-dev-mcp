@@ -447,7 +447,7 @@ struct MCPStatusBanner: View {
                     .lineLimit(1)
             }
             
-            Text("Server: ws://localhost:8765")
+            Text("Server: \(mcpBridge.getServerUrl())")
                 .font(.caption)
                 .foregroundColor(.secondary)
             

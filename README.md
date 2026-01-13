@@ -86,10 +86,10 @@ import { MCPBridge } from '@mobile-dev-mcp/react-native';
 
 // Initialize in development
 if (__DEV__) {
-  MCPBridge.initialize({
-    serverUrl: 'ws://localhost:8765',
-    appName: 'MyApp',
-  });
+  // SDK auto-detects platform and uses appropriate host
+  // Android emulator: ws://10.0.2.2:8765
+  // iOS/real devices: ws://localhost:8765
+  MCPBridge.initialize({ debug: true });
   
   // Enable features
   MCPBridge.enableNetworkInterception();
@@ -106,9 +106,13 @@ if (__DEV__) {
 import MobileDevMCP
 
 #if DEBUG
-MCPBridge.shared.initialize(serverUrl: "ws://localhost:8765", appName: "MyApp")
+// SDK uses ws://localhost:8765 by default
+MCPBridge.shared.initialize(debug: true)
 MCPBridge.shared.enableNetworkInterception()
 MCPBridge.shared.enableLogCapture()
+
+// Or specify custom server
+MCPBridge.shared.initialize(serverUrl: "ws://192.168.1.100:8765", debug: true)
 #endif
 ```
 
@@ -118,9 +122,15 @@ MCPBridge.shared.enableLogCapture()
 import com.mobiledevmcp.MCPBridge
 
 if (BuildConfig.DEBUG) {
-    MCPBridge.initialize(this, "ws://localhost:8765", "MyApp")
+    // SDK auto-detects emulator vs real device
+    // Emulator: ws://10.0.2.2:8765
+    // Real device: ws://localhost:8765 (use adb reverse)
+    MCPBridge.initialize(context = this, debug = true)
     MCPBridge.enableNetworkInterception()
     MCPBridge.enableLogCapture()
+    
+    // Or specify custom server
+    MCPBridge.initialize(context = this, serverUrl = "ws://192.168.1.100:8765")
 }
 ```
 
