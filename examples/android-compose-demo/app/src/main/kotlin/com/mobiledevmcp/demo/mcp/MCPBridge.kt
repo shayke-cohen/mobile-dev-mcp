@@ -19,7 +19,6 @@ import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.ref.WeakReference
-import java.util.concurrent.TimeUnit
 
 /**
  * MCP Bridge singleton for connecting to the MCP server

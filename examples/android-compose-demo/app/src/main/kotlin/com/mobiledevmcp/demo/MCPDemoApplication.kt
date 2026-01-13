@@ -22,11 +22,13 @@ class MCPDemoApplication : Application() {
     
     private fun initializeMCPSDK() {
         // Initialize the MCP SDK
-        MCPBridge.initialize(
-            context = this,
-            serverUrl = "ws://localhost:8765",
-            debug = true
-        )
+            // Use 10.0.2.2 for Android emulator (maps to host's localhost)
+            // Use localhost for real devices with adb reverse
+            MCPBridge.initialize(
+                context = this,
+                serverUrl = "ws://10.0.2.2:8765",
+                debug = true
+            )
         
         // Enable features
         MCPBridge.enableLogCapture()

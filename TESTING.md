@@ -270,12 +270,12 @@ ws.on('message', (data) => {
 The e2e test suite performs a full integration test:
 1. Starts the MCP server
 2. Boots simulators/emulators if needed
-3. Builds and runs demo apps
+3. Builds and runs demo apps (iOS SwiftUI, Android Compose)
 4. Waits for SDK connection
 5. Tests all MCP tools
 
 ```bash
-# Run all e2e tests
+# Run all e2e tests (iOS + Android)
 pnpm test:e2e
 
 # iOS only
@@ -291,6 +291,16 @@ node scripts/e2e-test.js --skip-build
 node scripts/e2e-test.js --platform=ios -v
 ```
 
+### Supported Platforms
+
+| Platform | Status | Demo App |
+|----------|--------|----------|
+| iOS | ✅ Fully tested | `ios-swiftui-demo` |
+| Android | ✅ Fully tested | `android-compose-demo` |
+| React Native | ⚠️ Manual only | `react-native-demo` |
+
+**Note:** React Native E2E requires Metro bundler running, so it's tested manually.
+
 ### What Gets Tested
 
 | Test | Description |
@@ -298,7 +308,8 @@ node scripts/e2e-test.js --platform=ios -v
 | Server tools | 44 MCP tools registered |
 | list_simulators | Lists iOS/Android devices |
 | simulator_screenshot | Takes screenshot |
-| Build and run | Compiles demo app |
+| Build and run iOS | Compiles SwiftUI demo |
+| Build and run Android | Compiles Compose demo |
 | SDK connection | App connects via WebSocket |
 | get_app_state | Returns cart, user, products |
 | get_device_info | Returns platform info |

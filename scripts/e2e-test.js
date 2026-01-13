@@ -90,8 +90,12 @@ function logWarn(message) {
 }
 
 function logInfo(message) {
+  console.log(`  ${colors.blue}ℹ${colors.reset} ${message}`);
+}
+
+function logVerbose(message) {
   if (verbose) {
-    console.log(`  ${colors.blue}ℹ${colors.reset} ${message}`);
+    console.log(`    ${colors.reset}${message}`);
   }
 }
 
@@ -396,17 +400,49 @@ class E2ETestRunner {
       throw new Error('Android demo not found');
     }
     
-    // Use run_demo_app for simpler invocation
-    const result = await this.mcpClient.callTool('run_demo_app', {
-      demo: 'android'
-    });
-    
-    if (result.isError) {
-      throw new Error(result.content[0].text);
+    // Set up adb reverse for port forwarding (helps with real devices)
+    try {
+      execSync('adb reverse tcp:8765 tcp:8765', { stdio: 'pipe' });
+      logVerbose('Set up adb reverse port forwarding');
+    } catch (e) {
+      logVerbose('adb reverse failed (may not be needed for emulator with 10.0.2.2)');
     }
     
-    // Wait for app to launch
-    await sleep(10000);
+    // Build the app
+    logVerbose('Running gradle build...');
+    try {
+      execSync('./gradlew assembleDebug', {
+        cwd: projectPath,
+        stdio: verbose ? 'inherit' : 'pipe',
+        timeout: 300000
+      });
+    } catch (e) {
+      throw new Error(`Gradle build failed: ${e.message}`);
+    }
+    
+    // Install the app
+    logVerbose('Installing APK...');
+    const apkPath = path.join(projectPath, 'app/build/outputs/apk/debug/app-debug.apk');
+    if (!fs.existsSync(apkPath)) {
+      throw new Error('APK not found after build');
+    }
+    
+    try {
+      execSync(`adb install -r "${apkPath}"`, { stdio: 'pipe', timeout: 60000 });
+    } catch (e) {
+      throw new Error(`APK install failed: ${e.message}`);
+    }
+    
+    // Launch the app
+    logVerbose('Launching app...');
+    try {
+      execSync('adb shell am start -n com.mobiledevmcp.demo/.MainActivity', { stdio: 'pipe' });
+    } catch (e) {
+      throw new Error(`App launch failed: ${e.message}`);
+    }
+    
+    // Wait for app to launch and SDK to initialize
+    await sleep(5000);
     
     return true;
   }
