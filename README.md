@@ -265,34 +265,231 @@ export async function fetchUser(id: string) {
 
 ## 🏗 Architecture
 
+### System Overview
+
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Cursor IDE                            │
-│                    (MCP Client)                              │
-└─────────────────────────┬───────────────────────────────────┘
-                          │ stdio (JSON-RPC)
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    MCP Server                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │ Device Tools │  │  Sim Tools   │  │   Helpers    │       │
-│  └──────────────┘  └──────────────┘  └──────────────┘       │
-│           │                │                                 │
-│           ▼                ▼                                 │
-│  ┌──────────────┐  ┌──────────────┐                         │
-│  │   Device     │  │  xcrun/adb   │                         │
-│  │   Manager    │  │  commands    │                         │
-│  └──────────────┘  └──────────────┘                         │
-└─────────────────────────┬───────────────────────────────────┘
-                          │ WebSocket
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   Mobile App + SDK                           │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │    State     │  │   Network    │  │     UI       │       │
-│  │   Adapter    │  │   Adapter    │  │   Adapter    │       │
-│  └──────────────┘  └──────────────┘  └──────────────┘       │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            CURSOR IDE                                    │
+│                         (MCP Client)                                     │
+│  ┌────────────────────────────────────────────────────────────────────┐ │
+│  │  "What's in the user's cart?" → AI interprets → calls get_app_state │ │
+│  └────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────┬───────────────────────────────────────┘
+                                  │
+                                  │ stdio (JSON-RPC 2.0)
+                                  │ Bidirectional communication
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           MCP SERVER                                     │
+│                    (Node.js + TypeScript)                                │
+│                                                                          │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │
+│  │  Device Tools   │  │ Simulator Tools │  │   Build Tools   │         │
+│  │  (24 tools)     │  │   (20 tools)    │  │                 │         │
+│  │                 │  │                 │  │                 │         │
+│  │ • get_app_state │  │ • list_sims     │  │ • build_app     │         │
+│  │ • get_logs      │  │ • boot/shutdown │  │ • run_app       │         │
+│  │ • feature_flags │  │ • screenshot    │  │ • run_demo_app  │         │
+│  │ • network_reqs  │  │ • set_location  │  │ • clean_build   │         │
+│  └────────┬────────┘  └────────┬────────┘  └─────────────────┘         │
+│           │                    │                                        │
+│           ▼                    ▼                                        │
+│  ┌─────────────────┐  ┌─────────────────┐                              │
+│  │ Device Manager  │  │  Shell Commands │                              │
+│  │                 │  │                 │                              │
+│  │ • Manages WS    │  │ • xcrun simctl  │                              │
+│  │   connections   │  │ • adb           │                              │
+│  │ • Routes cmds   │  │ • xcodebuild    │                              │
+│  │ • Tracks state  │  │ • gradlew       │                              │
+│  └────────┬────────┘  └─────────────────┘                              │
+│           │                                                             │
+└───────────┼─────────────────────────────────────────────────────────────┘
+            │
+            │ WebSocket (ws://localhost:8765)
+            │ Persistent connection, JSON messages
+            │
+    ┌───────┴───────┬───────────────┬───────────────┐
+    │               │               │               │
+    ▼               ▼               ▼               ▼
+┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────────┐
+│  iOS App  │ │Android App│ │  RN App   │ │  Test Client  │
+│  + SDK    │ │  + SDK    │ │  + SDK    │ │  (Optional)   │
+└───────────┘ └───────────┘ └───────────┘ └───────────────┘
+```
+
+### Component Details
+
+#### 1. Cursor IDE (MCP Client)
+
+Cursor acts as the MCP client, communicating with the server via **stdio**:
+- Sends tool calls as JSON-RPC 2.0 requests
+- Receives results and displays them to the user
+- AI interprets natural language and maps to appropriate tools
+
+#### 2. MCP Server
+
+The central hub that bridges Cursor and mobile apps:
+
+| Component | Purpose |
+|-----------|---------|
+| **stdio Interface** | JSON-RPC communication with Cursor |
+| **WebSocket Server** | Real-time connection with mobile SDKs (port 8765) |
+| **Device Manager** | Tracks connected apps, routes commands, manages state |
+| **Tool Registry** | 44 tools across device, simulator, and build categories |
+
+#### 3. Mobile SDKs
+
+Platform-specific SDKs that run inside your app:
+
+| Platform | SDK Location | WebSocket URL |
+|----------|--------------|---------------|
+| **iOS** | `MCPBridge.swift` | `ws://localhost:8765` |
+| **Android** | `MCPBridge.kt` | `ws://10.0.2.2:8765` (emulator) |
+| **React Native** | `MCPBridge.ts` | `ws://localhost:8765` |
+
+**SDK Capabilities:**
+- **State Exposure**: Register getters for any app state
+- **Log Capture**: Intercept console.log/NSLog/Log.d
+- **Network Interception**: Capture HTTP requests/responses
+- **Feature Flags**: Runtime flag management
+- **Auto-Reconnect**: 3-second retry on disconnect
+
+#### 4. Demo Apps
+
+Three fully-functional demo apps showcasing SDK integration:
+
+```
+examples/
+├── ios-swiftui-demo/       # SwiftUI e-commerce app
+│   └── MCPDemoApp/
+│       ├── MCP/MCPBridge.swift   # Inline SDK
+│       └── ContentView.swift      # Status banner
+│
+├── android-compose-demo/   # Jetpack Compose e-commerce app
+│   └── app/src/main/kotlin/
+│       ├── mcp/MCPBridge.kt      # Inline SDK
+│       └── ui/screens/           # Status card
+│
+└── react-native-demo/      # React Native e-commerce app
+    └── src/
+        ├── mcp/MCPBridge.ts      # Inline SDK
+        └── App.tsx               # Status banner
+```
+
+### Communication Flow
+
+#### Flow 1: App State Query
+
+```
+User: "What's in the cart?"
+         │
+         ▼
+┌─────────────────┐
+│   Cursor AI     │ Interprets query, decides to call get_app_state
+└────────┬────────┘
+         │ JSON-RPC: {"method": "tools/call", "params": {"name": "get_app_state"}}
+         ▼
+┌─────────────────┐
+│   MCP Server    │ Receives request, looks up connected device
+└────────┬────────┘
+         │ WebSocket: {"id": "123", "method": "get_app_state", "params": {"key": "cart"}}
+         ▼
+┌─────────────────┐
+│   Mobile SDK    │ Calls registered state getter, returns cart data
+└────────┬────────┘
+         │ WebSocket: {"type": "response", "id": "123", "result": {"items": [...]}}
+         ▼
+┌─────────────────┐
+│   MCP Server    │ Forwards result to Cursor
+└────────┬────────┘
+         │ JSON-RPC: {"result": {"content": [{"type": "text", "text": "Cart: ..."}]}}
+         ▼
+┌─────────────────┐
+│   Cursor AI     │ Formats and displays: "The cart has 3 items totaling $45.99"
+└─────────────────┘
+```
+
+#### Flow 2: Simulator Control (No SDK Required)
+
+```
+User: "Take a screenshot of the simulator"
+         │
+         ▼
+┌─────────────────┐
+│   Cursor AI     │ Calls simulator_screenshot tool
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   MCP Server    │ Executes: xcrun simctl io booted screenshot
+└────────┬────────┘
+         │
+         ▼
+    [Screenshot saved to temp file, returned as base64]
+```
+
+### WebSocket Protocol
+
+**Handshake (App → Server):**
+```json
+{
+  "type": "handshake",
+  "platform": "ios",
+  "appName": "MyApp",
+  "appVersion": "1.0.0",
+  "deviceId": "unique-device-id",
+  "capabilities": ["state", "logs", "network", "featureFlags"]
+}
+```
+
+**Command (Server → App):**
+```json
+{
+  "id": "cmd-123",
+  "method": "get_app_state",
+  "params": { "key": "cart" }
+}
+```
+
+**Response (App → Server):**
+```json
+{
+  "type": "response",
+  "id": "cmd-123",
+  "result": { "items": [], "total": 0 }
+}
+```
+
+### Project Structure
+
+```
+mobile-dev-mcp/
+├── packages/
+│   ├── mcp-server/           # Main MCP server
+│   │   ├── src/
+│   │   │   ├── index.ts      # Entry point (stdio + WebSocket)
+│   │   │   ├── tools/        # Tool implementations
+│   │   │   │   ├── device.ts     # App inspection tools
+│   │   │   │   ├── simulator.ts  # Simulator control
+│   │   │   │   └── build.ts      # Build & run tools
+│   │   │   └── device-manager.ts # WebSocket + device tracking
+│   │   └── dist/             # Compiled JS (run this)
+│   │
+│   ├── sdk-react-native/     # React Native SDK package
+│   ├── sdk-ios/              # iOS Swift SDK package
+│   └── sdk-android/          # Android Kotlin SDK package
+│
+├── examples/
+│   ├── ios-swiftui-demo/     # iOS demo with inline SDK
+│   ├── android-compose-demo/ # Android demo with inline SDK
+│   └── react-native-demo/    # React Native demo with inline SDK
+│
+├── scripts/
+│   ├── e2e-test.js           # End-to-end test suite
+│   ├── test-client.js        # Interactive test client
+│   └── run-*-demo.sh         # Demo app runners
+│
+└── TESTING.md                # Testing documentation
 ```
 
 ## 🔄 SDK Features
@@ -337,15 +534,21 @@ Demo apps include an **MCP Status Banner** showing:
 ## 🧪 Testing
 
 ```bash
-# Run all tests
+# Run unit tests
 pnpm test
 
-# Run MCP server tests
-pnpm --filter @mobile-dev-mcp/server test
+# Run E2E tests (iOS + Android)
+pnpm test:e2e
 
-# Run SDK tests
-pnpm --filter @mobile-dev-mcp/react-native test
+# Run E2E for specific platform
+pnpm test:e2e:ios
+pnpm test:e2e:android
+
+# Interactive test client
+node scripts/test-client.js
 ```
+
+See [TESTING.md](./TESTING.md) for comprehensive testing documentation.
 
 ## 📚 Documentation
 
