@@ -44,6 +44,11 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    // MCP SDK Status (DEBUG only)
+                    #if DEBUG
+                    MCPStatusBanner()
+                    #endif
+                    
                     // Welcome Banner
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Welcome\(appState.currentUser.map { ", \($0.name)" } ?? "")!")
@@ -79,9 +84,6 @@ struct HomeView: View {
                     .background(Color(.systemBackground))
                     .cornerRadius(16)
                     .shadow(radius: 2)
-                    
-                    // MCP SDK Status
-                    MCPStatusBanner()
                 }
                 .padding()
             }

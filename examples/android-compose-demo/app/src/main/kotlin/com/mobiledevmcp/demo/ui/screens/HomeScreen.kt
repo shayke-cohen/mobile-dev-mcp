@@ -42,6 +42,13 @@ fun HomeScreen(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // MCP SDK Status (Development only) - at top for visibility
+        if (BuildConfig.DEBUG) {
+            item {
+                MCPStatusCard()
+            }
+        }
+        
         // Welcome Banner
         item {
             Card(
@@ -139,13 +146,6 @@ fun HomeScreen(
                         )
                     }
                 }
-            }
-        }
-        
-        // MCP SDK Status (Development only)
-        if (BuildConfig.DEBUG) {
-            item {
-                MCPStatusCard()
             }
         }
     }

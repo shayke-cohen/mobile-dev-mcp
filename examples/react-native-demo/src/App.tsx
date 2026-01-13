@@ -144,6 +144,37 @@ function App(): React.JSX.Element {
         </Text>
       </View>
 
+      {/* MCP SDK Status Banner - at top for visibility */}
+      {__DEV__ && (
+        <View style={[styles.debugBanner, mcpState.isConnected && styles.debugBannerConnected]}>
+          <View style={styles.debugHeader}>
+            <Text style={styles.debugTitle}>🔧 MCP SDK</Text>
+            <View style={[styles.connectionDot, mcpState.isConnected ? styles.connected : styles.disconnected]} />
+            <Text style={styles.connectionText}>
+              {mcpState.isConnected ? 'Connected' : 'Disconnected'}
+              {mcpState.reconnectCount > 0 && !mcpState.isConnected ? ` (${mcpState.reconnectCount})` : ''}
+            </Text>
+          </View>
+          {mcpState.lastActivity ? (
+            <Text style={styles.activityText} numberOfLines={1}>{mcpState.lastActivity}</Text>
+          ) : null}
+          <Text style={styles.debugText}>Server: ws://localhost:8765</Text>
+          <View style={styles.debugActions}>
+            <TouchableOpacity 
+              style={[styles.debugButton, mcpState.isConnected && styles.debugButtonDisabled]}
+              onPress={() => MCPBridge.reconnect()}
+              disabled={mcpState.isConnected}>
+              <Text style={styles.debugButtonText}>🔄 Reconnect</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.debugButton}
+              onPress={() => setShowActivityLog(true)}>
+              <Text style={styles.debugButtonText}>📋 Activity Log</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Welcome!</Text>
         <Text style={styles.cardText}>
@@ -198,36 +229,6 @@ function App(): React.JSX.Element {
           </TouchableOpacity>
         </View>
       ))}
-
-      {__DEV__ && (
-        <View style={[styles.debugBanner, mcpState.isConnected && styles.debugBannerConnected]}>
-          <View style={styles.debugHeader}>
-            <Text style={styles.debugTitle}>🔧 MCP SDK</Text>
-            <View style={[styles.connectionDot, mcpState.isConnected ? styles.connected : styles.disconnected]} />
-            <Text style={styles.connectionText}>
-              {mcpState.isConnected ? 'Connected' : 'Disconnected'}
-              {mcpState.reconnectCount > 0 && !mcpState.isConnected ? ` (${mcpState.reconnectCount})` : ''}
-            </Text>
-          </View>
-          {mcpState.lastActivity ? (
-            <Text style={styles.activityText} numberOfLines={1}>{mcpState.lastActivity}</Text>
-          ) : null}
-          <Text style={styles.debugText}>Server: ws://localhost:8765</Text>
-          <View style={styles.debugActions}>
-            <TouchableOpacity 
-              style={[styles.debugButton, mcpState.isConnected && styles.debugButtonDisabled]}
-              onPress={() => MCPBridge.reconnect()}
-              disabled={mcpState.isConnected}>
-              <Text style={styles.debugButtonText}>🔄 Reconnect</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.debugButton}
-              onPress={() => setShowActivityLog(true)}>
-              <Text style={styles.debugButtonText}>📋 Activity Log</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
       
       {/* Activity Log Modal */}
       {showActivityLog && (
