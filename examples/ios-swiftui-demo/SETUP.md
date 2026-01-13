@@ -1,88 +1,104 @@
 # iOS SwiftUI Demo - Setup Instructions
 
-This demo has all Swift source code complete. Here's how to run it:
+This demo app is ready to run with all Swift source code complete.
 
-## Option 1: Open as Swift Package in Xcode (Quick Test)
+## Quick Run
 
-1. Open Xcode
-2. File → Open → Select `Package.swift`
-3. Wait for package resolution
-4. Note: This won't run as a standalone app, but you can inspect the code
+```bash
+cd examples/ios-swiftui-demo
 
-## Option 2: Create Xcode Project (Recommended for Full Testing)
+# Build and run with xcodebuild
+xcodebuild -project MCPDemoApp.xcodeproj \
+  -scheme MCPDemoApp \
+  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+  build
 
-### Step 1: Create New Xcode Project
+# Install and launch
+xcrun simctl install booted build/Debug-iphonesimulator/MCPDemoApp.app
+xcrun simctl launch booted com.mobiledevmcp.demo
 
-1. Open Xcode
-2. File → New → Project
-3. Select "App" under iOS
-4. Configure:
-   - Product Name: `MCPDemoApp`
-   - Organization Identifier: `com.mobiledevmcp`
-   - Interface: **SwiftUI**
-   - Language: **Swift**
-   - Uncheck "Include Tests"
-5. Save to `examples/ios-swiftui-demo/MCPDemoApp`
+# Or simply open in Xcode
+open MCPDemoApp.xcodeproj
+```
 
-### Step 2: Add MCP SDK Package
+## Using Xcode
 
-1. In Xcode: File → Add Package Dependencies
-2. Enter: `../../packages/sdk-ios` (or full path)
-3. Add to target: MCPDemoApp
-
-### Step 3: Replace Generated Code
-
-1. Delete the generated `ContentView.swift` and `MCPDemoAppApp.swift`
-2. Copy our source files:
+1. **Open Xcode project:**
    ```bash
-   cp Sources/MCPDemoApp.swift MCPDemoApp/
-   cp Sources/ContentView.swift MCPDemoApp/
+   open MCPDemoApp.xcodeproj
    ```
-3. Or drag-drop from `Sources/` into Xcode
 
-### Step 4: Build and Run
+2. **Select a simulator** (iPhone 15 or newer recommended)
 
-1. Select an iOS Simulator (iPhone 15 recommended)
-2. Press Cmd+R or click Run
-3. App should launch with the demo store UI
+3. **Build and run** (Cmd+R)
 
 ## File Structure
 
 ```
 ios-swiftui-demo/
-├── Package.swift         # Swift Package config
-├── Sources/
-│   ├── MCPDemoApp.swift  # App entry + state management ✓
-│   └── ContentView.swift # All UI views ✓
-├── README.md            # Overview
-└── SETUP.md             # This file
+├── MCPDemoApp.xcodeproj/     # Xcode project
+├── MCPDemoApp/
+│   ├── MCPDemoAppApp.swift   # @main App entry + AppState ✓
+│   └── ContentView.swift     # TabView + all screens ✓
+├── Sources/                   # Original source (reference)
+│   ├── MCPDemoApp.swift      # With MCP SDK imports
+│   └── ContentView.swift     
+├── Package.swift             # Swift Package config
+├── README.md
+└── SETUP.md
 ```
 
-## Testing MCP Integration
+## App Features
 
-1. **Start MCP server:**
-   ```bash
-   cd ../../packages/mcp-server
-   npm run dev
-   ```
+The app includes **TabView navigation** with 4 tabs:
 
-2. **Run iOS app in Simulator**
+1. **Home** - Welcome banner, quick actions grid, featured products
+2. **Products** - Product list with navigation to detail view
+3. **Cart** - Cart management with quantity +/- controls
+4. **Profile** - User sign in/out, account sections, app info
 
-3. **In Cursor, try:**
-   - "What's the user state?"
-   - "Show cart items"
-   - "List feature flags"
+## Building from Command Line
+
+```bash
+# Build for simulator
+xcodebuild -project MCPDemoApp.xcodeproj \
+  -scheme MCPDemoApp \
+  -destination 'id=<SIMULATOR_UUID>' \
+  -configuration Debug \
+  build
+
+# List available simulators
+xcrun simctl list devices available
+
+# Install on booted simulator
+xcrun simctl install booted /path/to/MCPDemoApp.app
+
+# Launch
+xcrun simctl launch booted com.mobiledevmcp.demo
+```
 
 ## Troubleshooting
 
-### Package resolution fails
-- Ensure sdk-ios Package.swift has correct paths
-- Try: File → Packages → Reset Package Caches
+### Build fails with signing errors
+- Open Xcode, go to Signing & Capabilities
+- Select "Automatically manage signing"
+- Choose your development team (or Personal Team)
 
-### App crashes on launch
-- Check MCP server is running on localhost:8765
-- Verify #if DEBUG blocks are working
+### Simulator not found
+```bash
+# List available simulators
+xcrun simctl list devices
 
-### WebSocket connection fails
-- Simulator uses localhost automatically
-- For physical device: use computer's IP address
+# Boot a specific simulator
+xcrun simctl boot "iPhone 16 Pro"
+```
+
+### Package resolution fails (if using Package.swift)
+- File → Packages → Reset Package Caches
+- Ensure sdk-ios Package.swift exists at the correct path
+
+## Requirements
+
+- Xcode 15+
+- iOS 17.0+ deployment target
+- macOS Sonoma or newer (recommended)

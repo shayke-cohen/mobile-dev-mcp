@@ -1,78 +1,79 @@
 # React Native MCP Demo App
 
-A sample React Native app demonstrating the Mobile Dev MCP SDK integration.
+A sample React Native e-commerce app demonstrating the Mobile Dev MCP SDK integration.
 
 ## Features
 
-- **Home Screen**: Welcome banner, quick actions, cart summary
-- **Product List**: Browse products with add-to-cart functionality
-- **Product Detail**: View product details and purchase options
-- **Cart**: Manage cart items with promo codes and checkout
+All screens are accessible via **bottom tab navigation**:
 
-## MCP SDK Integration
+- **🏠 Home Screen**: Welcome banner, stats dashboard, quick actions, featured products
+- **🛍️ Products**: Browse all products with ratings, stock status, and add-to-cart
+- **🛒 Cart**: Manage cart items with quantity controls, subtotal, and checkout
+- **👤 Profile**: User authentication (sign in/out), account settings, app info
 
-The app integrates with the MCP SDK to expose:
+## Screenshots
 
-- **Redux Store**: Full state tree accessible via `get_app_state`
-- **Navigation State**: Current route and navigation stack
-- **Network Requests**: All fetch/XHR requests captured
-- **Console Logs**: All logs accessible via `get_logs`
-- **Feature Flags**: Runtime toggleable flags
+The app uses a consistent purple (#6200EE) theme with support for light and dark modes.
 
-## Setup
+## Quick Start
 
-1. Install dependencies:
+```bash
+# Navigate to the demo
+cd examples/react-native-demo
+
+# The app runs with core React Native dependencies
+# No additional npm install needed if node_modules exists
+
+# Run on iOS
+npx react-native run-ios
+
+# Run on Android  
+npx react-native run-android
+```
+
+## Full Setup (From Scratch)
+
+1. **Initialize native folders** (if ios/android don't exist):
    ```bash
-   cd examples/react-native-demo
-   npm install
-   # or
-   yarn
+   npx react-native init MCPDemoApp --version 0.74.0
+   # Copy ios/ and android/ folders to this directory
    ```
 
-2. Install iOS dependencies:
+2. **Install iOS dependencies**:
    ```bash
    cd ios && pod install && cd ..
    ```
 
-3. Start Metro bundler:
+3. **Run the app**:
    ```bash
-   npm start
-   ```
-
-4. Run on iOS or Android:
-   ```bash
-   npm run ios
+   npx react-native run-ios
    # or
-   npm run android
+   npx react-native run-android
    ```
 
-5. Start the MCP server (in another terminal):
-   ```bash
-   cd packages/mcp-server
-   npm run dev
-   ```
+## MCP SDK Integration
 
-6. Open Cursor and try queries like:
-   - "What's in the user's cart?"
-   - "Show me recent network requests"
-   - "Are there any errors in the logs?"
-   - "Toggle the dark_mode feature flag"
+When the MCP SDK is integrated, the app exposes:
+
+- **App State**: User info, cart items, products
+- **Network Requests**: All fetch/XHR requests captured
+- **Console Logs**: All logs accessible via `get_logs`
+- **Feature Flags**: Runtime toggleable flags
 
 ## Architecture
 
-- **App.tsx**: App entry point with MCP initialization and navigation
-- **store/**: Redux store with user, cart, and products slices
-- **screens/**: All screen components (Home, ProductList, ProductDetail, Cart)
+```
+src/
+├── App.tsx          # Main app with tab navigation and all screens
+├── screens/         # Original screen components (for reference)
+└── store/           # Redux store slices (for reference)
+```
 
-## Debug Info
+The simplified App.tsx contains all screens inline using React Native's core components only, with no external dependencies required.
 
-In development mode (`__DEV__`), a debug banner shows at the bottom of the home screen with MCP connection status and example queries.
+## Debug Mode
 
-## Promo Codes
-
-For testing cart functionality:
-- `SAVE10` - $10 off
-- `SAVE20` - $20 off
+In development mode (`__DEV__`), a debug banner shows on the home screen with MCP connection info and example queries to try.
 
 ## Requirements
 
@@ -80,3 +81,4 @@ For testing cart functionality:
 - React Native 0.74+
 - Xcode 15+ (for iOS)
 - Android Studio (for Android)
+- Java 17+ (for Android)
