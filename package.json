@@ -24,6 +24,8 @@
     "test:e2e": "node scripts/e2e-test.js",
     "test:e2e:ios": "node scripts/e2e-test.js --platform=ios",
     "test:e2e:android": "node scripts/e2e-test.js --platform=android",
+    "test:e2e:rn": "node scripts/e2e-test.js --platform=rn",
+    "test:e2e:rn-android": "node scripts/e2e-test.js --platform=rn-android",
     "test:e2e:existing": "node scripts/e2e-test.js --use-existing-server",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",

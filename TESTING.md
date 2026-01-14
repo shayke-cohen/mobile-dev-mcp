@@ -369,13 +369,35 @@ This lets you see server logs in real-time while tests run.
 
 ### Supported Platforms
 
-| Platform | Status | Demo App |
-|----------|--------|----------|
-| iOS | ✅ Fully tested | `ios-swiftui-demo` |
-| Android | ✅ Fully tested | `android-compose-demo` |
-| React Native | ⚠️ Manual only | `react-native-demo` |
+| Platform | Status | Demo App | Command |
+|----------|--------|----------|---------|
+| iOS | ✅ Fully tested | `ios-swiftui-demo` | `yarn test:e2e:ios` |
+| Android | ✅ Fully tested | `android-compose-demo` | `yarn test:e2e:android` |
+| React Native iOS | ⚠️ Requires setup | `react-native-demo` | `yarn test:e2e:rn` |
+| React Native Android | ⚠️ Requires setup | `react-native-demo` | `yarn test:e2e:rn-android` |
 
-**Note:** React Native E2E requires Metro bundler running, so it's tested manually.
+### React Native E2E Testing
+
+React Native E2E tests require additional setup:
+
+1. **Pre-install dependencies** (to avoid timeout):
+   ```bash
+   cd examples/react-native-demo
+   yarn install
+   cd ios && pod install && cd ..
+   ```
+
+2. **Start Metro bundler** in a separate terminal:
+   ```bash
+   cd examples/react-native-demo
+   yarn start
+   ```
+
+3. **Run E2E tests**:
+   ```bash
+   yarn test:e2e:rn          # React Native on iOS
+   yarn test:e2e:rn-android  # React Native on Android
+   ```
 
 ### What Gets Tested
 

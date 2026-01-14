@@ -12,9 +12,11 @@
  * 6. Reports results
  * 
  * Usage:
- *   node scripts/e2e-test.js                      # Run all tests
+ *   node scripts/e2e-test.js                      # Run all tests (iOS + Android)
  *   node scripts/e2e-test.js --platform=ios       # iOS only
  *   node scripts/e2e-test.js --platform=android   # Android only
+ *   node scripts/e2e-test.js --platform=rn        # React Native (iOS)
+ *   node scripts/e2e-test.js --platform=rn-android # React Native (Android)
  *   node scripts/e2e-test.js --skip-build         # Skip build, just test
  *   node scripts/e2e-test.js --use-existing-server # Connect to running server
  *   node scripts/e2e-test.js --verbose            # Verbose output
@@ -426,8 +428,8 @@ class E2ETestRunner {
 
   // ==================== App Building ====================
 
-  async buildAndRunReactNative(simulator) {
-    logInfo('Building React Native app...');
+  async buildAndRunReactNative(simulator, rnPlatform = 'ios') {
+    logInfo(`Building React Native app for ${rnPlatform}...`);
     
     const projectPath = CONFIG.demos.reactNative;
     
@@ -435,16 +437,70 @@ class E2ETestRunner {
       throw new Error('React Native demo not found');
     }
     
-    // Use MCP tool to build
-    const result = await this.mcpClient.callTool('run_app', {
-      project_path: projectPath,
-      platform: simulator.platform,
-      configuration: 'debug'
-    });
-    
-    if (result.isError) {
-      throw new Error(result.content[0].text);
+    // Install dependencies if needed
+    const nodeModulesPath = path.join(projectPath, 'node_modules');
+    if (!fs.existsSync(nodeModulesPath)) {
+      logInfo('Installing React Native dependencies...');
+      exec(`cd "${projectPath}" && yarn install`, { timeout: 120000 });
     }
+    
+    if (rnPlatform === 'ios') {
+      // Install pods if needed
+      const podsPath = path.join(projectPath, 'ios', 'Pods');
+      if (!fs.existsSync(podsPath)) {
+        logInfo('Installing CocoaPods...');
+        exec(`cd "${projectPath}/ios" && pod install`, { timeout: 120000 });
+      }
+      
+      // Build iOS
+      logInfo('Building React Native iOS...');
+      const iosProjectPath = path.join(projectPath, 'ios');
+      
+      // Terminate any existing instance
+      try {
+        exec(`xcrun simctl terminate ${simulator.id} com.mcpdemoapp`, { stdio: 'ignore' });
+      } catch (e) {}
+      
+      // Build with xcodebuild
+      exec(`cd "${iosProjectPath}" && xcodebuild -workspace MCPDemoApp.xcworkspace -scheme MCPDemoApp -destination 'id=${simulator.id}' -configuration Debug build`, { timeout: 300000 });
+      
+      // Find and install the app
+      const derivedDataPath = path.join(process.env.HOME, 'Library/Developer/Xcode/DerivedData');
+      const appDirs = fs.readdirSync(derivedDataPath).filter(d => d.startsWith('MCPDemoApp-'));
+      if (appDirs.length > 0) {
+        // Sort by modification time to get the most recent
+        const sortedDirs = appDirs.sort((a, b) => {
+          const statA = fs.statSync(path.join(derivedDataPath, a));
+          const statB = fs.statSync(path.join(derivedDataPath, b));
+          return statB.mtime - statA.mtime;
+        });
+        const appPath = path.join(derivedDataPath, sortedDirs[0], 'Build/Products/Debug-iphonesimulator/MCPDemoApp.app');
+        if (fs.existsSync(appPath)) {
+          exec(`xcrun simctl install ${simulator.id} "${appPath}"`);
+          exec(`xcrun simctl launch ${simulator.id} com.mcpdemoapp`);
+        }
+      }
+    } else {
+      // Build Android
+      logInfo('Building React Native Android...');
+      
+      // Set up adb reverse for Metro
+      exec('adb reverse tcp:8081 tcp:8081');
+      exec('adb reverse tcp:8765 tcp:8765');
+      
+      // Build APK
+      exec(`cd "${projectPath}/android" && ./gradlew assembleDebug`, { timeout: 300000 });
+      
+      // Install and launch
+      const apkPath = path.join(projectPath, 'android/app/build/outputs/apk/debug/app-debug.apk');
+      if (fs.existsSync(apkPath)) {
+        exec(`adb install -r "${apkPath}"`);
+        exec('adb shell am start -n com.mcpdemoapp/.MainActivity');
+      }
+    }
+    
+    // Wait for app to start
+    await sleep(5000);
     
     return true;
   }
@@ -856,6 +912,40 @@ class E2ETestRunner {
     }
   }
 
+  async runReactNativeTests(rnPlatform = 'ios') {
+    logStep('React Native', `Running React Native (${rnPlatform}) e2e tests...`);
+    
+    let device;
+    const devicePlatform = rnPlatform === 'ios' ? 'ios' : 'android';
+    
+    await this.test(`Find or boot ${rnPlatform} device`, async () => {
+      device = await this.findOrBootSimulator(devicePlatform);
+    });
+    
+    if (!device) {
+      this.skip('React Native app build', 'No device available');
+      return;
+    }
+    
+    if (!skipBuild) {
+      await this.test(`Build and run React Native (${rnPlatform}) app`, async () => {
+        await this.buildAndRunReactNative(device, rnPlatform);
+      });
+      
+      await this.test('React Native SDK connects to server', async () => {
+        const devices = await this.waitForSDKConnection();
+        // React Native reports as the underlying platform
+        const rnDevice = devices.find(d => d.platform === devicePlatform);
+        if (!rnDevice) {
+          throw new Error('React Native device did not connect');
+        }
+      });
+      
+      // Run UI automation tests (same as native platform)
+      await this.testUIAutomation(devicePlatform);
+    }
+  }
+
   async run() {
     console.log('');
     log('╔══════════════════════════════════════════════════════════════╗', 'cyan');
@@ -892,6 +982,14 @@ class E2ETestRunner {
       
       if (platform === 'all' || platform === 'android') {
         await this.runAndroidTests();
+      }
+      
+      if (platform === 'rn' || platform === 'rn-ios') {
+        await this.runReactNativeTests('ios');
+      }
+      
+      if (platform === 'rn-android') {
+        await this.runReactNativeTests('android');
       }
       
       // If we have a connected app, test app tools
