@@ -378,26 +378,32 @@ This lets you see server logs in real-time while tests run.
 
 ### React Native E2E Testing
 
-React Native E2E tests require additional setup:
+React Native E2E tests automatically start Metro bundler in a background process.
 
-1. **Pre-install dependencies** (to avoid timeout):
-   ```bash
-   cd examples/react-native-demo
-   yarn install
-   cd ios && pod install && cd ..
-   ```
+**Quick start** (if dependencies are pre-installed):
+```bash
+yarn test:e2e:rn          # React Native on iOS
+yarn test:e2e:rn-android  # React Native on Android
+```
 
-2. **Start Metro bundler** in a separate terminal:
-   ```bash
-   cd examples/react-native-demo
-   yarn start
-   ```
+**First time setup** (to avoid timeout during dependency installation):
+```bash
+# Pre-install dependencies
+cd examples/react-native-demo
+yarn install
+cd ios && pod install && cd ..
 
-3. **Run E2E tests**:
-   ```bash
-   yarn test:e2e:rn          # React Native on iOS
-   yarn test:e2e:rn-android  # React Native on Android
-   ```
+# Then run tests
+cd ../..
+yarn test:e2e:rn
+```
+
+The E2E test will:
+1. Install dependencies if needed (yarn install, pod install)
+2. Start Metro bundler automatically in background
+3. Build and run the React Native app
+4. Run SDK connection and app tool tests
+5. Stop Metro bundler on cleanup
 
 ### What Gets Tested
 

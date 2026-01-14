@@ -115,7 +115,12 @@ function sleep(ms) {
 function exec(cmd, options = {}) {
   logInfo(`Executing: ${cmd}`);
   try {
-    return execSync(cmd, { encoding: 'utf-8', stdio: verbose ? 'inherit' : 'pipe', ...options });
+    return execSync(cmd, { 
+      encoding: 'utf-8', 
+      stdio: verbose ? 'inherit' : 'pipe',
+      maxBuffer: 50 * 1024 * 1024, // 50MB buffer for large build outputs
+      ...options 
+    });
   } catch (e) {
     if (verbose) console.error(e.message);
     throw e;
@@ -340,6 +345,7 @@ class E2ETestRunner {
       tests: []
     };
     this.bootedSimulators = [];
+    this.metroProcess = null;
   }
 
   async test(name, fn) {
@@ -428,6 +434,86 @@ class E2ETestRunner {
 
   // ==================== App Building ====================
 
+  async startMetroBundler() {
+    const projectPath = CONFIG.demos.reactNative;
+    
+    // Check if Metro is already running
+    try {
+      const response = await fetch('http://localhost:8081/status');
+      if (response.ok) {
+        logInfo('Metro bundler already running');
+        return true;
+      }
+    } catch (e) {
+      // Metro not running, start it
+    }
+    
+    logInfo('Starting Metro bundler in background...');
+    
+    // Start Metro in a detached process
+    this.metroProcess = spawn('yarn', ['start'], {
+      cwd: projectPath,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, FORCE_COLOR: '0' }
+    });
+    
+    // Log Metro output
+    this.metroProcess.stdout.on('data', (data) => {
+      const msg = data.toString().trim();
+      if (verbose && msg) {
+        console.log(`  [metro] ${msg}`);
+      }
+    });
+    
+    this.metroProcess.stderr.on('data', (data) => {
+      const msg = data.toString().trim();
+      if (verbose && msg && !msg.includes('WARN')) {
+        console.log(`  [metro] ${msg}`);
+      }
+    });
+    
+    // Wait for Metro to be ready
+    logInfo('Waiting for Metro bundler to start...');
+    const maxWait = 30000;
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < maxWait) {
+      try {
+        const response = await fetch('http://localhost:8081/status');
+        if (response.ok) {
+          logInfo('Metro bundler is ready');
+          return true;
+        }
+      } catch (e) {
+        // Not ready yet
+      }
+      await sleep(1000);
+    }
+    
+    throw new Error('Metro bundler failed to start');
+  }
+  
+  stopMetroBundler() {
+    if (this.metroProcess) {
+      logInfo('Stopping Metro bundler...');
+      try {
+        // Kill the process group
+        process.kill(-this.metroProcess.pid, 'SIGTERM');
+      } catch (e) {
+        try {
+          this.metroProcess.kill('SIGTERM');
+        } catch (e2) {}
+      }
+      this.metroProcess = null;
+    }
+    
+    // Also kill any orphaned Metro processes
+    try {
+      execSync('pkill -f "react-native.*start" 2>/dev/null || true', { stdio: 'ignore' });
+    } catch (e) {}
+  }
+
   async buildAndRunReactNative(simulator, rnPlatform = 'ios') {
     logInfo(`Building React Native app for ${rnPlatform}...`);
     
@@ -441,24 +527,34 @@ class E2ETestRunner {
     const nodeModulesPath = path.join(projectPath, 'node_modules');
     if (!fs.existsSync(nodeModulesPath)) {
       logInfo('Installing React Native dependencies...');
-      exec(`cd "${projectPath}" && yarn install`, { timeout: 120000 });
+      exec(`cd "${projectPath}" && yarn install`, { timeout: 180000 });
     }
+    
+    // Start Metro bundler
+    await this.startMetroBundler();
     
     if (rnPlatform === 'ios') {
       // Install pods if needed
       const podsPath = path.join(projectPath, 'ios', 'Pods');
       if (!fs.existsSync(podsPath)) {
         logInfo('Installing CocoaPods...');
-        exec(`cd "${projectPath}/ios" && pod install`, { timeout: 120000 });
+        exec(`cd "${projectPath}/ios" && pod install`, { timeout: 180000 });
       }
       
       // Build iOS
       logInfo('Building React Native iOS...');
       const iosProjectPath = path.join(projectPath, 'ios');
       
-      // Terminate any existing instance
+      // React Native iOS bundle ID is different from native iOS
+      const rnBundleId = 'org.reactjs.native.example.MCPDemoApp';
+      const nativeBundleId = 'com.mobiledevmcp.demo';
+      
+      // Terminate any existing instances (both RN and native iOS)
       try {
-        exec(`xcrun simctl terminate ${simulator.id} com.mcpdemoapp`, { stdio: 'ignore' });
+        exec(`xcrun simctl terminate ${simulator.id} ${rnBundleId}`, { stdio: 'ignore' });
+      } catch (e) {}
+      try {
+        exec(`xcrun simctl terminate ${simulator.id} ${nativeBundleId}`, { stdio: 'ignore' });
       } catch (e) {}
       
       // Build with xcodebuild
@@ -477,7 +573,7 @@ class E2ETestRunner {
         const appPath = path.join(derivedDataPath, sortedDirs[0], 'Build/Products/Debug-iphonesimulator/MCPDemoApp.app');
         if (fs.existsSync(appPath)) {
           exec(`xcrun simctl install ${simulator.id} "${appPath}"`);
-          exec(`xcrun simctl launch ${simulator.id} com.mcpdemoapp`);
+          exec(`xcrun simctl launch ${simulator.id} ${rnBundleId}`);
         }
       }
     } else {
@@ -499,8 +595,9 @@ class E2ETestRunner {
       }
     }
     
-    // Wait for app to start
-    await sleep(5000);
+    // Wait for app to start and connect (React Native apps need more time to load JS bundle)
+    logInfo('Waiting for React Native app to initialize...');
+    await sleep(10000);
     
     return true;
   }
@@ -934,8 +1031,8 @@ class E2ETestRunner {
       
       await this.test('React Native SDK connects to server', async () => {
         const devices = await this.waitForSDKConnection();
-        // React Native reports as the underlying platform
-        const rnDevice = devices.find(d => d.platform === devicePlatform);
+        // React Native reports as 'react-native' platform
+        const rnDevice = devices.find(d => d.platform === 'react-native');
         if (!rnDevice) {
           throw new Error('React Native device did not connect');
         }
@@ -1011,6 +1108,7 @@ class E2ETestRunner {
     } finally {
       // Cleanup
       logStep('CLEANUP', 'Cleaning up...');
+      this.stopMetroBundler();
       this.mcpClient.stop();
       logSuccess('Server stopped');
     }
