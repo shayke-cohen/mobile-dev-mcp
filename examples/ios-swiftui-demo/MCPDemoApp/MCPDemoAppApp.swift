@@ -44,6 +44,11 @@ struct MCPDemoAppApp: App {
             return ["id": user.id, "name": user.name, "email": user.email]
         }
         
+        MCPBridge.shared.exposeState(key: "user") { [weak appState] in
+            guard let user = appState?.currentUser else { return nil }
+            return ["id": user.id, "name": user.name, "email": user.email]
+        }
+        
         MCPBridge.shared.exposeState(key: "isLoggedIn") { [weak appState] in
             return appState?.isLoggedIn ?? false
         }
@@ -77,6 +82,82 @@ struct MCPDemoAppApp: App {
         
         MCPBridge.shared.exposeState(key: "cartCount") { [weak appState] in
             return appState?.cartItems.reduce(0) { $0 + $1.quantity } ?? 0
+        }
+        
+        // Register action handlers
+        registerActionHandlers()
+    }
+    
+    private func registerActionHandlers() {
+        // Cart actions
+        MCPBridge.shared.registerAction(name: "addToCart") { [weak appState] params in
+            guard let productId = params["productId"] as? String else {
+                throw MCPError.invalidParams("productId is required")
+            }
+            guard let product = appState?.products.first(where: { $0.id == productId }) else {
+                throw MCPError.invalidParams("Product not found: \(productId)")
+            }
+            guard product.inStock else {
+                throw MCPError.invalidParams("Product out of stock: \(product.name)")
+            }
+            DispatchQueue.main.async {
+                appState?.addToCart(product)
+            }
+            return ["added": product.name, "productId": productId]
+        }
+        
+        MCPBridge.shared.registerAction(name: "removeFromCart") { [weak appState] params in
+            guard let productId = params["productId"] as? String else {
+                throw MCPError.invalidParams("productId is required")
+            }
+            DispatchQueue.main.async {
+                appState?.removeFromCart(productId)
+            }
+            return ["removed": productId]
+        }
+        
+        MCPBridge.shared.registerAction(name: "clearCart") { [weak appState] _ in
+            DispatchQueue.main.async {
+                appState?.clearCart()
+            }
+            return ["cleared": true]
+        }
+        
+        MCPBridge.shared.registerAction(name: "updateQuantity") { [weak appState] params in
+            guard let productId = params["productId"] as? String else {
+                throw MCPError.invalidParams("productId is required")
+            }
+            let delta = params["delta"] as? Int ?? 1
+            if let currentItem = appState?.cartItems.first(where: { $0.productId == productId }) {
+                let newQuantity = currentItem.quantity + delta
+                DispatchQueue.main.async {
+                    appState?.updateQuantity(productId, quantity: newQuantity)
+                }
+            }
+            return ["updated": productId, "delta": delta]
+        }
+        
+        // User actions
+        MCPBridge.shared.registerAction(name: "login") { [weak appState] _ in
+            DispatchQueue.main.async {
+                appState?.login()
+            }
+            return ["loggedIn": true, "user": ["id": "user_123", "name": "John Doe"]]
+        }
+        
+        MCPBridge.shared.registerAction(name: "logout") { [weak appState] _ in
+            DispatchQueue.main.async {
+                appState?.logout()
+            }
+            return ["loggedOut": true]
+        }
+        
+        // Navigation is handled by TabView - not programmatic in this app
+        MCPBridge.shared.registerAction(name: "navigate") { params in
+            // iOS TabView doesn't support programmatic navigation easily
+            // Return success but note that navigation isn't supported
+            let route = params["route"] as? String ?? "unknown"
+            return ["navigatedTo": route, "note": "iOS TabView navigation not programmatic"]
         }
     }
 }

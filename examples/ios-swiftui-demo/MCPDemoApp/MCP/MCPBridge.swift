@@ -20,6 +20,7 @@ final class MCPBridge: ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask?
     private var stateGetters: [String: () -> Any?] = [:]
+    private var actionHandlers: [String: ([String: Any]) throws -> Any?] = [:]
     private var logs: [[String: Any]] = []
     private var networkRequests: [[String: Any]] = []
     private var featureFlags: [String: Bool] = [:]
@@ -64,6 +65,24 @@ final class MCPBridge: ObservableObject {
         if debug {
             log("Exposed state: \(key)")
         }
+    }
+    
+    /// Register an action handler that can be triggered remotely via MCP
+    func registerAction(name: String, handler: @escaping ([String: Any]) throws -> Any?) {
+        actionHandlers[name] = handler
+        if debug {
+            log("Registered action: \(name)")
+        }
+    }
+    
+    /// Register multiple action handlers at once
+    func registerActions(_ actions: [String: ([String: Any]) throws -> Any?]) {
+        actions.forEach { registerAction(name: $0.key, handler: $0.value) }
+    }
+    
+    /// Get list of registered actions
+    func getRegisteredActions() -> [String] {
+        return Array(actionHandlers.keys)
     }
     
     func registerFeatureFlags(_ flags: [String: Bool]) {
@@ -252,9 +271,42 @@ final class MCPBridge: ObservableObject {
             return ["errors": Array(errors.suffix(limit)), "count": errors.count]
         case "list_network_requests":
             return networkRequests.suffix(params["limit"] as? Int ?? 50)
+        // Action commands
+        case "list_actions":
+            return getRegisteredActions()
+        case "navigate_to":
+            return try executeAction(name: "navigate", params: params)
+        case "execute_action":
+            guard let actionName = params["action"] as? String else {
+                throw MCPError.invalidParams("action is required")
+            }
+            return try executeAction(name: actionName, params: params)
+        case "add_to_cart":
+            return try executeAction(name: "addToCart", params: params)
+        case "remove_from_cart":
+            return try executeAction(name: "removeFromCart", params: params)
+        case "clear_cart":
+            return try executeAction(name: "clearCart", params: params)
+        case "login":
+            return try executeAction(name: "login", params: params)
+        case "logout":
+            return try executeAction(name: "logout", params: params)
         default:
+            // Try to find a registered action handler
+            if actionHandlers[method] != nil {
+                return try executeAction(name: method, params: params)
+            }
             throw MCPError.unknownMethod(method)
         }
+    }
+    
+    private func executeAction(name: String, params: [String: Any]) throws -> Any? {
+        guard let handler = actionHandlers[name] else {
+            throw MCPError.unknownMethod("Action not registered: \(name)")
+        }
+        
+        let result = try handler(params)
+        return ["success": true, "action": name, "result": result ?? NSNull()]
     }
     
     private func getAppState(params: [String: Any]) -> [String: Any] {

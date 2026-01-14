@@ -31,6 +31,7 @@ object MCPBridge {
     private var okHttpClient: OkHttpClient? = null
     private var contextRef: WeakReference<Context>? = null
     private val stateGetters = mutableMapOf<String, () -> Any?>()
+    private val actionHandlers = mutableMapOf<String, suspend (Map<String, Any?>) -> Any?>()
     private val featureFlags = mutableMapOf<String, Boolean>()
     private val logs = mutableListOf<Map<String, Any>>()
     private val networkRequests = mutableListOf<Map<String, Any>>()
@@ -106,6 +107,28 @@ object MCPBridge {
             log("Exposed state: $key")
         }
     }
+    
+    /**
+     * Register an action handler that can be triggered remotely via MCP
+     */
+    fun registerAction(name: String, handler: suspend (Map<String, Any?>) -> Any?) {
+        actionHandlers[name] = handler
+        if (debug) {
+            log("Registered action: $name")
+        }
+    }
+    
+    /**
+     * Register multiple action handlers at once
+     */
+    fun registerActions(actions: Map<String, suspend (Map<String, Any?>) -> Any?>) {
+        actions.forEach { (name, handler) -> registerAction(name, handler) }
+    }
+    
+    /**
+     * Get list of registered actions
+     */
+    fun getRegisteredActions(): List<String> = actionHandlers.keys.toList()
     
     /**
      * Register feature flags
@@ -273,7 +296,7 @@ object MCPBridge {
             
             scope.launch {
                 try {
-                    val result = handleCommand(method, params)
+                    val result = handleCommandSuspend(method, params)
                     sendResponse(id, result)
                     logActivity("→ Response: $method OK")
                 } catch (e: Exception) {
@@ -286,7 +309,7 @@ object MCPBridge {
         }
     }
     
-    private fun handleCommand(method: String, params: JSONObject): Any? {
+    private suspend fun handleCommandSuspend(method: String, params: JSONObject): Any? {
         return when (method) {
             "get_app_state" -> getAppState(params)
             "list_feature_flags" -> featureFlags
@@ -296,7 +319,57 @@ object MCPBridge {
             "get_logs" -> logs.takeLast(params.optInt("limit", 100))
             "get_recent_errors" -> logs.filter { it["level"] == "error" }.takeLast(params.optInt("limit", 20))
             "list_network_requests" -> networkRequests.takeLast(params.optInt("limit", 50))
-            else -> throw Exception("Unknown method: $method")
+            // Action commands
+            "list_actions" -> getRegisteredActions()
+            "navigate_to" -> executeAction("navigate", params.toMap())
+            "execute_action" -> {
+                val actionName = params.optString("action", "")
+                if (actionName.isEmpty()) throw Exception("action is required")
+                executeAction(actionName, params.toMap())
+            }
+            "add_to_cart" -> executeAction("addToCart", params.toMap())
+            "remove_from_cart" -> executeAction("removeFromCart", params.toMap())
+            "clear_cart" -> executeAction("clearCart", params.toMap())
+            "login" -> executeAction("login", params.toMap())
+            "logout" -> executeAction("logout", params.toMap())
+            else -> {
+                // Try to find a registered action handler
+                if (actionHandlers.containsKey(method)) {
+                    executeAction(method, params.toMap())
+                } else {
+                    throw Exception("Unknown method: $method")
+                }
+            }
+        }
+    }
+    
+    private suspend fun executeAction(name: String, params: Map<String, Any?>): Map<String, Any?> {
+        val handler = actionHandlers[name] ?: throw Exception("Action not registered: $name")
+        val result = handler(params)
+        return mapOf("success" to true, "action" to name, "result" to result)
+    }
+    
+    private fun JSONObject.toMap(): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>()
+        keys().forEach { key ->
+            map[key] = when (val value = get(key)) {
+                JSONObject.NULL -> null
+                is JSONObject -> value.toMap()
+                is JSONArray -> value.toList()
+                else -> value
+            }
+        }
+        return map
+    }
+    
+    private fun JSONArray.toList(): List<Any?> {
+        return (0 until length()).map { i ->
+            when (val value = get(i)) {
+                JSONObject.NULL -> null
+                is JSONObject -> value.toMap()
+                is JSONArray -> value.toList()
+                else -> value
+            }
         }
     }
     

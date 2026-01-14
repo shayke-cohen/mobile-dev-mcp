@@ -58,10 +58,14 @@ class AppViewModel : ViewModel() {
     init {
         loadMockProducts()
         exposeStateToMCP()
+        registerActionsToMCP()
     }
     
     private fun exposeStateToMCP() {
         MCPBridge.exposeState("currentUser") { _state.value.currentUser?.let {
+            mapOf("id" to it.id, "name" to it.name, "email" to it.email)
+        }}
+        MCPBridge.exposeState("user") { _state.value.currentUser?.let {
             mapOf("id" to it.id, "name" to it.name, "email" to it.email)
         }}
         MCPBridge.exposeState("isLoggedIn") { _state.value.isLoggedIn }
@@ -73,6 +77,62 @@ class AppViewModel : ViewModel() {
         }}
         MCPBridge.exposeState("cartTotal") { _state.value.cartTotal }
         MCPBridge.exposeState("cartCount") { _state.value.cartItemCount }
+    }
+    
+    private fun registerActionsToMCP() {
+        // Cart actions
+        MCPBridge.registerAction("addToCart") { params ->
+            val productId = params["productId"] as? String
+                ?: throw IllegalArgumentException("productId is required")
+            val product = _state.value.products.find { it.id == productId }
+                ?: throw IllegalArgumentException("Product not found: $productId")
+            if (!product.inStock) {
+                throw IllegalArgumentException("Product out of stock: ${product.name}")
+            }
+            addToCart(product)
+            mapOf("added" to product.name, "productId" to productId)
+        }
+        
+        MCPBridge.registerAction("removeFromCart") { params ->
+            val productId = params["productId"] as? String
+                ?: throw IllegalArgumentException("productId is required")
+            removeFromCart(productId)
+            mapOf("removed" to productId)
+        }
+        
+        MCPBridge.registerAction("clearCart") { _ ->
+            clearCart()
+            mapOf("cleared" to true)
+        }
+        
+        MCPBridge.registerAction("updateQuantity") { params ->
+            val productId = params["productId"] as? String
+                ?: throw IllegalArgumentException("productId is required")
+            val delta = (params["delta"] as? Number)?.toInt() ?: 1
+            val currentItem = _state.value.cartItems.find { it.productId == productId }
+            if (currentItem != null) {
+                updateQuantity(productId, currentItem.quantity + delta)
+            }
+            mapOf("updated" to productId, "delta" to delta)
+        }
+        
+        // User actions
+        MCPBridge.registerAction("login") { _ ->
+            login()
+            mapOf("loggedIn" to true, "user" to mapOf("id" to "user_123", "name" to "John Doe"))
+        }
+        
+        MCPBridge.registerAction("logout") { _ ->
+            logout()
+            mapOf("loggedOut" to true)
+        }
+        
+        // Navigation - Android uses NavController which isn't easily accessible from ViewModel
+        MCPBridge.registerAction("navigate") { params ->
+            val route = params["route"] as? String ?: "unknown"
+            // Navigation is handled by NavController in MainScreen, not easily accessible here
+            mapOf("navigatedTo" to route, "note" to "Android navigation not accessible from ViewModel")
+        }
     }
     
     private fun loadMockProducts() {

@@ -828,8 +828,11 @@ class E2ETestRunner {
 
   // ==================== SDK Action Tests ====================
   
-  async testSDKActions() {
+  async testSDKActions(platform = 'ios') {
     logStep('SDK ACTIONS', 'Testing SDK action commands (navigate, cart, etc.)...');
+    
+    // React Native tracks currentTab, native apps don't
+    const supportsNavigationTracking = platform === 'rn' || platform === 'rn-android';
     
     // Test list_actions
     await this.test('list_actions returns registered actions', async () => {
@@ -846,21 +849,22 @@ class E2ETestRunner {
       logVerbose(`Available actions: ${actions.join(', ')}`);
     });
     
-    // Test navigation
-    await this.test('navigate_to changes screen', async () => {
-      // Navigate to products
+    // Test navigation (only verify state on RN which tracks currentTab)
+    await this.test('navigate_to sends command', async () => {
       const result = await this.mcpClient.callTool('navigate_to', { route: 'products' });
       
       if (result.isError) {
         throw new Error(result.content[0].text);
       }
       
-      // Verify via state
-      await sleep(500);
-      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
-      const state = JSON.parse(stateResult.content[0].text);
-      if (state.currentTab !== 'products') {
-        throw new Error(`Expected currentTab=products, got ${state.currentTab}`);
+      if (supportsNavigationTracking) {
+        // Verify via state (only RN tracks currentTab)
+        await sleep(500);
+        const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
+        const state = JSON.parse(stateResult.content[0].text);
+        if (state.currentTab !== 'products') {
+          throw new Error(`Expected currentTab=products, got ${state.currentTab}`);
+        }
       }
     });
     
@@ -911,14 +915,20 @@ class E2ETestRunner {
     });
     
     // Test navigate to cart
-    await this.test('navigate to cart and verify', async () => {
-      await this.mcpClient.callTool('navigate_to', { route: 'cart' });
-      await sleep(300);
+    await this.test('navigate_to cart', async () => {
+      const result = await this.mcpClient.callTool('navigate_to', { route: 'cart' });
       
-      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
-      const state = JSON.parse(stateResult.content[0].text);
-      if (state.currentTab !== 'cart') {
-        throw new Error(`Expected currentTab=cart, got ${state.currentTab}`);
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      if (supportsNavigationTracking) {
+        await sleep(300);
+        const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
+        const state = JSON.parse(stateResult.content[0].text);
+        if (state.currentTab !== 'cart') {
+          throw new Error(`Expected currentTab=cart, got ${state.currentTab}`);
+        }
       }
     });
     
@@ -971,14 +981,20 @@ class E2ETestRunner {
     });
     
     // Test navigate back home
-    await this.test('navigate back to home', async () => {
-      await this.mcpClient.callTool('navigate_to', { route: 'home' });
-      await sleep(300);
+    await this.test('navigate_to home', async () => {
+      const result = await this.mcpClient.callTool('navigate_to', { route: 'home' });
       
-      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
-      const state = JSON.parse(stateResult.content[0].text);
-      if (state.currentTab !== 'home') {
-        throw new Error(`Expected currentTab=home, got ${state.currentTab}`);
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      if (supportsNavigationTracking) {
+        await sleep(300);
+        const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
+        const state = JSON.parse(stateResult.content[0].text);
+        if (state.currentTab !== 'home') {
+          throw new Error(`Expected currentTab=home, got ${state.currentTab}`);
+        }
       }
     });
   }
@@ -1251,7 +1267,7 @@ class E2ETestRunner {
         const result = await this.mcpClient.callTool('list_connected_devices');
         if (!result.isError && !result.content[0].text.includes('No device')) {
           await this.testAppTools();
-          await this.testSDKActions();
+          await this.testSDKActions(platform);
         } else {
           logWarn('No app connected - skipping app tool tests');
           logInfo('Run a demo app to enable full tests');
