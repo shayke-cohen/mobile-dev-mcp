@@ -77,48 +77,58 @@ export default function App() {
     products: () => products,
   });
 
-  // Register actions for AI
+  // Register actions for AI - All actions are traced for debugging
   const addToCart = useCallback((productId: string) => {
-    const product = products.find(p => p.id === productId);
-    if (!product || !product.inStock) {
-      throw new Error(`Product ${productId} not found or out of stock`);
-    }
-
-    setCart(prev => {
-      const existing = prev.find(item => item.productId === productId);
-      if (existing) {
-        return prev.map(item =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+    return traceSync('CartService.addToCart', () => {
+      const product = products.find(p => p.id === productId);
+      if (!product || !product.inStock) {
+        throw new Error(`Product ${productId} not found or out of stock`);
       }
-      return [...prev, { productId, name: product.name, price: product.price, quantity: 1 }];
-    });
 
-    return { added: product.name, productId };
-  }, [products]);
+      setCart(prev => {
+        const existing = prev.find(item => item.productId === productId);
+        if (existing) {
+          return prev.map(item =>
+            item.productId === productId
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        }
+        return [...prev, { productId, name: product.name, price: product.price, quantity: 1 }];
+      });
+
+      return { added: product.name, productId };
+    }, { args: { productId } });
+  }, [products, traceSync]);
 
   const removeFromCart = useCallback((productId: string) => {
-    setCart(prev => prev.filter(item => item.productId !== productId));
-    return { removed: productId };
-  }, []);
+    return traceSync('CartService.removeFromCart', () => {
+      setCart(prev => prev.filter(item => item.productId !== productId));
+      return { removed: productId };
+    }, { args: { productId } });
+  }, [traceSync]);
 
   const clearCart = useCallback(() => {
-    setCart([]);
-    return { cleared: true };
-  }, []);
+    return traceSync('CartService.clearCart', () => {
+      setCart([]);
+      return { cleared: true };
+    });
+  }, [traceSync]);
 
   const login = useCallback(() => {
-    const newUser = { id: 'user_123', name: 'John Doe', email: 'john@example.com' };
-    setUser(newUser);
-    return { loggedIn: true, user: newUser };
-  }, []);
+    return traceSync('AuthService.login', () => {
+      const newUser = { id: 'user_123', name: 'John Doe', email: 'john@example.com' };
+      setUser(newUser);
+      return { loggedIn: true, user: newUser };
+    });
+  }, [traceSync]);
 
   const logout = useCallback(() => {
-    setUser(null);
-    return { loggedOut: true };
-  }, []);
+    return traceSync('AuthService.logout', () => {
+      setUser(null);
+      return { loggedOut: true };
+    });
+  }, [traceSync]);
 
   useMCPActions({
     addToCart: (params) => addToCart(params.productId as string),
@@ -127,8 +137,10 @@ export default function App() {
     login: () => login(),
     logout: () => logout(),
     navigate: (params) => {
-      window.location.href = params.route as string;
-      return { navigatedTo: params.route };
+      return traceSync('Navigation.navigate', () => {
+        window.location.href = params.route as string;
+        return { navigatedTo: params.route };
+      }, { args: { route: params.route } });
     },
   });
 
