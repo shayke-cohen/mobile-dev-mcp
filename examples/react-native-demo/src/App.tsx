@@ -102,6 +102,82 @@ function App(): React.JSX.Element {
     }
   }, [currentTab]);
 
+  // Register UI components for MCP inspection
+  useEffect(() => {
+    if (__DEV__) {
+      // Register tab buttons
+      MCPBridge.registerComponent('tab-home', {
+        type: 'Button',
+        onPress: () => setCurrentTab('home'),
+        getText: () => 'Home',
+      });
+      MCPBridge.registerComponent('tab-products', {
+        type: 'Button',
+        onPress: () => setCurrentTab('products'),
+        getText: () => 'Products',
+      });
+      MCPBridge.registerComponent('tab-cart', {
+        type: 'Button',
+        onPress: () => setCurrentTab('cart'),
+        getText: () => `Cart (${cartCount})`,
+      });
+      MCPBridge.registerComponent('tab-profile', {
+        type: 'Button',
+        onPress: () => setCurrentTab('profile'),
+        getText: () => 'Profile',
+      });
+
+      // Register header text
+      MCPBridge.registerComponent('app-title', {
+        type: 'Text',
+        getText: () => 'MCP Demo Store',
+      });
+      MCPBridge.registerComponent('welcome-text', {
+        type: 'Text',
+        getText: () => user ? `Welcome back, ${user.name}!` : 'Mobile Dev MCP SDK Demo',
+      });
+
+      // Register cart total
+      MCPBridge.registerComponent('cart-total', {
+        type: 'Text',
+        getText: () => `$${cartTotal.toFixed(2)}`,
+      });
+
+      // Register login/logout buttons
+      MCPBridge.registerComponent('login-button', {
+        type: 'Button',
+        onPress: login,
+        getText: () => 'Login',
+      });
+      MCPBridge.registerComponent('logout-button', {
+        type: 'Button',
+        onPress: logout,
+        getText: () => 'Logout',
+      });
+
+      // Register product buttons (for first few products)
+      PRODUCTS.slice(0, 3).forEach(product => {
+        MCPBridge.registerComponent(`add-to-cart-${product.id}`, {
+          type: 'Button',
+          props: { productId: product.id, productName: product.name },
+          onPress: () => addToCart(product),
+          getText: () => product.inStock ? 'Add to Cart' : 'Out of Stock',
+        });
+      });
+
+      return () => {
+        // Cleanup on unmount
+        ['tab-home', 'tab-products', 'tab-cart', 'tab-profile', 
+         'app-title', 'welcome-text', 'cart-total', 'login-button', 'logout-button'].forEach(id => {
+          MCPBridge.unregisterComponent(id);
+        });
+        PRODUCTS.slice(0, 3).forEach(product => {
+          MCPBridge.unregisterComponent(`add-to-cart-${product.id}`);
+        });
+      };
+    }
+  }, [cartCount, cartTotal, user, addToCart, login, logout]);
+
   // Register MCP action handlers (allows remote control of the app)
   useEffect(() => {
     if (__DEV__) {

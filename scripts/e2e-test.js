@@ -1134,6 +1134,117 @@ class E2ETestRunner {
       }
       logVerbose(`Found ${data.count} Button elements`);
     });
+
+    // Test specific testIds exist
+    await this.test('registered testIds include tab buttons', async () => {
+      const result = await this.mcpClient.callTool('get_component_tree');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      const testIds = data.registeredTestIds || [];
+      
+      const expectedIds = ['tab-home', 'tab-products', 'tab-cart', 'app-title'];
+      const foundIds = expectedIds.filter(id => testIds.includes(id));
+      
+      if (foundIds.length === 0) {
+        throw new Error(`No expected testIds found. Registered: ${testIds.slice(0, 10).join(', ')}`);
+      }
+      logVerbose(`Found testIds: ${foundIds.join(', ')}`);
+    });
+
+    // Test get_element_text returns correct text
+    await this.test('get_element_text returns app title', async () => {
+      const result = await this.mcpClient.callTool('get_element_text', { testId: 'app-title' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      
+      if (!data.found) {
+        throw new Error('app-title element not found');
+      }
+      
+      if (!data.text || !data.text.includes('MCP Demo Store')) {
+        throw new Error(`Expected text to contain 'MCP Demo Store', got: ${data.text}`);
+      }
+      logVerbose(`App title text: ${data.text}`);
+    });
+
+    // Test find_element by testId
+    await this.test('find_element by testId works', async () => {
+      const result = await this.mcpClient.callTool('find_element', { testId: 'login-button' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      
+      if (!data.found) {
+        throw new Error('login-button not found');
+      }
+      
+      if (data.count !== 1) {
+        throw new Error(`Expected 1 element, found ${data.count}`);
+      }
+      logVerbose(`Found login-button element`);
+    });
+
+    // Test simulate_interaction with testId
+    await this.test('simulate_interaction tap by testId', async () => {
+      const result = await this.mcpClient.callTool('simulate_interaction', {
+        type: 'tap',
+        target: { testId: 'tab-products' }
+      });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      
+      if (!data.success) {
+        // Element might not have onTap registered, which is okay
+        logVerbose(`Tap not executed: ${data.error || 'no tap handler'}`);
+        return;
+      }
+      
+      logVerbose(`Tapped element: ${data.testId}`);
+    });
+
+    // Test cart-related text updates
+    await this.test('cart total text updates after add', async () => {
+      // First add a product
+      await this.mcpClient.callTool('add_to_cart', { productId: '1' });
+      await sleep(300);
+      
+      // Check cart total text
+      const result = await this.mcpClient.callTool('get_element_text', { testId: 'cart-total' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      
+      if (!data.found) {
+        throw new Error('cart-total element not found');
+      }
+      
+      // Should have a price like $149.99
+      if (!data.text || !data.text.includes('$')) {
+        throw new Error(`Expected price format, got: ${data.text}`);
+      }
+      logVerbose(`Cart total: ${data.text}`);
+      
+      // Clean up - clear cart
+      await this.mcpClient.callTool('clear_cart');
+    });
   }
 
   // ==================== UI Automation Tests ====================

@@ -159,6 +159,55 @@ struct MCPDemoAppApp: App {
             let route = params["route"] as? String ?? "unknown"
             return ["navigatedTo": route, "note": "iOS TabView navigation not programmatic"]
         }
+        
+        // Register UI components for inspection
+        registerUIComponents()
+    }
+    
+    private func registerUIComponents() {
+        // Register tab buttons
+        MCPBridge.shared.registerComponent(testId: "tab-home", type: "Button", getText: { "Home" })
+        MCPBridge.shared.registerComponent(testId: "tab-products", type: "Button", getText: { "Products" })
+        MCPBridge.shared.registerComponent(testId: "tab-cart", type: "Button", getText: { [weak appState] in
+            "Cart (\(appState?.cartItems.reduce(0) { $0 + $1.quantity } ?? 0))"
+        })
+        MCPBridge.shared.registerComponent(testId: "tab-profile", type: "Button", getText: { "Profile" })
+        
+        // Register header text
+        MCPBridge.shared.registerComponent(testId: "app-title", type: "Text", getText: { "MCP Demo Store" })
+        MCPBridge.shared.registerComponent(testId: "welcome-text", type: "Text", getText: { [weak appState] in
+            appState?.isLoggedIn == true ? "Welcome back, \(appState?.currentUser?.name ?? "User")!" : "Mobile Dev MCP SDK Demo"
+        })
+        
+        // Register cart total
+        MCPBridge.shared.registerComponent(testId: "cart-total", type: "Text", getText: { [weak appState] in
+            String(format: "$%.2f", appState?.cartTotal ?? 0.0)
+        })
+        
+        // Register login/logout buttons
+        MCPBridge.shared.registerComponent(testId: "login-button", type: "Button", onTap: { [weak appState] in
+            appState?.login()
+        }, getText: { "Login" })
+        
+        MCPBridge.shared.registerComponent(testId: "logout-button", type: "Button", onTap: { [weak appState] in
+            appState?.logout()
+        }, getText: { "Logout" })
+        
+        // Register product buttons (first 3)
+        for product in appState.products.prefix(3) {
+            MCPBridge.shared.registerComponent(
+                testId: "add-to-cart-\(product.id)",
+                type: "Button",
+                props: ["productId": product.id, "productName": product.name],
+                onTap: { [weak appState] in
+                    appState?.addToCart(product)
+                },
+                getText: { product.inStock ? "Add to Cart" : "Out of Stock" }
+            )
+        }
+        
+        // Set initial navigation state
+        MCPBridge.shared.setNavigationState(route: "home")
     }
 }
 

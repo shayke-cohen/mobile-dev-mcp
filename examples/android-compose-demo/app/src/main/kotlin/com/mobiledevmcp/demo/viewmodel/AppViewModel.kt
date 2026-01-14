@@ -133,6 +133,49 @@ class AppViewModel : ViewModel() {
             // Navigation is handled by NavController in MainScreen, not easily accessible here
             mapOf("navigatedTo" to route, "note" to "Android navigation not accessible from ViewModel")
         }
+        
+        // Register UI components for inspection
+        registerUIComponents()
+    }
+    
+    private fun registerUIComponents() {
+        // Register tab buttons
+        MCPBridge.registerComponent("tab-home", "Button", getText = { "Home" })
+        MCPBridge.registerComponent("tab-products", "Button", getText = { "Products" })
+        MCPBridge.registerComponent("tab-cart", "Button", getText = {
+            "Cart (${_state.value.cartItems.sumOf { it.quantity }})"
+        })
+        MCPBridge.registerComponent("tab-profile", "Button", getText = { "Profile" })
+        
+        // Register header text
+        MCPBridge.registerComponent("app-title", "Text", getText = { "MCP Demo Store" })
+        MCPBridge.registerComponent("welcome-text", "Text", getText = {
+            if (_state.value.isLoggedIn) "Welcome back, ${_state.value.currentUser?.name}!"
+            else "Mobile Dev MCP SDK Demo"
+        })
+        
+        // Register cart total
+        MCPBridge.registerComponent("cart-total", "Text", getText = {
+            "$${String.format("%.2f", _state.value.cartTotal)}"
+        })
+        
+        // Register login/logout buttons
+        MCPBridge.registerComponent("login-button", "Button", onTap = { login() }, getText = { "Login" })
+        MCPBridge.registerComponent("logout-button", "Button", onTap = { logout() }, getText = { "Logout" })
+        
+        // Register product buttons (first 3)
+        _state.value.products.take(3).forEach { product ->
+            MCPBridge.registerComponent(
+                testId = "add-to-cart-${product.id}",
+                type = "Button",
+                props = mapOf("productId" to product.id, "productName" to product.name),
+                onTap = { addToCart(product) },
+                getText = { if (product.inStock) "Add to Cart" else "Out of Stock" }
+            )
+        }
+        
+        // Set initial navigation state
+        MCPBridge.setNavigationState("home")
     }
     
     private fun loadMockProducts() {
