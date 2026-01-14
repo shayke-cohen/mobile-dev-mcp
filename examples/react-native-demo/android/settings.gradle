@@ -1,4 +1,16 @@
 rootProject.name = 'MCPDemoApp'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+// Support both local node_modules and hoisted (yarn workspaces) node_modules
+def cliPlatformAndroidPath = file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+if (!cliPlatformAndroidPath.exists()) {
+    cliPlatformAndroidPath = file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+}
+apply from: cliPlatformAndroidPath; applyNativeModulesSettingsGradle(settings)
+
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+
+def gradlePluginPath = file('../node_modules/@react-native/gradle-plugin')
+if (!gradlePluginPath.exists()) {
+    gradlePluginPath = file('../../../node_modules/@react-native/gradle-plugin')
+}
+includeBuild(gradlePluginPath)

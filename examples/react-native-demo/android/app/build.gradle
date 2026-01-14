@@ -9,13 +9,13 @@ apply plugin: "com.facebook.react"
 react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
-    // root = file("../")
-    //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
-    // reactNativeDir = file("../node_modules/react-native")
-    //   The folder where the react-native Codegen package is. Default is ../node_modules/@react-native/codegen
-    // codegenDir = file("../node_modules/@react-native/codegen")
-    //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
-    // cliFile = file("../node_modules/react-native/cli.js")
+    root = file("../../")
+    
+    // Support both local node_modules and hoisted (yarn workspaces) node_modules
+    // For yarn workspaces, packages are in the monorepo root
+    reactNativeDir = file("../../../../node_modules/react-native")
+    codegenDir = file("../../../../node_modules/@react-native/codegen")
+    cliFile = file("../../../../node_modules/react-native/cli.js")
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
@@ -115,4 +115,9 @@ dependencies {
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+// Support both local node_modules and hoisted (yarn workspaces) node_modules
+def nativeModulesGradle = file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+if (!nativeModulesGradle.exists()) {
+    nativeModulesGradle = file("../../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+}
+apply from: nativeModulesGradle; applyNativeModulesAppBuildGradle(project)

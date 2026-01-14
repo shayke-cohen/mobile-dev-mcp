@@ -2816,15 +2816,15 @@ class E2ETestRunner {
         await this.runIOSTests();
       }
       
+      if (platform === 'all' || platform === 'rn' || platform === 'rn-ios') {
+        await this.runReactNativeTests('ios');
+      }
+      
       if (platform === 'all' || platform === 'android') {
         await this.runAndroidTests();
       }
       
-      if (platform === 'rn' || platform === 'rn-ios') {
-        await this.runReactNativeTests('ios');
-      }
-      
-      if (platform === 'rn-android') {
+      if (platform === 'all' || platform === 'rn-android') {
         await this.runReactNativeTests('android');
       }
       
