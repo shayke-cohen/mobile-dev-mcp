@@ -215,7 +215,7 @@ interface VersionInfo {
 
 async function getAppVersionInfo(params: Record<string, unknown>): Promise<unknown> {
   const projectPath = params.projectPath as string;
-  let platform = params.platform as string || 'auto';
+  const platform = params.platform as string || 'auto';
 
   if (!fs.existsSync(projectPath)) {
     throw new Error(`Project path not found: ${projectPath}`);
@@ -252,7 +252,7 @@ async function getAppVersionInfo(params: Record<string, unknown>): Promise<unkno
 
 async function getIOSVersionInfo(projectPath: string): Promise<VersionInfo> {
   // Check for React Native structure
-  let iosPath = fs.existsSync(path.join(projectPath, 'ios')) 
+  const iosPath = fs.existsSync(path.join(projectPath, 'ios')) 
     ? path.join(projectPath, 'ios') 
     : projectPath;
 
@@ -296,7 +296,7 @@ async function findInfoPlist(iosPath: string): Promise<string | null> {
 
 async function getAndroidVersionInfo(projectPath: string): Promise<VersionInfo> {
   // Check for React Native structure
-  let androidPath = fs.existsSync(path.join(projectPath, 'android')) 
+  const androidPath = fs.existsSync(path.join(projectPath, 'android')) 
     ? path.join(projectPath, 'android') 
     : projectPath;
 
@@ -406,7 +406,7 @@ async function setAppVersion(params: Record<string, unknown>): Promise<unknown> 
 }
 
 async function setIOSVersion(projectPath: string, version?: string, buildNumber?: number): Promise<unknown> {
-  let iosPath = fs.existsSync(path.join(projectPath, 'ios')) 
+  const iosPath = fs.existsSync(path.join(projectPath, 'ios')) 
     ? path.join(projectPath, 'ios') 
     : projectPath;
 
@@ -434,7 +434,7 @@ async function setIOSVersion(projectPath: string, version?: string, buildNumber?
 }
 
 async function setAndroidVersion(projectPath: string, version?: string, buildNumber?: number): Promise<unknown> {
-  let androidPath = fs.existsSync(path.join(projectPath, 'android')) 
+  const androidPath = fs.existsSync(path.join(projectPath, 'android')) 
     ? path.join(projectPath, 'android') 
     : projectPath;
 
@@ -501,7 +501,7 @@ async function buildReleaseIOS(params: Record<string, unknown>): Promise<unknown
   }
 
   // Check for iOS directory (React Native)
-  let iosPath = fs.existsSync(path.join(projectPath, 'ios')) 
+  const iosPath = fs.existsSync(path.join(projectPath, 'ios')) 
     ? path.join(projectPath, 'ios') 
     : projectPath;
 
@@ -640,7 +640,7 @@ async function buildReleaseAndroid(params: Record<string, unknown>): Promise<unk
   }
 
   // Check for Android directory (React Native)
-  let androidPath = fs.existsSync(path.join(projectPath, 'android')) 
+  const androidPath = fs.existsSync(path.join(projectPath, 'android')) 
     ? path.join(projectPath, 'android') 
     : projectPath;
 

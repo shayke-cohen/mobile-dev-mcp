@@ -4,7 +4,7 @@
  * Registers a React component for AI inspection and interaction.
  */
 
-import { useEffect, useRef, useCallback, RefObject } from 'react';
+import { useEffect, useRef, RefObject } from 'react';
 import { MCPBridge } from '../MCPBridge';
 
 interface MCPComponentOptions {

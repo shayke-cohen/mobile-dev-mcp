@@ -25,6 +25,10 @@ export default tseslint.config(
       '@typescript-eslint/no-this-alias': 'off',
       // Allow console for debugging
       'no-console': 'off',
+      // Allow case declarations (common in switch statements)
+      'no-case-declarations': 'off',
+      // Allow let when const would suffice (style preference)
+      'prefer-const': 'warn',
     },
   }
 );

@@ -602,7 +602,7 @@ class MCPBridgeClass {
             value = (value as Record<string, unknown>)[parts[i]];
           }
           return value;
-        } catch (e) {
+        } catch (_e) {
           return null;
         }
       }
@@ -617,7 +617,7 @@ class MCPBridgeClass {
       if (getter) {
         try {
           result[key] = getter();
-        } catch (e) {
+        } catch (_e) {
           result[key] = null;
         }
       }
@@ -838,11 +838,12 @@ class MCPBridgeClass {
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return { success: true, testId: target, action };
           
-        case 'swipe':
+        case 'swipe': {
           const direction = params.direction as string || 'down';
           const distance = (params.distance as number) || 200;
           this.simulateSwipe(el, direction, distance);
           return { success: true, testId: target, action, direction, distance };
+        }
           
         case 'long_press':
           // Dispatch touch events for long press
