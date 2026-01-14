@@ -14,7 +14,17 @@ export function generateId(): string {
  */
 export function safeStringify(obj: unknown, maxLength = 1000): string {
   try {
-    const str = JSON.stringify(obj, null, 2);
+    // Handle circular references
+    const seen = new WeakSet();
+    const str = JSON.stringify(obj, (_key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return '[Circular]';
+        }
+        seen.add(value);
+      }
+      return value;
+    }, 2);
     if (str.length > maxLength) {
       return str.substring(0, maxLength) + '... (truncated)';
     }
@@ -35,6 +45,11 @@ export function sleep(ms: number): Promise<void> {
  * Get nested property from object using dot notation
  */
 export function getNestedProperty(obj: unknown, path: string): unknown {
+  // Return entire object for empty path
+  if (!path) {
+    return obj;
+  }
+  
   const parts = path.split('.');
   let current: unknown = obj;
 
