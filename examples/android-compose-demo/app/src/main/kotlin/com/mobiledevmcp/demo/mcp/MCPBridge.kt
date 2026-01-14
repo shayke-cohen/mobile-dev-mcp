@@ -432,7 +432,7 @@ object MCPBridge {
             "logout" -> executeAction("logout", params.toMap())
             
             // Tracing commands
-            "get_traces" -> getTracesDict(params)
+            "get_traces" -> getTracesDict(params.toMap())
             "get_active_traces" -> getTracesDict(mapOf("inProgress" to true))
             "clear_traces" -> {
                 clearTraces()
