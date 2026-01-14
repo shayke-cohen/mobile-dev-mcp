@@ -38,6 +38,30 @@ interface MCPState {
   activityLog: ActivityEntry[];
 }
 
+// Component registration for testIds
+interface RegisteredComponent {
+  testId: string;
+  type: string;
+  props?: Record<string, unknown>;
+  bounds?: { x: number; y: number; width: number; height: number };
+  onPress?: () => void;
+  onChangeText?: (text: string) => void;
+  getText?: () => string;
+  children?: string[];
+}
+
+// Network mock configuration
+interface NetworkMock {
+  id: string;
+  urlPattern: RegExp;
+  response: {
+    statusCode: number;
+    body: unknown;
+    headers?: Record<string, string>;
+    delay?: number;
+  };
+}
+
 class MCPBridgeClass {
   private ws: WebSocket | null = null;
   private stateGetters: Map<string, StateGetter> = new Map();
@@ -48,9 +72,28 @@ class MCPBridgeClass {
     url: string;
     method: string;
     status?: number;
+    duration?: number;
+    requestBody?: unknown;
+    responseBody?: unknown;
     timestamp: number;
   }> = [];
   private featureFlags: Map<string, boolean> = new Map();
+  
+  // New: Component registry for UI inspection
+  private components: Map<string, RegisteredComponent> = new Map();
+  
+  // New: Network mocking
+  private networkMocks: Map<string, NetworkMock> = new Map();
+  
+  // New: Navigation state
+  private navigationState: {
+    currentRoute: string;
+    params?: Record<string, unknown>;
+    history: Array<{ route: string; timestamp: number }>;
+  } = {
+    currentRoute: 'home',
+    history: [],
+  };
   private config: Required<MCPConfig> = {
     serverUrl: this.getDefaultServerUrl(),
     debug: true,
@@ -261,6 +304,47 @@ class MCPBridgeClass {
           break;
         case 'get_app_info':
           result = this.getAppInfo();
+          break;
+
+        // UI inspection commands
+        case 'get_component_tree':
+          result = this.getComponentTree(params);
+          break;
+        case 'get_layout_tree':
+          result = this.getLayoutTree(params);
+          break;
+        case 'inspect_element':
+          result = this.inspectElement(params);
+          break;
+        case 'find_element':
+          result = this.findElement(params);
+          break;
+        case 'get_element_text':
+          result = this.getElementText(params);
+          break;
+        case 'simulate_interaction':
+          result = await this.simulateInteraction(params);
+          break;
+        
+        // Navigation commands
+        case 'get_navigation_state':
+          result = this.getNavigationState();
+          break;
+        
+        // Storage commands
+        case 'query_storage':
+          result = await this.queryStorage(params);
+          break;
+        
+        // Network mocking commands
+        case 'mock_network_request':
+          result = this.mockNetworkRequest(params);
+          break;
+        case 'clear_network_mocks':
+          result = this.clearNetworkMocks(params);
+          break;
+        case 'replay_network_request':
+          result = await this.replayNetworkRequest(params);
           break;
 
         // Action commands
@@ -618,6 +702,391 @@ class MCPBridgeClass {
       bundleId: 'com.mobiledevmcp.demo',
       environment: __DEV__ ? 'development' : 'production',
     };
+  }
+
+  // ==================== Component Registration ====================
+
+  /**
+   * Register a component for UI inspection and interaction
+   */
+  registerComponent(
+    testId: string,
+    config: {
+      type: string;
+      props?: Record<string, unknown>;
+      bounds?: { x: number; y: number; width: number; height: number };
+      onPress?: () => void;
+      onChangeText?: (text: string) => void;
+      getText?: () => string;
+      children?: string[];
+    }
+  ): void {
+    this.components.set(testId, { testId, ...config });
+    if (this.config.debug) {
+      console.log(`[MCP SDK] Registered component: ${testId}`);
+    }
+  }
+
+  /**
+   * Unregister a component
+   */
+  unregisterComponent(testId: string): void {
+    this.components.delete(testId);
+  }
+
+  /**
+   * Update component bounds (call from onLayout)
+   */
+  updateComponentBounds(
+    testId: string,
+    bounds: { x: number; y: number; width: number; height: number }
+  ): void {
+    const component = this.components.get(testId);
+    if (component) {
+      component.bounds = bounds;
+    }
+  }
+
+  // ==================== UI Inspection Commands ====================
+
+  private getComponentTree(params: Record<string, unknown>): Record<string, unknown> {
+    const includeProps = params.includeProps !== false;
+    const depth = (params.depth as number) || 10;
+    
+    const components = Array.from(this.components.values()).map(comp => ({
+      testId: comp.testId,
+      type: comp.type,
+      ...(includeProps && comp.props ? { props: comp.props } : {}),
+      bounds: comp.bounds,
+      hasOnPress: !!comp.onPress,
+      hasOnChangeText: !!comp.onChangeText,
+      children: comp.children,
+    }));
+
+    return {
+      componentCount: components.length,
+      components,
+      registeredTestIds: Array.from(this.components.keys()),
+    };
+  }
+
+  private getLayoutTree(params: Record<string, unknown>): Record<string, unknown> {
+    const includeHidden = params.includeHidden === true;
+    
+    const elements = Array.from(this.components.values())
+      .filter(comp => includeHidden || comp.bounds)
+      .map(comp => ({
+        testId: comp.testId,
+        type: comp.type,
+        bounds: comp.bounds || { x: 0, y: 0, width: 0, height: 0 },
+        visible: !!comp.bounds,
+      }));
+
+    return {
+      elementCount: elements.length,
+      elements,
+    };
+  }
+
+  private inspectElement(params: Record<string, unknown>): Record<string, unknown> {
+    const x = params.x as number;
+    const y = params.y as number;
+
+    // Find element at coordinates
+    for (const comp of this.components.values()) {
+      if (comp.bounds) {
+        const { x: bx, y: by, width, height } = comp.bounds;
+        if (x >= bx && x <= bx + width && y >= by && y <= by + height) {
+          return {
+            found: true,
+            testId: comp.testId,
+            type: comp.type,
+            bounds: comp.bounds,
+            props: comp.props,
+            text: comp.getText?.(),
+            interactive: !!(comp.onPress || comp.onChangeText),
+          };
+        }
+      }
+    }
+
+    return { found: false, x, y };
+  }
+
+  private findElement(params: Record<string, unknown>): Record<string, unknown> {
+    const testId = params.testId as string;
+    const type = params.type as string;
+    const text = params.text as string;
+
+    const results: Array<Record<string, unknown>> = [];
+
+    for (const comp of this.components.values()) {
+      let match = true;
+      
+      if (testId && comp.testId !== testId) match = false;
+      if (type && comp.type !== type) match = false;
+      if (text && comp.getText?.() !== text) match = false;
+
+      if (match) {
+        results.push({
+          testId: comp.testId,
+          type: comp.type,
+          bounds: comp.bounds,
+          text: comp.getText?.(),
+        });
+      }
+    }
+
+    return {
+      found: results.length > 0,
+      count: results.length,
+      elements: results,
+    };
+  }
+
+  private getElementText(params: Record<string, unknown>): Record<string, unknown> {
+    const testId = params.testId as string;
+    const comp = this.components.get(testId);
+
+    if (!comp) {
+      return { found: false, testId };
+    }
+
+    return {
+      found: true,
+      testId,
+      text: comp.getText?.() ?? null,
+      type: comp.type,
+    };
+  }
+
+  private async simulateInteraction(params: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const type = params.type as string;
+    const target = params.target as Record<string, unknown>;
+    const value = params.value as string;
+
+    let component: RegisteredComponent | undefined;
+
+    // Find target component
+    if (target.testId) {
+      component = this.components.get(target.testId as string);
+    } else if (target.x !== undefined && target.y !== undefined) {
+      // Find by coordinates
+      for (const comp of this.components.values()) {
+        if (comp.bounds) {
+          const { x, y, width, height } = comp.bounds;
+          if (
+            (target.x as number) >= x &&
+            (target.x as number) <= x + width &&
+            (target.y as number) >= y &&
+            (target.y as number) <= y + height
+          ) {
+            component = comp;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!component) {
+      return {
+        success: false,
+        error: 'Element not found',
+        target,
+      };
+    }
+
+    switch (type) {
+      case 'tap':
+      case 'press':
+        if (component.onPress) {
+          component.onPress();
+          return { success: true, action: 'tap', testId: component.testId };
+        }
+        return { success: false, error: 'Element is not pressable', testId: component.testId };
+
+      case 'longPress':
+        if (component.onPress) {
+          component.onPress();
+          return { success: true, action: 'longPress', testId: component.testId };
+        }
+        return { success: false, error: 'Element is not pressable', testId: component.testId };
+
+      case 'input':
+      case 'type':
+        if (component.onChangeText && value) {
+          component.onChangeText(value);
+          return { success: true, action: 'input', testId: component.testId, value };
+        }
+        return { success: false, error: 'Element does not accept text input', testId: component.testId };
+
+      default:
+        return { success: false, error: `Unknown interaction type: ${type}` };
+    }
+  }
+
+  // ==================== Navigation State ====================
+
+  /**
+   * Set current navigation state (call from navigation listener)
+   */
+  setNavigationState(route: string, params?: Record<string, unknown>): void {
+    this.navigationState.history.push({
+      route: this.navigationState.currentRoute,
+      timestamp: Date.now(),
+    });
+    this.navigationState.currentRoute = route;
+    this.navigationState.params = params;
+    
+    // Keep last 20 history entries
+    if (this.navigationState.history.length > 20) {
+      this.navigationState.history = this.navigationState.history.slice(-20);
+    }
+  }
+
+  private getNavigationState(): Record<string, unknown> {
+    return {
+      currentRoute: this.navigationState.currentRoute,
+      params: this.navigationState.params,
+      history: this.navigationState.history,
+      historyLength: this.navigationState.history.length,
+    };
+  }
+
+  // ==================== Storage Query ====================
+
+  private async queryStorage(params: Record<string, unknown>): Promise<Record<string, unknown>> {
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const key = params.key as string | undefined;
+      const pattern = params.pattern as string | undefined;
+
+      if (key) {
+        // Get specific key
+        const value = await AsyncStorage.getItem(key);
+        return {
+          key,
+          value: value ? JSON.parse(value) : null,
+          exists: value !== null,
+        };
+      }
+
+      // Get all keys
+      const allKeys = await AsyncStorage.getAllKeys();
+      let keys = allKeys;
+
+      if (pattern) {
+        const regex = new RegExp(pattern);
+        keys = allKeys.filter((k: string) => regex.test(k));
+      }
+
+      const pairs = await AsyncStorage.multiGet(keys);
+      const storage: Record<string, unknown> = {};
+      
+      for (const [k, v] of pairs) {
+        try {
+          storage[k] = v ? JSON.parse(v) : null;
+        } catch {
+          storage[k] = v;
+        }
+      }
+
+      return {
+        keyCount: keys.length,
+        keys,
+        storage,
+      };
+    } catch (error) {
+      return {
+        error: 'AsyncStorage not available or error occurred',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  // ==================== Network Mocking ====================
+
+  private mockNetworkRequest(params: Record<string, unknown>): Record<string, unknown> {
+    const urlPattern = params.urlPattern as string;
+    const mockResponse = params.mockResponse as {
+      statusCode: number;
+      body: unknown;
+      headers?: Record<string, string>;
+      delay?: number;
+    };
+
+    const mockId = `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    this.networkMocks.set(mockId, {
+      id: mockId,
+      urlPattern: new RegExp(urlPattern),
+      response: mockResponse,
+    });
+
+    return {
+      success: true,
+      mockId,
+      urlPattern,
+      activeМocks: this.networkMocks.size,
+    };
+  }
+
+  private clearNetworkMocks(params: Record<string, unknown>): Record<string, unknown> {
+    const mockId = params.mockId as string | undefined;
+
+    if (mockId) {
+      const deleted = this.networkMocks.delete(mockId);
+      return { success: deleted, mockId, remainingMocks: this.networkMocks.size };
+    }
+
+    const count = this.networkMocks.size;
+    this.networkMocks.clear();
+    return { success: true, clearedCount: count, remainingMocks: 0 };
+  }
+
+  private async replayNetworkRequest(params: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const requestId = params.requestId as string;
+    const modifications = params.modifications as Record<string, unknown> | undefined;
+
+    const request = this.networkRequests.find(r => r.id === requestId);
+    if (!request) {
+      return { success: false, error: 'Request not found', requestId };
+    }
+
+    try {
+      const response = await fetch(request.url, {
+        method: request.method,
+        headers: modifications?.headers as Record<string, string> | undefined,
+        body: modifications?.body ? JSON.stringify(modifications.body) : undefined,
+      });
+
+      const body = await response.json().catch(() => response.text());
+
+      return {
+        success: true,
+        requestId,
+        status: response.status,
+        body,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        requestId,
+      };
+    }
+  }
+
+  /**
+   * Check if a URL matches any mock
+   */
+  private getMatchingMock(url: string): NetworkMock | undefined {
+    for (const mock of this.networkMocks.values()) {
+      if (mock.urlPattern.test(url)) {
+        return mock;
+      }
+    }
+    return undefined;
   }
 }
 

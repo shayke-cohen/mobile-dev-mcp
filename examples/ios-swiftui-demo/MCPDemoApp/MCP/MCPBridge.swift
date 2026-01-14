@@ -28,6 +28,15 @@ final class MCPBridge: ObservableObject {
     private var isInitialized = false
     private var reconnectAttempts = 0
     
+    // Component registry for UI inspection
+    private var components: [String: RegisteredComponent] = [:]
+    
+    // Navigation state tracking
+    private var navigationState: NavigationState = NavigationState()
+    
+    // Network mocking
+    private var networkMocks: [String: NetworkMock] = [:]
+    
     private static let DEFAULT_PORT = "8765"
     private static var defaultServerUrl: String {
         "ws://localhost:\(DEFAULT_PORT)"
@@ -271,6 +280,35 @@ final class MCPBridge: ObservableObject {
             return ["errors": Array(errors.suffix(limit)), "count": errors.count]
         case "list_network_requests":
             return networkRequests.suffix(params["limit"] as? Int ?? 50)
+        
+        // UI inspection commands
+        case "get_component_tree":
+            return getComponentTree(params: params)
+        case "get_layout_tree":
+            return getLayoutTree(params: params)
+        case "inspect_element":
+            return inspectElement(params: params)
+        case "find_element":
+            return findElement(params: params)
+        case "get_element_text":
+            return getElementText(params: params)
+        case "simulate_interaction":
+            return try simulateInteraction(params: params)
+        
+        // Navigation commands
+        case "get_navigation_state":
+            return getNavigationStateDict()
+        
+        // Storage commands
+        case "query_storage":
+            return queryStorage(params: params)
+        
+        // Network mocking commands
+        case "mock_network_request":
+            return mockNetworkRequest(params: params)
+        case "clear_network_mocks":
+            return clearNetworkMocks(params: params)
+            
         // Action commands
         case "list_actions":
             return getRegisteredActions()
@@ -307,6 +345,242 @@ final class MCPBridge: ObservableObject {
         
         let result = try handler(params)
         return ["success": true, "action": name, "result": result ?? NSNull()]
+    }
+    
+    // MARK: - Component Registration
+    
+    func registerComponent(testId: String, type: String, props: [String: Any]? = nil, bounds: CGRect? = nil, onTap: (() -> Void)? = nil, getText: (() -> String?)? = nil) {
+        components[testId] = RegisteredComponent(testId: testId, type: type, props: props, bounds: bounds, onTap: onTap, getText: getText)
+        if debug {
+            log("Registered component: \(testId)")
+        }
+    }
+    
+    func unregisterComponent(testId: String) {
+        components.removeValue(forKey: testId)
+    }
+    
+    func updateComponentBounds(testId: String, bounds: CGRect) {
+        components[testId]?.bounds = bounds
+    }
+    
+    // MARK: - UI Inspection
+    
+    private func getComponentTree(params: [String: Any]) -> [String: Any] {
+        let includeProps = params["includeProps"] as? Bool ?? true
+        
+        let componentList = components.values.map { comp -> [String: Any] in
+            var dict: [String: Any] = [
+                "testId": comp.testId,
+                "type": comp.type,
+                "hasTapHandler": comp.onTap != nil,
+                "hasTextGetter": comp.getText != nil
+            ]
+            if includeProps, let props = comp.props {
+                dict["props"] = props
+            }
+            if let bounds = comp.bounds {
+                dict["bounds"] = ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height]
+            }
+            return dict
+        }
+        
+        return [
+            "componentCount": components.count,
+            "components": componentList,
+            "registeredTestIds": Array(components.keys)
+        ]
+    }
+    
+    private func getLayoutTree(params: [String: Any]) -> [String: Any] {
+        let includeHidden = params["includeHidden"] as? Bool ?? false
+        
+        let elements = components.values.compactMap { comp -> [String: Any]? in
+            guard includeHidden || comp.bounds != nil else { return nil }
+            let bounds = comp.bounds ?? .zero
+            return [
+                "testId": comp.testId,
+                "type": comp.type,
+                "bounds": ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height],
+                "visible": comp.bounds != nil
+            ]
+        }
+        
+        return ["elementCount": elements.count, "elements": elements]
+    }
+    
+    private func inspectElement(params: [String: Any]) -> [String: Any] {
+        guard let x = params["x"] as? CGFloat, let y = params["y"] as? CGFloat else {
+            return ["found": false, "error": "x and y required"]
+        }
+        
+        let point = CGPoint(x: x, y: y)
+        for comp in components.values {
+            if let bounds = comp.bounds, bounds.contains(point) {
+                return [
+                    "found": true,
+                    "testId": comp.testId,
+                    "type": comp.type,
+                    "bounds": ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height],
+                    "text": comp.getText?() ?? NSNull(),
+                    "interactive": comp.onTap != nil
+                ]
+            }
+        }
+        
+        return ["found": false, "x": x, "y": y]
+    }
+    
+    private func findElement(params: [String: Any]) -> [String: Any] {
+        let testId = params["testId"] as? String
+        let type = params["type"] as? String
+        let text = params["text"] as? String
+        
+        let results = components.values.filter { comp in
+            if let testId = testId, comp.testId != testId { return false }
+            if let type = type, comp.type != type { return false }
+            if let text = text, comp.getText?() != text { return false }
+            return true
+        }.map { comp -> [String: Any] in
+            var dict: [String: Any] = ["testId": comp.testId, "type": comp.type]
+            if let bounds = comp.bounds {
+                dict["bounds"] = ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height]
+            }
+            dict["text"] = comp.getText?() ?? NSNull()
+            return dict
+        }
+        
+        return ["found": !results.isEmpty, "count": results.count, "elements": results]
+    }
+    
+    private func getElementText(params: [String: Any]) -> [String: Any] {
+        guard let testId = params["testId"] as? String else {
+            return ["found": false, "error": "testId required"]
+        }
+        
+        guard let comp = components[testId] else {
+            return ["found": false, "testId": testId]
+        }
+        
+        return ["found": true, "testId": testId, "text": comp.getText?() ?? NSNull(), "type": comp.type]
+    }
+    
+    private func simulateInteraction(params: [String: Any]) throws -> [String: Any] {
+        guard let type = params["type"] as? String,
+              let target = params["target"] as? [String: Any] else {
+            throw MCPError.invalidParams("type and target required")
+        }
+        
+        var component: RegisteredComponent?
+        
+        if let testId = target["testId"] as? String {
+            component = components[testId]
+        } else if let x = target["x"] as? CGFloat, let y = target["y"] as? CGFloat {
+            let point = CGPoint(x: x, y: y)
+            component = components.values.first { $0.bounds?.contains(point) == true }
+        }
+        
+        guard let comp = component else {
+            return ["success": false, "error": "Element not found"]
+        }
+        
+        switch type {
+        case "tap", "press":
+            if let onTap = comp.onTap {
+                DispatchQueue.main.async { onTap() }
+                return ["success": true, "action": "tap", "testId": comp.testId]
+            }
+            return ["success": false, "error": "Element not tappable", "testId": comp.testId]
+        default:
+            return ["success": false, "error": "Unknown interaction type: \(type)"]
+        }
+    }
+    
+    // MARK: - Navigation State
+    
+    func setNavigationState(route: String, params: [String: Any]? = nil) {
+        navigationState.history.append((route: navigationState.currentRoute, timestamp: Date()))
+        navigationState.currentRoute = route
+        navigationState.params = params
+        
+        // Keep last 20 entries
+        if navigationState.history.count > 20 {
+            navigationState.history = Array(navigationState.history.suffix(20))
+        }
+    }
+    
+    private func getNavigationStateDict() -> [String: Any] {
+        return [
+            "currentRoute": navigationState.currentRoute,
+            "params": navigationState.params ?? NSNull(),
+            "history": navigationState.history.map { ["route": $0.route, "timestamp": ISO8601DateFormatter().string(from: $0.timestamp)] },
+            "historyLength": navigationState.history.count
+        ]
+    }
+    
+    // MARK: - Storage Query
+    
+    private func queryStorage(params: [String: Any]) -> [String: Any] {
+        let key = params["key"] as? String
+        
+        if let key = key {
+            let value = UserDefaults.standard.object(forKey: key)
+            return ["key": key, "value": value ?? NSNull(), "exists": value != nil]
+        }
+        
+        // Get all keys matching pattern
+        let pattern = params["pattern"] as? String
+        var allKeys = UserDefaults.standard.dictionaryRepresentation().keys.map { $0 }
+        
+        if let pattern = pattern, let regex = try? NSRegularExpression(pattern: pattern) {
+            allKeys = allKeys.filter { key in
+                regex.firstMatch(in: key, range: NSRange(key.startIndex..., in: key)) != nil
+            }
+        }
+        
+        var storage: [String: Any] = [:]
+        for key in allKeys.prefix(100) { // Limit to 100 keys
+            storage[key] = UserDefaults.standard.object(forKey: key) ?? NSNull()
+        }
+        
+        return ["keyCount": allKeys.count, "keys": Array(allKeys.prefix(100)), "storage": storage]
+    }
+    
+    // MARK: - Network Mocking
+    
+    private func mockNetworkRequest(params: [String: Any]) -> [String: Any] {
+        guard let urlPattern = params["urlPattern"] as? String,
+              let mockResponse = params["mockResponse"] as? [String: Any],
+              let statusCode = mockResponse["statusCode"] as? Int,
+              let body = mockResponse["body"] else {
+            return ["success": false, "error": "Invalid mock configuration"]
+        }
+        
+        let mockId = "mock_\(Date().timeIntervalSince1970)_\(Int.random(in: 1000...9999))"
+        
+        networkMocks[mockId] = NetworkMock(
+            id: mockId,
+            urlPattern: urlPattern,
+            response: NetworkMock.MockResponse(
+                statusCode: statusCode,
+                body: body,
+                headers: mockResponse["headers"] as? [String: String],
+                delay: mockResponse["delay"] as? TimeInterval
+            )
+        )
+        
+        return ["success": true, "mockId": mockId, "urlPattern": urlPattern, "activeMocks": networkMocks.count]
+    }
+    
+    private func clearNetworkMocks(params: [String: Any]) -> [String: Any] {
+        if let mockId = params["mockId"] as? String {
+            let removed = networkMocks.removeValue(forKey: mockId) != nil
+            return ["success": removed, "mockId": mockId, "remainingMocks": networkMocks.count]
+        }
+        
+        let count = networkMocks.count
+        networkMocks.removeAll()
+        return ["success": true, "clearedCount": count, "remainingMocks": 0]
     }
     
     private func getAppState(params: [String: Any]) -> [String: Any] {
@@ -401,6 +675,37 @@ final class MCPBridge: ObservableObject {
             "message": message,
             "timestamp": Date().timeIntervalSince1970 * 1000
         ])
+    }
+}
+
+// MARK: - Supporting Types
+
+struct RegisteredComponent {
+    let testId: String
+    let type: String
+    var props: [String: Any]?
+    var bounds: CGRect?
+    var onTap: (() -> Void)?
+    var getText: (() -> String?)?
+    var children: [String]?
+}
+
+struct NavigationState {
+    var currentRoute: String = "home"
+    var params: [String: Any]?
+    var history: [(route: String, timestamp: Date)] = []
+}
+
+struct NetworkMock {
+    let id: String
+    let urlPattern: String
+    let response: MockResponse
+    
+    struct MockResponse {
+        let statusCode: Int
+        let body: Any
+        var headers: [String: String]?
+        var delay: TimeInterval?
     }
 }
 

@@ -999,6 +999,143 @@ class E2ETestRunner {
     });
   }
 
+  // ==================== Validation Tests ====================
+  
+  async testValidationFeatures(platform = 'ios') {
+    logStep('VALIDATION', 'Testing validation features (component tree, navigation state, etc.)...');
+    
+    // Test get_component_tree
+    await this.test('get_component_tree returns components', async () => {
+      const result = await this.mcpClient.callTool('get_component_tree');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      // Should have component info
+      if (typeof data.componentCount !== 'number') {
+        throw new Error('Component tree missing componentCount');
+      }
+      if (!Array.isArray(data.registeredTestIds)) {
+        throw new Error('Component tree missing registeredTestIds');
+      }
+      logVerbose(`Found ${data.componentCount} components, testIds: ${data.registeredTestIds.slice(0, 5).join(', ')}...`);
+    });
+    
+    // Test get_layout_tree
+    await this.test('get_layout_tree returns layout info', async () => {
+      const result = await this.mcpClient.callTool('get_layout_tree');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      if (typeof data.elementCount !== 'number') {
+        throw new Error('Layout tree missing elementCount');
+      }
+      if (!Array.isArray(data.elements)) {
+        throw new Error('Layout tree missing elements array');
+      }
+    });
+    
+    // Test get_navigation_state
+    await this.test('get_navigation_state returns route info', async () => {
+      const result = await this.mcpClient.callTool('get_navigation_state');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      if (!data.currentRoute) {
+        throw new Error('Navigation state missing currentRoute');
+      }
+      if (!Array.isArray(data.history)) {
+        throw new Error('Navigation state missing history');
+      }
+      logVerbose(`Current route: ${data.currentRoute}, history length: ${data.historyLength}`);
+    });
+    
+    // Test query_storage
+    await this.test('query_storage returns storage data', async () => {
+      const result = await this.mcpClient.callTool('query_storage');
+      
+      if (result.isError) {
+        // Storage might not be available on all platforms
+        const text = result.content[0].text;
+        if (text.includes('not available')) {
+          logVerbose('Storage not available on this platform');
+          return;
+        }
+        throw new Error(text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      if (typeof data.keyCount !== 'number') {
+        throw new Error('Storage query missing keyCount');
+      }
+    });
+    
+    // Test network mocking
+    await this.test('mock_network_request creates mock', async () => {
+      const result = await this.mcpClient.callTool('mock_network_request', {
+        urlPattern: 'api.example.com/test',
+        mockResponse: {
+          statusCode: 200,
+          body: { success: true, message: 'Mocked response' }
+        }
+      });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success || !data.mockId) {
+        throw new Error('Mock creation failed');
+      }
+      logVerbose(`Created mock: ${data.mockId}`);
+    });
+    
+    // Test clear network mocks
+    await this.test('clear_network_mocks clears mocks', async () => {
+      const result = await this.mcpClient.callTool('clear_network_mocks');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Clear mocks failed');
+      }
+      if (data.remainingMocks !== 0) {
+        throw new Error(`Expected 0 remaining mocks, got ${data.remainingMocks}`);
+      }
+    });
+    
+    // Test find_element (if components are registered)
+    await this.test('find_element searches components', async () => {
+      const result = await this.mcpClient.callTool('find_element', { type: 'Button' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      // found can be true or false depending on whether buttons are registered
+      if (typeof data.found !== 'boolean') {
+        throw new Error('find_element missing found field');
+      }
+      if (typeof data.count !== 'number') {
+        throw new Error('find_element missing count field');
+      }
+      logVerbose(`Found ${data.count} Button elements`);
+    });
+  }
+
   // ==================== UI Automation Tests ====================
 
   async testUIAutomation(platform) {
@@ -1262,12 +1399,13 @@ class E2ETestRunner {
         await this.runReactNativeTests('android');
       }
       
-      // If we have a connected app, test app tools and SDK actions
+      // If we have a connected app, test app tools, SDK actions, and validation
       try {
         const result = await this.mcpClient.callTool('list_connected_devices');
         if (!result.isError && !result.content[0].text.includes('No device')) {
           await this.testAppTools();
           await this.testSDKActions(platform);
+          await this.testValidationFeatures(platform);
         } else {
           logWarn('No app connected - skipping app tool tests');
           logInfo('Run a demo app to enable full tests');

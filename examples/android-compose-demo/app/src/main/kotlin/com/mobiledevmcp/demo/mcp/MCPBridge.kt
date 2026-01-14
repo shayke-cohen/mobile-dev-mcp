@@ -37,6 +37,42 @@ object MCPBridge {
     private val networkRequests = mutableListOf<Map<String, Any>>()
     private val activityLog = mutableListOf<String>()
     
+    // Component registry for UI inspection
+    private val components = mutableMapOf<String, RegisteredComponent>()
+    
+    // Navigation state tracking
+    private var navigationState = NavigationState()
+    
+    // Network mocking
+    private val networkMocks = mutableMapOf<String, NetworkMock>()
+    
+    // Data classes for component registration
+    data class RegisteredComponent(
+        val testId: String,
+        val type: String,
+        var props: Map<String, Any?>? = null,
+        var bounds: Bounds? = null,
+        var onTap: (() -> Unit)? = null,
+        var getText: (() -> String?)? = null
+    )
+    
+    data class Bounds(val x: Float, val y: Float, val width: Float, val height: Float)
+    
+    data class NavigationState(
+        var currentRoute: String = "home",
+        var params: Map<String, Any?>? = null,
+        val history: MutableList<Pair<String, Long>> = mutableListOf()
+    )
+    
+    data class NetworkMock(
+        val id: String,
+        val urlPattern: Regex,
+        val statusCode: Int,
+        val body: Any,
+        val headers: Map<String, String>? = null,
+        val delay: Long? = null
+    )
+    
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var isInitialized = false
     private var serverUrl = DEFAULT_SERVER_URL
@@ -319,6 +355,25 @@ object MCPBridge {
             "get_logs" -> logs.takeLast(params.optInt("limit", 100))
             "get_recent_errors" -> logs.filter { it["level"] == "error" }.takeLast(params.optInt("limit", 20))
             "list_network_requests" -> networkRequests.takeLast(params.optInt("limit", 50))
+            
+            // UI inspection commands
+            "get_component_tree" -> getComponentTree(params)
+            "get_layout_tree" -> getLayoutTree(params)
+            "inspect_element" -> inspectElement(params)
+            "find_element" -> findElement(params)
+            "get_element_text" -> getElementText(params)
+            "simulate_interaction" -> simulateInteraction(params)
+            
+            // Navigation commands
+            "get_navigation_state" -> getNavigationStateMap()
+            
+            // Storage commands
+            "query_storage" -> queryStorage(params)
+            
+            // Network mocking commands
+            "mock_network_request" -> mockNetworkRequest(params)
+            "clear_network_mocks" -> clearNetworkMocks(params)
+            
             // Action commands
             "list_actions" -> getRegisteredActions()
             "navigate_to" -> executeAction("navigate", params.toMap())
@@ -347,6 +402,223 @@ object MCPBridge {
         val handler = actionHandlers[name] ?: throw Exception("Action not registered: $name")
         val result = handler(params)
         return mapOf("success" to true, "action" to name, "result" to result)
+    }
+    
+    // ==================== Component Registration ====================
+    
+    fun registerComponent(
+        testId: String,
+        type: String,
+        props: Map<String, Any?>? = null,
+        bounds: Bounds? = null,
+        onTap: (() -> Unit)? = null,
+        getText: (() -> String?)? = null
+    ) {
+        components[testId] = RegisteredComponent(testId, type, props, bounds, onTap, getText)
+        if (debug) log("Registered component: $testId")
+    }
+    
+    fun unregisterComponent(testId: String) {
+        components.remove(testId)
+    }
+    
+    fun updateComponentBounds(testId: String, bounds: Bounds) {
+        components[testId]?.bounds = bounds
+    }
+    
+    // ==================== UI Inspection ====================
+    
+    private fun getComponentTree(params: JSONObject): Map<String, Any?> {
+        val includeProps = params.optBoolean("includeProps", true)
+        
+        val componentList = components.values.map { comp ->
+            mutableMapOf<String, Any?>(
+                "testId" to comp.testId,
+                "type" to comp.type,
+                "hasTapHandler" to (comp.onTap != null),
+                "hasTextGetter" to (comp.getText != null)
+            ).apply {
+                if (includeProps && comp.props != null) put("props", comp.props)
+                comp.bounds?.let { b -> put("bounds", mapOf("x" to b.x, "y" to b.y, "width" to b.width, "height" to b.height)) }
+            }
+        }
+        
+        return mapOf(
+            "componentCount" to components.size,
+            "components" to componentList,
+            "registeredTestIds" to components.keys.toList()
+        )
+    }
+    
+    private fun getLayoutTree(params: JSONObject): Map<String, Any?> {
+        val includeHidden = params.optBoolean("includeHidden", false)
+        
+        val elements = components.values.filter { includeHidden || it.bounds != null }.map { comp ->
+            val b = comp.bounds ?: Bounds(0f, 0f, 0f, 0f)
+            mapOf(
+                "testId" to comp.testId,
+                "type" to comp.type,
+                "bounds" to mapOf("x" to b.x, "y" to b.y, "width" to b.width, "height" to b.height),
+                "visible" to (comp.bounds != null)
+            )
+        }
+        
+        return mapOf("elementCount" to elements.size, "elements" to elements)
+    }
+    
+    private fun inspectElement(params: JSONObject): Map<String, Any?> {
+        val x = params.optDouble("x", -1.0).toFloat()
+        val y = params.optDouble("y", -1.0).toFloat()
+        
+        for (comp in components.values) {
+            val b = comp.bounds ?: continue
+            if (x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height) {
+                return mapOf(
+                    "found" to true,
+                    "testId" to comp.testId,
+                    "type" to comp.type,
+                    "bounds" to mapOf("x" to b.x, "y" to b.y, "width" to b.width, "height" to b.height),
+                    "text" to comp.getText?.invoke(),
+                    "interactive" to (comp.onTap != null)
+                )
+            }
+        }
+        
+        return mapOf("found" to false, "x" to x, "y" to y)
+    }
+    
+    private fun findElement(params: JSONObject): Map<String, Any?> {
+        val testId = params.optString("testId", null)
+        val type = params.optString("type", null)
+        val text = params.optString("text", null)
+        
+        val results = components.values.filter { comp ->
+            (testId == null || comp.testId == testId) &&
+            (type == null || comp.type == type) &&
+            (text == null || comp.getText?.invoke() == text)
+        }.map { comp ->
+            mutableMapOf<String, Any?>(
+                "testId" to comp.testId,
+                "type" to comp.type,
+                "text" to comp.getText?.invoke()
+            ).apply {
+                comp.bounds?.let { b -> put("bounds", mapOf("x" to b.x, "y" to b.y, "width" to b.width, "height" to b.height)) }
+            }
+        }
+        
+        return mapOf("found" to results.isNotEmpty(), "count" to results.size, "elements" to results)
+    }
+    
+    private fun getElementText(params: JSONObject): Map<String, Any?> {
+        val testId = params.optString("testId", "")
+        val comp = components[testId] ?: return mapOf("found" to false, "testId" to testId)
+        return mapOf("found" to true, "testId" to testId, "text" to comp.getText?.invoke(), "type" to comp.type)
+    }
+    
+    private fun simulateInteraction(params: JSONObject): Map<String, Any?> {
+        val type = params.optString("type", "")
+        val target = params.optJSONObject("target") ?: return mapOf("success" to false, "error" to "target required")
+        
+        val comp = if (target.has("testId")) {
+            components[target.getString("testId")]
+        } else if (target.has("x") && target.has("y")) {
+            val x = target.getDouble("x").toFloat()
+            val y = target.getDouble("y").toFloat()
+            components.values.find { c ->
+                c.bounds?.let { b -> x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height } == true
+            }
+        } else null
+        
+        comp ?: return mapOf("success" to false, "error" to "Element not found")
+        
+        return when (type) {
+            "tap", "press" -> {
+                comp.onTap?.let {
+                    scope.launch { it() }
+                    mapOf("success" to true, "action" to "tap", "testId" to comp.testId)
+                } ?: mapOf("success" to false, "error" to "Element not tappable", "testId" to comp.testId)
+            }
+            else -> mapOf("success" to false, "error" to "Unknown interaction type: $type")
+        }
+    }
+    
+    // ==================== Navigation State ====================
+    
+    fun setNavigationState(route: String, params: Map<String, Any?>? = null) {
+        navigationState.history.add(navigationState.currentRoute to System.currentTimeMillis())
+        navigationState.currentRoute = route
+        navigationState.params = params
+        
+        // Keep last 20 entries
+        while (navigationState.history.size > 20) {
+            navigationState.history.removeAt(0)
+        }
+    }
+    
+    private fun getNavigationStateMap(): Map<String, Any?> = mapOf(
+        "currentRoute" to navigationState.currentRoute,
+        "params" to navigationState.params,
+        "history" to navigationState.history.map { mapOf("route" to it.first, "timestamp" to it.second) },
+        "historyLength" to navigationState.history.size
+    )
+    
+    // ==================== Storage Query ====================
+    
+    private fun queryStorage(params: JSONObject): Map<String, Any?> {
+        val context = contextRef?.get() ?: return mapOf("error" to "Context not available")
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val key = params.optString("key", null)
+        
+        if (key != null) {
+            val value = prefs.all[key]
+            return mapOf("key" to key, "value" to value, "exists" to (value != null))
+        }
+        
+        val pattern = params.optString("pattern", null)
+        var keys = prefs.all.keys.toList()
+        
+        if (pattern != null) {
+            val regex = Regex(pattern)
+            keys = keys.filter { regex.containsMatchIn(it) }
+        }
+        
+        val storage = keys.take(100).associateWith { prefs.all[it] }
+        return mapOf("keyCount" to keys.size, "keys" to keys.take(100), "storage" to storage)
+    }
+    
+    // ==================== Network Mocking ====================
+    
+    private fun mockNetworkRequest(params: JSONObject): Map<String, Any?> {
+        val urlPattern = params.optString("urlPattern", "") 
+        val mockResponse = params.optJSONObject("mockResponse") ?: return mapOf("success" to false, "error" to "mockResponse required")
+        
+        val mockId = "mock_${System.currentTimeMillis()}_${(1000..9999).random()}"
+        
+        networkMocks[mockId] = NetworkMock(
+            id = mockId,
+            urlPattern = Regex(urlPattern),
+            statusCode = mockResponse.optInt("statusCode", 200),
+            body = mockResponse.opt("body") ?: "",
+            headers = mockResponse.optJSONObject("headers")?.let { h ->
+                h.keys().asSequence().associateWith { h.getString(it) }
+            },
+            delay = mockResponse.optLong("delay", 0).takeIf { it > 0 }
+        )
+        
+        return mapOf("success" to true, "mockId" to mockId, "urlPattern" to urlPattern, "activeMocks" to networkMocks.size)
+    }
+    
+    private fun clearNetworkMocks(params: JSONObject): Map<String, Any?> {
+        val mockId = params.optString("mockId", null)
+        
+        return if (mockId != null) {
+            val removed = networkMocks.remove(mockId) != null
+            mapOf("success" to removed, "mockId" to mockId, "remainingMocks" to networkMocks.size)
+        } else {
+            val count = networkMocks.size
+            networkMocks.clear()
+            mapOf("success" to true, "clearedCount" to count, "remainingMocks" to 0)
+        }
     }
     
     private fun JSONObject.toMap(): Map<String, Any?> {

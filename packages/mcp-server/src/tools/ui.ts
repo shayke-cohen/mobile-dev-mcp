@@ -73,6 +73,41 @@ export const uiTools = [
     },
   },
   {
+    name: 'find_element',
+    description: 'Find UI elements by testId, type, or text content',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        testId: {
+          type: 'string',
+          description: 'Test ID to search for',
+        },
+        type: {
+          type: 'string',
+          description: 'Component type to search for (e.g., Button, Text)',
+        },
+        text: {
+          type: 'string',
+          description: 'Text content to search for',
+        },
+      },
+    },
+  },
+  {
+    name: 'get_element_text',
+    description: 'Get the text content of an element by testId',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        testId: {
+          type: 'string',
+          description: 'Test ID of the element',
+        },
+      },
+      required: ['testId'],
+    },
+  },
+  {
     name: 'simulate_interaction',
     description: 'Simulate tap, swipe, or text input on the app',
     inputSchema: {

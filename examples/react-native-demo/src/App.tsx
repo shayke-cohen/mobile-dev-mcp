@@ -95,6 +95,13 @@ function App(): React.JSX.Element {
     }
   }, [cart, user, currentTab]);
 
+  // Track navigation state for MCP
+  useEffect(() => {
+    if (__DEV__) {
+      MCPBridge.setNavigationState(currentTab);
+    }
+  }, [currentTab]);
+
   // Register MCP action handlers (allows remote control of the app)
   useEffect(() => {
     if (__DEV__) {
