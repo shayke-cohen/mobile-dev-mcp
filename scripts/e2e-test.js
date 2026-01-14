@@ -1518,6 +1518,67 @@ class E2ETestRunner {
     }
   }
 
+  async runMacOSTests() {
+    logStep('macOS', 'Running macOS SwiftUI e2e tests...');
+    
+    // Build and run macOS app
+    if (!skipBuild) {
+      await this.test('Build and run macOS demo app', async () => {
+        const projectPath = path.join(__dirname, '../examples/macos-swiftui-demo');
+        
+        logVerbose('Building macOS app with Swift Package Manager...');
+        exec(`cd "${projectPath}" && swift build`, { maxBuffer: 50 * 1024 * 1024 });
+        
+        logVerbose('Running macOS app...');
+        // Run in background
+        const child = spawn('swift', ['run'], {
+          cwd: projectPath,
+          detached: true,
+          stdio: 'ignore'
+        });
+        child.unref();
+        this.macosProcess = child;
+        
+        // Wait for app to start
+        await sleep(3000);
+      });
+      
+      await this.test('macOS SDK connects to server', async () => {
+        const devices = await this.waitForSDKConnection();
+        const macosDevice = devices.find(d => d.platform === 'macos');
+        if (!macosDevice) {
+          throw new Error('macOS device did not connect');
+        }
+        logVerbose(`Connected: ${macosDevice.appName}`);
+      });
+    }
+    
+    // macOS-specific tests
+    await this.test('macOS: Can read app state', async () => {
+      const result = await this.mcpClient.callTool('get_app_state', { key: 'cart' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!Array.isArray(data.cart)) {
+        throw new Error('Cart state is not an array');
+      }
+      logVerbose(`Cart has ${data.cart.length} items`);
+    });
+    
+    await this.test('macOS: Get device info', async () => {
+      const result = await this.mcpClient.callTool('get_device_info');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (data.platform !== 'macos') {
+        throw new Error(`Expected platform=macos, got ${data.platform}`);
+      }
+      logVerbose(`macOS version: ${data.version}`);
+    });
+  }
+
   async run() {
     console.log('');
     log('╔══════════════════════════════════════════════════════════════╗', 'cyan');
@@ -1562,6 +1623,10 @@ class E2ETestRunner {
       
       if (platform === 'rn-android') {
         await this.runReactNativeTests('android');
+      }
+      
+      if (platform === 'all' || platform === 'macos') {
+        await this.runMacOSTests();
       }
       
       // If we have a connected app, test app tools, SDK actions, and validation

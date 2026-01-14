@@ -107,12 +107,12 @@ if (BuildConfig.DEBUG) {
                                                 │
                                                 │ WebSocket
                                                 ▼
-                    ┌───────────────────────────────────────────┐
-                    │              Mobile Apps                   │
-                    ├─────────────┬─────────────┬───────────────┤
-                    │ React Native│    iOS      │   Android     │
-                    │    SDK      │    SDK      │     SDK       │
-                    └─────────────┴─────────────┴───────────────┘
+            ┌───────────────────────────────────────────────────────┐
+            │                    Native Apps                         │
+            ├─────────────┬─────────────┬─────────────┬─────────────┤
+            │ React Native│    iOS      │   Android   │   macOS     │
+            │    SDK      │    SDK      │     SDK     │    SDK      │
+            └─────────────┴─────────────┴─────────────┴─────────────┘
 ```
 
 ## Packages
@@ -131,6 +131,7 @@ The repository includes demo apps for each platform:
 - [`examples/react-native-demo`](./examples/react-native-demo) - React Native e-commerce app
 - [`examples/ios-swiftui-demo`](./examples/ios-swiftui-demo) - iOS SwiftUI e-commerce app
 - [`examples/android-compose-demo`](./examples/android-compose-demo) - Android Compose e-commerce app
+- [`examples/macos-swiftui-demo`](./examples/macos-swiftui-demo) - macOS SwiftUI e-commerce app
 
 ## Testing
 
@@ -142,6 +143,7 @@ yarn test:e2e
 yarn test:e2e:ios
 yarn test:e2e:android
 yarn test:e2e:rn
+yarn test:e2e:macos
 ```
 
 ## Available MCP Tools

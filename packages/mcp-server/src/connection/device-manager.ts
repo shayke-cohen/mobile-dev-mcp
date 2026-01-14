@@ -8,7 +8,7 @@ import { generateId } from '../utils/helpers.js';
 
 export interface Device {
   id: string;
-  platform: 'ios' | 'android' | 'react-native' | 'flutter';
+  platform: 'ios' | 'android' | 'react-native' | 'macos' | 'flutter';
   appName: string;
   appVersion: string;
   connection: WebSocket;
