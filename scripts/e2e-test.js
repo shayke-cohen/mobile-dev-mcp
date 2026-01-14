@@ -1272,10 +1272,7 @@ class E2ETestRunner {
     });
 
     // ==================== Tracing Tests ====================
-    // Skip tracing tests for web platform - these require native platform tracing support
-    if (platform === 'web') {
-      logInfo('Skipping trace tests for web platform (not yet supported)');
-    } else {
+    // All platforms support tracing now (including web)
     
     await this.test('get_traces returns trace history', async () => {
       const result = await this.mcpClient.callTool('get_traces', { limit: 10 });
@@ -1526,8 +1523,6 @@ class E2ETestRunner {
       
       await this.mcpClient.callTool('logout');
     });
-
-    } // End of tracing tests skip for web
 
     // Test cart-related text updates
     await this.test('cart total text updates after add', async () => {
