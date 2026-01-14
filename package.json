@@ -30,6 +30,7 @@
     "test:e2e:rn-android": "yarn pretest:e2e && node scripts/e2e-test.js --platform=rn-android",
     "test:e2e:macos": "yarn pretest:e2e && node scripts/e2e-test.js --platform=macos",
     "test:e2e:web": "yarn pretest:e2e && node scripts/e2e-test.js --platform=web",
+    "test:e2e:fastlane": "yarn pretest:e2e && node scripts/e2e-test-fastlane.js",
     "test:e2e:existing": "node scripts/e2e-test.js --use-existing-server",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
