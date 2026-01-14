@@ -17,6 +17,7 @@ import { logsTools, handleLogsTool } from './logs.js';
 import { deviceTools, handleDeviceTool } from './device.js';
 import { simulatorTools, handleSimulatorTool } from './simulator.js';
 import { buildTools, handleBuildTool } from './build.js';
+import { releaseTools, handleReleaseTool } from './release.js';
 import { actionTools, handleActionTool } from './actions.js';
 import { debugTools, handleDebugTool } from './debug.js';
 
@@ -35,6 +36,7 @@ const deviceRequiredTools = [
 const localTools = [
   ...simulatorTools,
   ...buildTools,
+  ...releaseTools,
 ];
 
 // Combine all tools
@@ -74,6 +76,19 @@ export function registerAllTools(server: Server, deviceManager: DeviceManager): 
       // Check if this is a build tool (doesn't require device connection)
       if (buildTools.some(t => t.name === name)) {
         result = await handleBuildTool(name, args || {});
+        
+        const text = typeof result === 'string'
+          ? result
+          : JSON.stringify(result, null, 2);
+
+        return {
+          content: [{ type: 'text', text }],
+        };
+      }
+
+      // Check if this is a release tool (doesn't require device connection)
+      if (releaseTools.some(t => t.name === name)) {
+        result = await handleReleaseTool(name, args || {});
         
         const text = typeof result === 'string'
           ? result
