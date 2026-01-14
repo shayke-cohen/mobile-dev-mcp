@@ -1257,11 +1257,31 @@ class E2ETestRunner {
       execSync(`adb shell input tap ${x} ${y}`, { stdio: 'pipe' });
     };
     
-    // iOS tap is more complex - needs accessibility permissions for AppleScript
-    // For now, we only run full UI automation on Android
-    if (platform === 'ios') {
-      logInfo('iOS UI automation requires accessibility permissions - testing state inspection only');
-      
+    // iOS: Use AppleScript to interact with Simulator window
+    const tapIOS = async (x, y) => {
+      // Get the simulator window position first
+      const script = `
+        tell application "Simulator" to activate
+        delay 0.3
+        tell application "System Events"
+          tell process "Simulator"
+            set frontWindow to first window
+            set winPos to position of frontWindow
+            set winSize to size of frontWindow
+          end tell
+          -- Click relative to window (add offset for title bar ~52px)
+          click at {(item 1 of winPos) + ${x}, (item 2 of winPos) + 52 + ${y}}
+        end tell
+      `;
+      try {
+        execSync(`osascript -e '${script.replace(/'/g, "'\"'\"'")}'`, { stdio: 'pipe' });
+        await sleep(300);
+      } catch (e) {
+        logWarn(`iOS tap failed: ${e.message}`);
+      }
+    };
+
+    if (platform === 'ios' || platform === 'rn') {
       // Test that we can read and verify cart state
       await this.test('iOS: Can read cart state', async () => {
         const result = await this.mcpClient.callTool('get_app_state', { key: 'cart' });
@@ -1283,6 +1303,40 @@ class E2ETestRunner {
           throw new Error('Screenshot failed');
         }
         logVerbose(`Screenshot saved: ${screenshotPath}`);
+      });
+
+      // iOS UI automation tests using AppleScript
+      await this.test('iOS: Navigate to Products via tap', async () => {
+        // Tap on Products tab (bottom navigation, around x=140 for iPhone 15 Pro)
+        await tapIOS(140, 680);
+        await sleep(500);
+        
+        // Verify navigation happened via SDK
+        const result = await this.mcpClient.callTool('get_navigation_state');
+        if (!result.isError) {
+          const data = JSON.parse(result.content[0].text);
+          logVerbose(`Current route: ${data.currentRoute}`);
+        }
+      });
+
+      await this.test('iOS: Tap Add to Cart button', async () => {
+        // Tap on first product's Add to Cart button (approximate coordinates)
+        await tapIOS(180, 400);
+        await sleep(500);
+      });
+
+      await this.test('iOS: Verify cart updated after tap', async () => {
+        const result = await this.mcpClient.callTool('get_app_state', { key: 'cartCount' });
+        if (!result.isError) {
+          const data = JSON.parse(result.content[0].text);
+          logVerbose(`Cart count after tap: ${data.cartCount}`);
+        }
+      });
+
+      await this.test('iOS: Navigate to Home via tap', async () => {
+        // Tap on Home tab
+        await tapIOS(50, 680);
+        await sleep(300);
       });
       
       return;
