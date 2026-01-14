@@ -9,12 +9,49 @@ This guide explains how to test the Mobile Dev MCP server with and without Curso
 pnpm install
 pnpm build
 
+# Run E2E tests
+pnpm test:e2e
+
 # Run automated tests
 node scripts/test-client.js --mode=test
 
 # Run interactive test client
 node scripts/test-client.js
 ```
+
+## Running Server Separately (Recommended for Debugging)
+
+For better visibility into server logs and easier debugging, run the server in a separate terminal:
+
+```bash
+# Terminal 1: Start server in standalone mode
+pnpm start:server
+
+# Terminal 2: Run E2E tests against existing server
+pnpm test:e2e:existing --platform=ios
+```
+
+### Server Modes
+
+| Mode | Command | Description |
+|------|---------|-------------|
+| **Standalone** | `pnpm start:server` | WebSocket only, for testing/debugging |
+| **Normal** | (via Cursor) | stdio + WebSocket, for Cursor IDE |
+
+### Standalone Server Options
+
+```bash
+# Default port 8765
+pnpm start:server
+
+# Custom port
+MCP_PORT=9000 pnpm start:server
+
+# Debug logging
+pnpm start:server:debug
+```
+
+The standalone server displays all activity in the terminal, making it easier to debug issues.
 
 ## Testing Methods
 
@@ -290,7 +327,7 @@ ws.on('message', (data) => {
 ## E2E Tests
 
 The e2e test suite performs a full integration test:
-1. Starts the MCP server
+1. Starts the MCP server (or connects to existing one)
 2. Boots simulators/emulators if needed
 3. Builds and runs demo apps (iOS SwiftUI, Android Compose)
 4. Waits for SDK connection
@@ -306,12 +343,29 @@ pnpm test:e2e:ios
 # Android only
 pnpm test:e2e:android
 
+# Use existing server (for debugging - run pnpm start:server first)
+pnpm test:e2e:existing --platform=ios
+
 # Skip build (test already running app)
 node scripts/e2e-test.js --skip-build
 
 # Verbose output
 node scripts/e2e-test.js --platform=ios -v
 ```
+
+### Debugging with Separate Server
+
+For easier debugging, run the server in one terminal and tests in another:
+
+```bash
+# Terminal 1: Start server with debug logging
+pnpm start:server:debug
+
+# Terminal 2: Run tests
+pnpm test:e2e:existing --platform=android -v
+```
+
+This lets you see server logs in real-time while tests run.
 
 ### Supported Platforms
 

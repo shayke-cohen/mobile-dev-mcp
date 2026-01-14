@@ -15,6 +15,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:server": "pnpm --filter @mobile-dev-mcp/server dev",
+    "start:server": "./scripts/start-server.sh",
+    "start:server:debug": "./scripts/start-server.sh --debug",
     "test": "turbo run test",
     "test:server": "./scripts/test-server.sh",
     "test:client": "node scripts/test-client.js",
@@ -22,6 +24,7 @@
     "test:e2e": "node scripts/e2e-test.js",
     "test:e2e:ios": "node scripts/e2e-test.js --platform=ios",
     "test:e2e:android": "node scripts/e2e-test.js --platform=android",
+    "test:e2e:existing": "node scripts/e2e-test.js --use-existing-server",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
     "typecheck": "turbo run typecheck"

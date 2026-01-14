@@ -13,9 +13,10 @@ Start the MCP server and a demo app for local development.
 2. **Install dependencies** (if needed)
    - Run `pnpm install` in the root directory
 
-3. **Start the MCP server**
-   - Run `pnpm dev:server` from the root directory
-   - Verify it starts on ws://localhost:8765
+3. **Start the MCP server** (choose one):
+   - For Cursor integration: Server starts automatically via stdio
+   - For debugging/testing: `pnpm start:server` (runs in standalone WebSocket-only mode)
+   - For debug logging: `pnpm start:server:debug`
 
 4. **Ask which demo app to run**
    - React Native (iOS or Android)
@@ -29,5 +30,14 @@ Start the MCP server and a demo app for local development.
    - For Android Compose: Open in Android Studio and run on emulator
 
 6. **Verify connection**
-   - Check MCP server logs show device connected
+   - In standalone mode: Server logs show device connected
+   - In app: MCP Status Banner shows "Connected" (green)
    - Test with a simple tool like `get_device_info`
+
+## Server Modes
+
+| Mode | Command | Use Case |
+|------|---------|----------|
+| Cursor Integration | (automatic) | Normal usage with Cursor AI |
+| Standalone | `pnpm start:server` | Debugging, testing, development |
+| Standalone Debug | `pnpm start:server:debug` | Verbose logging |

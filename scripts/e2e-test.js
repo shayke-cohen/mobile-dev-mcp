@@ -4,7 +4,7 @@
  * MCP Server End-to-End Test
  * 
  * This script performs a full integration test:
- * 1. Starts the MCP server
+ * 1. Starts the MCP server (or connects to existing one)
  * 2. Boots simulators/emulators if needed
  * 3. Builds and runs demo apps
  * 4. Waits for SDK connection
@@ -12,10 +12,16 @@
  * 6. Reports results
  * 
  * Usage:
- *   node scripts/e2e-test.js                    # Run all tests
- *   node scripts/e2e-test.js --platform=ios     # iOS only
- *   node scripts/e2e-test.js --platform=android # Android only
- *   node scripts/e2e-test.js --skip-build       # Skip build, just test
+ *   node scripts/e2e-test.js                      # Run all tests
+ *   node scripts/e2e-test.js --platform=ios       # iOS only
+ *   node scripts/e2e-test.js --platform=android   # Android only
+ *   node scripts/e2e-test.js --skip-build         # Skip build, just test
+ *   node scripts/e2e-test.js --use-existing-server # Connect to running server
+ *   node scripts/e2e-test.js --verbose            # Verbose output
+ * 
+ * For debugging, run the server separately:
+ *   Terminal 1: pnpm start:server
+ *   Terminal 2: pnpm test:e2e:existing --platform=ios
  */
 
 const { spawn, execSync } = require('child_process');
@@ -56,6 +62,7 @@ const args = process.argv.slice(2);
 const platform = args.find(a => a.startsWith('--platform='))?.split('=')[1] || 'all';
 const skipBuild = args.includes('--skip-build');
 const verbose = args.includes('--verbose') || args.includes('-v');
+const useExistingServer = args.includes('--use-existing-server');
 
 // ===================== Utilities =====================
 
@@ -123,9 +130,42 @@ class MCPClient {
     this.buffer = '';
     this.connectedDevices = [];
     this.wsConnections = new Set();
+    this.useExistingServer = useExistingServer;
   }
 
   async start() {
+    if (this.useExistingServer) {
+      return this.connectToExistingServer();
+    }
+    return this.spawnServer();
+  }
+
+  async connectToExistingServer() {
+    logInfo('Connecting to existing MCP server...');
+    
+    // Verify the server is running by connecting to WebSocket
+    return new Promise((resolve, reject) => {
+      const ws = new WebSocket(`ws://localhost:${CONFIG.wsPort}`);
+      const timeout = setTimeout(() => {
+        ws.close();
+        reject(new Error(`Cannot connect to existing server at ws://localhost:${CONFIG.wsPort}. Make sure to run: pnpm start:server`));
+      }, 5000);
+      
+      ws.on('open', () => {
+        clearTimeout(timeout);
+        logInfo('Connected to existing server WebSocket');
+        ws.close();
+        resolve();
+      });
+      
+      ws.on('error', (err) => {
+        clearTimeout(timeout);
+        reject(new Error(`Cannot connect to existing server: ${err.message}. Make sure to run: pnpm start:server`));
+      });
+    });
+  }
+
+  async spawnServer() {
     return new Promise((resolve, reject) => {
       logInfo('Starting MCP server...');
       
@@ -183,6 +223,11 @@ class MCPClient {
   }
 
   async call(method, params = {}) {
+    if (this.useExistingServer) {
+      // For existing server, spawn a temporary MCP client process
+      return this.callViaTempClient(method, params);
+    }
+    
     return new Promise((resolve, reject) => {
       const id = ++this.requestId;
       
@@ -205,6 +250,64 @@ class MCPClient {
     });
   }
 
+  async callViaTempClient(method, params = {}) {
+    // Spawn a temporary server process to handle the MCP call
+    // This is needed because MCP uses stdio, which requires parent-child relationship
+    return new Promise((resolve, reject) => {
+      const tempServer = spawn('node', [CONFIG.serverPath], {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        env: { ...process.env, MCP_LOG_LEVEL: 'error', MCP_PORT: '0' } // Use different port
+      });
+      
+      let buffer = '';
+      const requestId = 1;
+      
+      tempServer.stdout.on('data', (data) => {
+        buffer += data.toString();
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const message = JSON.parse(line);
+            if (message.id === requestId) {
+              tempServer.kill();
+              if (message.error) {
+                reject(new Error(message.error.message || JSON.stringify(message.error)));
+              } else {
+                resolve(message.result);
+              }
+            }
+          } catch (e) {
+            // Not JSON
+          }
+        }
+      });
+      
+      tempServer.on('error', (err) => {
+        reject(err);
+      });
+      
+      // Wait for server to start, then send request
+      setTimeout(() => {
+        const request = {
+          jsonrpc: '2.0',
+          id: requestId,
+          method,
+          params
+        };
+        tempServer.stdin.write(JSON.stringify(request) + '\n');
+      }, 2000);
+      
+      // Timeout
+      setTimeout(() => {
+        tempServer.kill();
+        reject(new Error('Request timeout'));
+      }, CONFIG.timeout.toolCall + 3000);
+    });
+  }
+
   async listTools() {
     const result = await this.call('tools/list');
     return result.tools;
@@ -216,7 +319,7 @@ class MCPClient {
   }
 
   stop() {
-    if (this.server) {
+    if (this.server && !this.useExistingServer) {
       this.server.kill();
       this.server = null;
     }
