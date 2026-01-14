@@ -513,6 +513,25 @@ class E2ETestRunner {
       execSync('pkill -f "react-native.*start" 2>/dev/null || true', { stdio: 'ignore' });
     } catch (e) {}
   }
+  
+  stopMacOSApp() {
+    if (this.macosProcess) {
+      logInfo('Stopping macOS app...');
+      try {
+        process.kill(-this.macosProcess.pid, 'SIGTERM');
+      } catch (e) {
+        try {
+          this.macosProcess.kill('SIGTERM');
+        } catch (e2) {}
+      }
+      this.macosProcess = null;
+    }
+    
+    // Kill any orphaned MCPDemoApp processes
+    try {
+      execSync('pkill -f "MCPDemoApp" 2>/dev/null || true', { stdio: 'ignore' });
+    } catch (e) {}
+  }
 
   async buildAndRunReactNative(simulator, rnPlatform = 'ios') {
     logInfo(`Building React Native app for ${rnPlatform}...`);
@@ -1530,14 +1549,20 @@ class E2ETestRunner {
         exec(`cd "${projectPath}" && swift build`, { maxBuffer: 50 * 1024 * 1024 });
         
         logVerbose('Running macOS app...');
-        // Run in background
-        const child = spawn('swift', ['run'], {
+        // Run the built executable directly (more stable than swift run)
+        const executablePath = path.join(projectPath, '.build/debug/MCPDemoApp');
+        const child = spawn(executablePath, [], {
           cwd: projectPath,
           detached: true,
-          stdio: 'ignore'
+          stdio: ['ignore', 'pipe', 'pipe']  // Keep stdout/stderr for stability
         });
         child.unref();
         this.macosProcess = child;
+        
+        // Log any errors from the macOS app
+        child.stderr.on('data', (data) => {
+          if (verbose) console.log(`  [macOS] ${data.toString().trim()}`);
+        });
         
         // Wait for app to start
         await sleep(3000);
@@ -1651,6 +1676,7 @@ class E2ETestRunner {
       // Cleanup
       logStep('CLEANUP', 'Cleaning up...');
       this.stopMetroBundler();
+      this.stopMacOSApp();
       this.mcpClient.stop();
       logSuccess('Server stopped');
     }

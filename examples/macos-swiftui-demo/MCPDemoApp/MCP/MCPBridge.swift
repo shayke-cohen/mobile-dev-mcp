@@ -511,7 +511,7 @@ final class MCPBridge: ObservableObject {
         
         if let key = key {
             let value = UserDefaults.standard.object(forKey: key)
-            return ["key": key, "value": value ?? NSNull(), "exists": value != nil]
+            return ["key": key, "value": sanitizeForJSON(value) ?? NSNull(), "exists": value != nil]
         }
         
         let pattern = params["pattern"] as? String
@@ -525,10 +525,36 @@ final class MCPBridge: ObservableObject {
         
         var storage: [String: Any] = [:]
         for key in allKeys.prefix(100) {
-            storage[key] = UserDefaults.standard.object(forKey: key) ?? NSNull()
+            if let value = UserDefaults.standard.object(forKey: key) {
+                storage[key] = sanitizeForJSON(value) ?? NSNull()
+            }
         }
         
         return ["keyCount": allKeys.count, "keys": Array(allKeys.prefix(100)), "storage": storage]
+    }
+    
+    /// Convert values to JSON-safe types (handle Data, Date, etc.)
+    private func sanitizeForJSON(_ value: Any?) -> Any? {
+        guard let value = value else { return nil }
+        
+        switch value {
+        case is String, is Int, is Double, is Float, is Bool, is NSNumber:
+            return value
+        case let data as Data:
+            return "<Data: \(data.count) bytes>"
+        case let date as Date:
+            return ISO8601DateFormatter().string(from: date)
+        case let array as [Any]:
+            return array.compactMap { sanitizeForJSON($0) }
+        case let dict as [String: Any]:
+            var result: [String: Any] = [:]
+            for (k, v) in dict {
+                result[k] = sanitizeForJSON(v) ?? NSNull()
+            }
+            return result
+        default:
+            return String(describing: value)
+        }
     }
     
     private func mockNetworkRequest(params: [String: Any]) -> [String: Any] {

@@ -212,12 +212,13 @@ class AppState: ObservableObject {
     }
     
     func loadMockProducts() {
+        // Use same products as iOS demo for consistent E2E testing
         products = [
-            Product(id: "1", name: "MacBook Pro 16\"", description: "Apple M3 Pro chip, 18GB RAM, 512GB SSD", price: 2499.99, category: "Computers", rating: 4.9, inStock: true),
-            Product(id: "2", name: "Studio Display", description: "27-inch 5K Retina display with 12MP camera", price: 1599.99, category: "Displays", rating: 4.7, inStock: true),
-            Product(id: "3", name: "Magic Keyboard", description: "Wireless keyboard with Touch ID", price: 199.99, category: "Accessories", rating: 4.5, inStock: true),
-            Product(id: "4", name: "Magic Trackpad", description: "Wireless Multi-Touch trackpad", price: 149.99, category: "Accessories", rating: 4.6, inStock: false),
-            Product(id: "5", name: "AirPods Pro", description: "Active Noise Cancellation, Spatial Audio", price: 249.99, category: "Audio", rating: 4.8, inStock: true),
+            Product(id: "1", name: "Wireless Headphones", description: "High-quality wireless headphones with noise cancellation", price: 149.99, category: "Electronics", rating: 4.5, inStock: true),
+            Product(id: "2", name: "Smart Watch", description: "Feature-rich smartwatch with health tracking", price: 299.99, category: "Electronics", rating: 4.8, inStock: true),
+            Product(id: "3", name: "Running Shoes", description: "Comfortable running shoes for everyday training", price: 89.99, category: "Sports", rating: 4.3, inStock: true),
+            Product(id: "4", name: "Laptop Stand", description: "Ergonomic aluminum laptop stand", price: 49.99, category: "Office", rating: 4.6, inStock: false),
+            Product(id: "5", name: "Coffee Maker", description: "Automatic coffee maker with timer", price: 79.99, category: "Home", rating: 4.2, inStock: true),
         ]
     }
     
