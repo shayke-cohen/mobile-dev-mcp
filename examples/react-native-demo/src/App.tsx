@@ -51,7 +51,9 @@ function App(): React.JSX.Element {
 
   // Initialize MCP SDK
   useEffect(() => {
+    console.log('[App] useEffect for MCP init called, __DEV__=' + __DEV__);
     if (__DEV__) {
+      console.log('[App] Inside __DEV__ block, calling MCPBridge.initialize');
       // Initialize the MCP SDK
       // SDK auto-detects platform and uses appropriate host:
       // - Android emulator: ws://10.0.2.2:8765

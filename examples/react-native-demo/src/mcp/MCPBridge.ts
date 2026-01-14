@@ -159,9 +159,18 @@ class MCPBridgeClass {
   private stateCallbacks: Set<StateCallback> = new Set();
 
   /**
+   * Check if SDK is initialized
+   */
+  isInitialized(): boolean {
+    return this.initialized;
+  }
+
+  /**
    * Initialize the MCP SDK
    */
   initialize(config: MCPConfig = {}): void {
+    console.log('[MCP SDK] Initialize called, __DEV__=' + (typeof __DEV__ !== 'undefined' ? __DEV__ : 'undefined'));
+    
     if (typeof __DEV__ !== 'undefined' && !__DEV__) {
       console.log('[MCP SDK] Only works in development mode');
       return;
@@ -173,6 +182,7 @@ class MCPBridgeClass {
     }
 
     this.config = { ...this.config, ...config };
+    console.log('[MCP SDK] Config set, connecting to ' + this.config.serverUrl);
     this.connect();
     this.initialized = true;
     console.log(`[MCP SDK] Initialized, connecting to ${this.config.serverUrl}`);
@@ -182,12 +192,19 @@ class MCPBridgeClass {
    * Connect to WebSocket server
    */
   private connect(): void {
-    this.logActivity('Connecting to ' + this.config.serverUrl + '...');
+    const url = this.config.serverUrl;
+    console.log('[MCP SDK] connect() called, url=' + url);
+    this.logActivity('Connecting to ' + url + '...');
     
     try {
-      this.ws = new WebSocket(this.config.serverUrl);
+      console.log('[MCP SDK] Creating WebSocket to ' + url);
+      // Use globalThis.WebSocket to ensure we get the native WebSocket
+      const WS = globalThis.WebSocket || WebSocket;
+      this.ws = new WS(url);
+      console.log('[MCP SDK] WebSocket instance created');
 
       this.ws.onopen = () => {
+        console.log('[MCP SDK] WebSocket onopen fired!');
         this._isConnected = true;
         this._reconnectCount = 0;
         this.logActivity('Connected!');
@@ -195,18 +212,21 @@ class MCPBridgeClass {
         
         // Send handshake (expected by device manager)
         const { Platform } = require('react-native');
-        this.sendMessage({
+        const handshake = {
           type: 'handshake',
           platform: 'react-native',
           appName: 'MCP Demo Store',
           appVersion: '1.0.0',
           deviceId: `rn_${Platform.OS}_${Date.now()}`,
           capabilities: ['state', 'logs', 'network', 'featureFlags', 'actions', 'ui', 'tracing'],
-        });
+        };
+        console.log('[MCP SDK] Sending handshake:', JSON.stringify(handshake));
+        this.sendMessage(handshake);
         this.logActivity('Sent handshake');
       };
 
-      this.ws.onclose = () => {
+      this.ws.onclose = (event) => {
+        console.log('[MCP SDK] WebSocket onclose fired, code=' + event?.code + ', reason=' + event?.reason);
         this._isConnected = false;
         this.logActivity('Disconnected');
         this.notifyStateChange();
@@ -214,6 +234,7 @@ class MCPBridgeClass {
       };
 
       this.ws.onerror = (error) => {
+        console.log('[MCP SDK] WebSocket onerror fired:', JSON.stringify(error));
         this._isConnected = false;
         this.logActivity('Connection error');
         this.notifyStateChange();
@@ -1356,3 +1377,14 @@ class MCPBridgeClass {
 
 // Export singleton instance
 export const MCPBridge = new MCPBridgeClass();
+
+// Auto-initialize in development mode
+if (typeof __DEV__ !== 'undefined' && __DEV__) {
+  console.log('[MCP SDK] Auto-initializing in development mode...');
+  setTimeout(() => {
+    if (!MCPBridge.isInitialized()) {
+      console.log('[MCP SDK] Calling initialize() from auto-init...');
+      MCPBridge.initialize({ debug: true });
+    }
+  }, 500);
+}
