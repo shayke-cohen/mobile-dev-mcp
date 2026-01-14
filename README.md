@@ -279,6 +279,7 @@ The repository includes demo apps for each platform:
 |------|-------------|
 | `simulator_screenshot` | Capture iOS/macOS screenshot |
 | `emulator_screenshot` | Capture Android screenshot |
+| `capture_screenshot` | Capture web viewport (web platform) |
 
 ## SDK Features
 

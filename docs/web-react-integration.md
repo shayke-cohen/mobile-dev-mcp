@@ -362,13 +362,14 @@ When connected, AI can use these tools:
 | `find_element` | Find elements by testId |
 | `get_element_text` | Get text content |
 | `simulate_interaction` | Click, type, scroll |
+| `capture_screenshot` | Capture viewport with visible elements |
 | `get_traces` | View function traces |
 | `get_active_traces` | View in-progress traces |
 | `get_logs` | View console logs |
 | `get_recent_errors` | View error logs |
 | `list_feature_flags` | List feature flags |
 | `toggle_feature_flag` | Toggle flag values |
-| `get_network_requests` | View API requests |
+| `list_network_requests` | View API requests |
 | `mock_network_request` | Create network mocks |
 
 ## Troubleshooting
