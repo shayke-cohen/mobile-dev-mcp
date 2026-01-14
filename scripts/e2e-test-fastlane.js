@@ -9,23 +9,25 @@
  * Usage:
  *   node scripts/e2e-test-fastlane.js
  *   node scripts/e2e-test-fastlane.js --use-existing-server
+ *   node scripts/e2e-test-fastlane.js --verbose
  */
 
 const { spawn } = require('child_process');
-const WebSocket = require('ws');
 const fs = require('fs');
 const path = require('path');
 
 // Configuration
-const MCP_SERVER_PORT = process.env.MCP_PORT || 3000;
-const MCP_SERVER_URL = `ws://localhost:${MCP_SERVER_PORT}`;
+const SERVER_PATH = path.join(__dirname, '..', 'packages', 'mcp-server', 'dist', 'index.js');
 const USE_EXISTING_SERVER = process.argv.includes('--use-existing-server');
 const VERBOSE = process.argv.includes('--verbose') || process.argv.includes('-v');
+const TIMEOUT_TOOL_CALL = 30000;
+const TIMEOUT_SERVER_START = 3000;
 
 // Test state
 let serverProcess = null;
-let wsClient = null;
-let messageId = 1;
+let requestId = 0;
+let pendingRequests = new Map();
+let buffer = '';
 let tempDirs = [];
 
 // Colors for output
@@ -72,57 +74,68 @@ function logVerbose(message) {
   }
 }
 
-// MARK: - Server Management
+// MARK: - Server Management (stdio-based MCP)
+
+function processBuffer() {
+  const lines = buffer.split('\n');
+  buffer = lines.pop() || '';
+  
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    
+    try {
+      const response = JSON.parse(line);
+      if (response.id && pendingRequests.has(response.id)) {
+        const { resolve } = pendingRequests.get(response.id);
+        pendingRequests.delete(response.id);
+        resolve(response);
+      }
+    } catch (e) {
+      logVerbose(`Non-JSON line: ${line.substring(0, 100)}`);
+    }
+  }
+}
 
 async function startServer() {
   if (USE_EXISTING_SERVER) {
-    logInfo('Using existing MCP server...');
+    logInfo('Using existing server - spawning temp client for each call');
     return;
   }
 
   logInfo('Starting MCP server...');
   
   return new Promise((resolve, reject) => {
-    const serverPath = path.join(__dirname, '..', 'packages', 'mcp-server');
-    
-    serverProcess = spawn('node', ['dist/index.js'], {
-      cwd: serverPath,
-      env: { ...process.env, MCP_PORT: MCP_SERVER_PORT },
-      stdio: ['ignore', 'pipe', 'pipe'],
+    serverProcess = spawn('node', [SERVER_PATH], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env, MCP_LOG_LEVEL: VERBOSE ? 'debug' : 'info' },
     });
 
-    let started = false;
-
     serverProcess.stdout.on('data', (data) => {
-      const output = data.toString();
-      logVerbose(`Server: ${output.trim()}`);
-      
-      if (!started && (output.includes('WebSocket server') || output.includes('listening'))) {
-        started = true;
-        setTimeout(resolve, 500); // Give it a moment to fully initialize
-      }
+      buffer += data.toString();
+      processBuffer();
     });
 
     serverProcess.stderr.on('data', (data) => {
-      logVerbose(`Server stderr: ${data.toString().trim()}`);
+      const msg = data.toString().trim();
+      if (VERBOSE && msg) {
+        console.log(`  [server] ${msg}`);
+      }
     });
 
     serverProcess.on('error', (err) => {
-      logError(`Failed to start server: ${err.message}`);
+      logError(`Server error: ${err.message}`);
       reject(err);
     });
 
-    // Timeout if server doesn't start
+    // Give server time to start
     setTimeout(() => {
-      if (!started) {
-        started = true;
-        resolve(); // Try to connect anyway
-      }
-    }, 5000);
+      logSuccess('MCP server started');
+      resolve();
+    }, TIMEOUT_SERVER_START);
   });
 }
 
-async function stopServer() {
+function stopServer() {
   if (serverProcess) {
     logInfo('Stopping MCP server...');
     serverProcess.kill('SIGTERM');
@@ -130,66 +143,102 @@ async function stopServer() {
   }
 }
 
-// MARK: - WebSocket Client
+// MARK: - MCP Client (stdio-based)
 
-async function connectToServer() {
-  logInfo(`Connecting to MCP server at ${MCP_SERVER_URL}...`);
+async function call(method, params = {}) {
+  if (USE_EXISTING_SERVER) {
+    return callViaTempClient(method, params);
+  }
   
   return new Promise((resolve, reject) => {
-    wsClient = new WebSocket(MCP_SERVER_URL);
+    const id = ++requestId;
     
-    wsClient.on('open', () => {
-      logSuccess('Connected to MCP server');
-      resolve();
-    });
+    const request = {
+      jsonrpc: '2.0',
+      id,
+      method,
+      params,
+    };
     
-    wsClient.on('error', (err) => {
-      logError(`WebSocket error: ${err.message}`);
-      reject(err);
-    });
-
+    logVerbose(`Request: ${JSON.stringify(request).substring(0, 150)}...`);
+    
+    pendingRequests.set(id, { resolve, reject });
+    serverProcess.stdin.write(JSON.stringify(request) + '\n');
+    
     setTimeout(() => {
-      reject(new Error('Connection timeout'));
-    }, 10000);
+      if (pendingRequests.has(id)) {
+        pendingRequests.delete(id);
+        reject(new Error('Request timeout'));
+      }
+    }, TIMEOUT_TOOL_CALL);
   });
 }
 
-async function sendMessage(message) {
+async function callViaTempClient(method, params = {}) {
+  // Spawn a temporary server process for this single call
   return new Promise((resolve, reject) => {
-    const id = messageId++;
-    const fullMessage = { ...message, id };
+    const tempServer = spawn('node', [SERVER_PATH], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
     
-    logVerbose(`Sending: ${JSON.stringify(fullMessage).substring(0, 200)}...`);
+    let tempBuffer = '';
+    let responded = false;
     
-    const handler = (data) => {
-      try {
-        const response = JSON.parse(data.toString());
-        if (response.id === id) {
-          wsClient.off('message', handler);
-          logVerbose(`Received: ${JSON.stringify(response).substring(0, 200)}...`);
-          resolve(response);
-        }
-      } catch (err) {
-        // Ignore parse errors for other messages
-      }
+    const request = {
+      jsonrpc: '2.0',
+      id: 1,
+      method,
+      params,
     };
     
-    wsClient.on('message', handler);
-    wsClient.send(JSON.stringify(fullMessage));
+    tempServer.stdout.on('data', (data) => {
+      tempBuffer += data.toString();
+      const lines = tempBuffer.split('\n');
+      
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const response = JSON.parse(line);
+          if (response.id === 1 && !responded) {
+            responded = true;
+            tempServer.kill('SIGTERM');
+            resolve(response);
+          }
+        } catch (e) {
+          // Not JSON
+        }
+      }
+    });
     
+    tempServer.stderr.on('data', (data) => {
+      if (VERBOSE) {
+        console.log(`  [temp-server] ${data.toString().trim()}`);
+      }
+    });
+    
+    tempServer.on('error', (err) => {
+      reject(err);
+    });
+    
+    // Wait a moment for server to initialize, then send request
     setTimeout(() => {
-      wsClient.off('message', handler);
-      reject(new Error('Response timeout'));
-    }, 30000);
+      tempServer.stdin.write(JSON.stringify(request) + '\n');
+    }, 1000);
+    
+    // Timeout
+    setTimeout(() => {
+      if (!responded) {
+        tempServer.kill('SIGTERM');
+        reject(new Error('Request timeout'));
+      }
+    }, TIMEOUT_TOOL_CALL);
   });
 }
 
 async function callTool(name, args = {}) {
-  const response = await sendMessage({
-    jsonrpc: '2.0',
-    method: 'tools/call',
-    params: { name, arguments: args },
-  });
+  const response = await call('tools/call', { name, arguments: args });
+  
+  logVerbose(`Response: ${JSON.stringify(response).substring(0, 200)}...`);
   
   if (response.error) {
     throw new Error(response.error.message || JSON.stringify(response.error));
@@ -206,13 +255,6 @@ async function callTool(name, args = {}) {
   }
   
   return response.result;
-}
-
-async function disconnect() {
-  if (wsClient) {
-    wsClient.close();
-    wsClient = null;
-  }
 }
 
 // MARK: - Test Utilities
@@ -290,7 +332,7 @@ async function testFastlaneCheck() {
     const result = await callTool('fastlane_check', {});
     
     if (typeof result.installed !== 'boolean') {
-      throw new Error('Expected installed to be boolean');
+      throw new Error(`Expected installed to be boolean, got ${typeof result.installed}`);
     }
     if (!result.message) {
       throw new Error('Expected message in response');
@@ -299,7 +341,7 @@ async function testFastlaneCheck() {
     if (result.installed) {
       logInfo(`Fastlane is installed: ${result.version} at ${result.path}`);
     } else {
-      logInfo('Fastlane is not installed');
+      logInfo('Fastlane is not installed on this machine');
     }
   });
   
@@ -307,11 +349,11 @@ async function testFastlaneCheck() {
     const result = await callTool('fastlane_check', { install: false });
     
     if (typeof result.installed !== 'boolean') {
-      throw new Error('Expected installed to be boolean');
+      throw new Error(`Expected installed to be boolean, got ${typeof result.installed}`);
     }
   });
   
-  // Only test installation if fastlane is not already installed
+  // Only test installation hint if fastlane is not already installed
   const checkResult = await callTool('fastlane_check', {});
   if (!checkResult.installed) {
     await runTest('fastlane_check shows install hint when not installed', async () => {
@@ -402,15 +444,20 @@ async function testFastlaneInit() {
   });
   
   await runTest('fastlane_init fails for non-existent path', async () => {
-    const result = await callTool('fastlane_init', { 
-      projectPath: '/tmp/non-existent-project-12345',
-    });
-    
-    if (result.success) {
-      throw new Error('Should fail for non-existent path');
-    }
-    if (!result.error) {
-      throw new Error('Should include error message');
+    try {
+      const result = await callTool('fastlane_init', { 
+        projectPath: '/tmp/non-existent-project-12345',
+      });
+      
+      // If we get here, the tool didn't throw but returned an error
+      if (result.success) {
+        throw new Error('Should fail for non-existent path');
+      }
+    } catch (err) {
+      // Expected - tool throws an error for non-existent path
+      if (!err.message.includes('not found') && !err.message.includes('Project path')) {
+        throw err;
+      }
     }
   });
 }
@@ -428,26 +475,31 @@ async function testFastlaneListLanes() {
     // List lanes
     const result = await callTool('fastlane_list_lanes', { projectPath: dir });
     
-    if (!result.success) {
-      throw new Error(`List lanes failed: ${result.error}`);
+    if (!result.initialized) {
+      throw new Error(`List lanes failed: ${result.message || 'unknown error'}`);
     }
-    if (!result.lanes || !Array.isArray(result.lanes)) {
-      throw new Error('Expected lanes array');
+    if (!result.lanes || typeof result.lanes !== 'object') {
+      throw new Error('Expected lanes object');
+    }
+    if (typeof result.totalLanes !== 'number') {
+      throw new Error('Expected totalLanes count');
     }
     
-    // Should have default lanes created by init
-    const laneNames = result.lanes.map(l => l.name);
-    logVerbose(`Found lanes: ${laneNames.join(', ')}`);
+    logVerbose(`Found ${result.totalLanes} lanes across ${result.fastlaneDirs?.length || 0} fastlane dirs`);
   });
   
-  await runTest('fastlane_list_lanes fails for project without fastlane', async () => {
+  await runTest('fastlane_list_lanes returns not initialized for project without fastlane', async () => {
     const dir = createTempDir('list-no-fastlane');
     createMockProject(dir, 'ios');
     
     const result = await callTool('fastlane_list_lanes', { projectPath: dir });
     
-    if (result.success) {
-      throw new Error('Should fail for project without fastlane');
+    // Should return initialized: false (not throw)
+    if (result.initialized) {
+      throw new Error('Should return initialized: false for project without fastlane');
+    }
+    if (!result.message) {
+      throw new Error('Expected message explaining fastlane not initialized');
     }
   });
 }
@@ -541,7 +593,6 @@ async function main() {
   try {
     // Setup
     await startServer();
-    await connectToServer();
     
     // Run all test suites
     await testFastlaneCheck();
@@ -555,8 +606,7 @@ async function main() {
     tests.failed++;
   } finally {
     // Cleanup
-    await disconnect();
-    await stopServer();
+    stopServer();
     cleanupTempDirs();
   }
   

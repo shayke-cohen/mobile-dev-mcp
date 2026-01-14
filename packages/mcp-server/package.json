@@ -11,7 +11,7 @@
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "test": "vitest",
+    "test": "vitest run",
     "lint": "eslint -c ../../eslint.config.js src/",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
