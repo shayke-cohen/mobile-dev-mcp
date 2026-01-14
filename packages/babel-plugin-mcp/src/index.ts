@@ -5,8 +5,8 @@
  * Only active in development mode (__DEV__ === true)
  */
 
+import type { PluginObj, NodePath, types as BabelTypes } from '@babel/core';
 import { declare } from '@babel/helper-plugin-utils';
-import type { PluginObj, NodePath, types as t } from '@babel/core';
 
 interface PluginOptions {
   /** Include patterns for files to instrument (glob patterns) */
@@ -41,7 +41,7 @@ const DEFAULT_OPTIONS: PluginOptions = {
   traceFn: 'MCPBridge.trace',
 };
 
-export default declare((api, options: PluginOptions) => {
+export default declare((api: { assertVersion: (v: number) => void; types: typeof BabelTypes }, options: PluginOptions) => {
   api.assertVersion(7);
 
   const opts = { ...DEFAULT_OPTIONS, ...options };
@@ -88,7 +88,7 @@ export default declare((api, options: PluginOptions) => {
   /**
    * Get function name from various node types
    */
-  function getFunctionName(path: NodePath<t.Function>): string {
+  function getFunctionName(path: NodePath<BabelTypes.Function>): string {
     const parent = path.parent;
     const node = path.node;
 
@@ -142,7 +142,7 @@ export default declare((api, options: PluginOptions) => {
   /**
    * Count lines in function body
    */
-  function countBodyLines(node: t.BlockStatement): number {
+  function countBodyLines(node: BabelTypes.BlockStatement): number {
     if (!node.loc) return 0;
     return node.loc.end.line - node.loc.start.line;
   }
@@ -154,9 +154,9 @@ export default declare((api, options: PluginOptions) => {
     functionName: string,
     className: string | null,
     isAsync: boolean,
-    originalBody: t.BlockStatement,
+    originalBody: BabelTypes.BlockStatement,
     paramsNames: string[]
-  ): t.BlockStatement {
+  ): BabelTypes.BlockStatement {
     const fullName = className ? `${className}.${functionName}` : functionName;
     const fileRef = currentFileName.split('/').pop() || 'unknown';
 
@@ -227,11 +227,11 @@ export default declare((api, options: PluginOptions) => {
   /**
    * Check if function should be traced
    */
-  function shouldTrace(path: NodePath<t.Function>): boolean {
+  function shouldTrace(path: NodePath<BabelTypes.Function>): boolean {
     const node = path.node;
 
     // Skip if already traced (has __mcp_traced marker)
-    if ((node as any).__mcp_traced) {
+    if ((node as BabelTypes.Function & { __mcp_traced?: boolean }).__mcp_traced) {
       return false;
     }
 
@@ -276,11 +276,25 @@ export default declare((api, options: PluginOptions) => {
     return true;
   }
 
+  /**
+   * Get parameter names from function params
+   */
+  function getParamNames(params: BabelTypes.Function['params']): string[] {
+    return params
+      .map(p => {
+        if (t.isIdentifier(p)) return p.name;
+        if (t.isAssignmentPattern(p) && t.isIdentifier(p.left)) return p.left.name;
+        if (t.isRestElement(p) && t.isIdentifier(p.argument)) return p.argument.name;
+        return null;
+      })
+      .filter((n): n is string => n !== null);
+  }
+
   const plugin: PluginObj = {
     name: 'babel-plugin-mcp',
 
     pre(state) {
-      currentFileName = state.filename || '';
+      currentFileName = (state as { filename?: string }).filename || '';
       mcpImported = false;
     },
 
@@ -304,7 +318,7 @@ export default declare((api, options: PluginOptions) => {
           });
         },
 
-        exit(path) {
+        exit(_path) {
           // Add MCPBridge import if tracing was added and not already imported
           if (!mcpImported) {
             return;
@@ -321,9 +335,7 @@ export default declare((api, options: PluginOptions) => {
 
         const functionName = getFunctionName(path);
         const className = getClassName(path);
-        const paramNames = node.params
-          .map(p => t.isIdentifier(p) ? p.name : null)
-          .filter((n): n is string => n !== null);
+        const paramNames = getParamNames(node.params);
 
         const newBody = createTraceWrapper(
           functionName,
@@ -333,7 +345,7 @@ export default declare((api, options: PluginOptions) => {
           paramNames
         );
 
-        (node as any).__mcp_traced = true;
+        (node as BabelTypes.FunctionDeclaration & { __mcp_traced?: boolean }).__mcp_traced = true;
         node.body = newBody;
         mcpImported = true;
       },
@@ -348,9 +360,7 @@ export default declare((api, options: PluginOptions) => {
 
         const functionName = getFunctionName(path);
         const className = getClassName(path);
-        const paramNames = node.params
-          .map(p => t.isIdentifier(p) ? p.name : null)
-          .filter((n): n is string => n !== null);
+        const paramNames = getParamNames(node.params);
 
         const newBody = createTraceWrapper(
           functionName,
@@ -360,7 +370,7 @@ export default declare((api, options: PluginOptions) => {
           paramNames
         );
 
-        (node as any).__mcp_traced = true;
+        (node as BabelTypes.ClassMethod & { __mcp_traced?: boolean }).__mcp_traced = true;
         node.body = newBody;
         mcpImported = true;
       },
@@ -374,9 +384,7 @@ export default declare((api, options: PluginOptions) => {
 
         const functionName = getFunctionName(path);
         const className = getClassName(path);
-        const paramNames = node.params
-          .map(p => t.isIdentifier(p) ? p.name : null)
-          .filter((n): n is string => n !== null);
+        const paramNames = getParamNames(node.params);
 
         const newBody = createTraceWrapper(
           functionName,
@@ -386,7 +394,7 @@ export default declare((api, options: PluginOptions) => {
           paramNames
         );
 
-        (node as any).__mcp_traced = true;
+        (node as BabelTypes.FunctionExpression & { __mcp_traced?: boolean }).__mcp_traced = true;
         node.body = newBody;
         mcpImported = true;
       },
@@ -399,7 +407,7 @@ export default declare((api, options: PluginOptions) => {
         const node = path.node;
         
         // Convert expression body to block statement if needed
-        let body: t.BlockStatement;
+        let body: BabelTypes.BlockStatement;
         if (t.isBlockStatement(node.body)) {
           body = node.body;
         } else {
@@ -408,9 +416,7 @@ export default declare((api, options: PluginOptions) => {
 
         const functionName = getFunctionName(path);
         const className = getClassName(path);
-        const paramNames = node.params
-          .map(p => t.isIdentifier(p) ? p.name : null)
-          .filter((n): n is string => n !== null);
+        const paramNames = getParamNames(node.params);
 
         const newBody = createTraceWrapper(
           functionName,
@@ -420,7 +426,7 @@ export default declare((api, options: PluginOptions) => {
           paramNames
         );
 
-        (node as any).__mcp_traced = true;
+        (node as BabelTypes.ArrowFunctionExpression & { __mcp_traced?: boolean }).__mcp_traced = true;
         node.body = newBody;
         mcpImported = true;
       },

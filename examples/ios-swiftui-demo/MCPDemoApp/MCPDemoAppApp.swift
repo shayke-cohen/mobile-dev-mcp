@@ -237,16 +237,19 @@ class AppState: ObservableObject {
         ]
     }
     
+    /// Login user - Auto-traced by MCPAutoTrace plugin
     func login() {
         currentUser = User(id: "user_123", name: "John Doe", email: "john@example.com")
         isLoggedIn = true
     }
     
+    /// Logout user - Auto-traced by MCPAutoTrace plugin
     func logout() {
         currentUser = nil
         isLoggedIn = false
     }
     
+    /// Add product to cart - Auto-traced by MCPAutoTrace plugin
     func addToCart(_ product: Product) {
         if let index = cartItems.firstIndex(where: { $0.productId == product.id }) {
             cartItems[index].quantity += 1
@@ -255,10 +258,12 @@ class AppState: ObservableObject {
         }
     }
     
+    /// Remove product from cart - Auto-traced by MCPAutoTrace plugin
     func removeFromCart(_ productId: String) {
         cartItems.removeAll { $0.productId == productId }
     }
     
+    /// Update cart item quantity - Auto-traced by MCPAutoTrace plugin
     func updateQuantity(_ productId: String, quantity: Int) {
         if let index = cartItems.firstIndex(where: { $0.productId == productId }) {
             if quantity <= 0 {
@@ -269,6 +274,7 @@ class AppState: ObservableObject {
         }
     }
     
+    /// Clear entire cart - Auto-traced by MCPAutoTrace plugin
     func clearCart() {
         cartItems.removeAll()
     }

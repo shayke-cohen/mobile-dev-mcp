@@ -165,9 +165,64 @@ MCPBridge.shared.setNavigationState(
 }
 ```
 
-## Function Tracing
+## Auto-Instrumentation (Zero-Config)
 
-Debug function execution with AI assistance:
+The easiest way to enable tracing - **no code changes needed**:
+
+### Swift Build Plugin
+
+Add the plugin to your target in `Package.swift`:
+
+```swift
+.target(
+    name: "MyApp",
+    dependencies: ["MobileDevMCP"],
+    plugins: [
+        .plugin(name: "MCPAutoTrace", package: "MobileDevMCP")
+    ]
+)
+```
+
+That's it! All your functions are now automatically traced in debug builds.
+
+### What Gets Traced
+
+- ✅ All public and internal functions
+- ✅ Class and struct methods
+- ✅ Function arguments
+- ✅ Return values and errors
+- ✅ Execution timing
+- ❌ Private functions (skipped by default)
+- ❌ Very short functions (< 2 statements)
+- ❌ Test files
+
+### How It Works
+
+The build plugin transforms your code at compile time:
+
+```swift
+// Your code:
+func addToCart(_ product: Product) {
+    cartItems.append(product)
+}
+
+// Transformed (debug only):
+func addToCart(_ product: Product) {
+    #if DEBUG
+    MCPBridge.shared.trace("AppState.addToCart", info: TraceInfo(args: ["product": "\(product)"]))
+    #endif
+    defer {
+        #if DEBUG
+        MCPBridge.shared.traceReturn("AppState.addToCart")
+        #endif
+    }
+    cartItems.append(product)
+}
+```
+
+## Manual Function Tracing
+
+For more control, you can manually trace functions:
 
 ```swift
 // Trace async functions

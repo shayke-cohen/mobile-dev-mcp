@@ -3,6 +3,9 @@
  */
 
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// WebSocket client delegate protocol
 protocol WebSocketClientDelegate: AnyObject {
@@ -133,14 +136,26 @@ class WebSocketClient: NSObject {
     }
     
     private func sendHandshake() {
+        var osVersion = "unknown"
+        var platform = "unknown"
+        
+        #if canImport(UIKit)
         let device = UIDevice.current
+        osVersion = device.systemVersion
+        platform = "ios"
+        #elseif os(macOS)
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        osVersion = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+        platform = "macos"
+        #endif
+        
         let handshake: [String: Any] = [
             "type": "handshake",
-            "platform": "ios",
-            "osVersion": device.systemVersion,
+            "platform": platform,
+            "osVersion": osVersion,
             "appName": Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "Unknown",
             "appVersion": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0",
-            "capabilities": ["state", "network", "logs", "ui", "screenshot"]
+            "capabilities": ["state", "network", "logs", "ui", "screenshot", "tracing"]
         ]
         send(handshake)
     }

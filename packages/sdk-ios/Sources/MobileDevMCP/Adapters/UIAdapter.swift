@@ -3,7 +3,9 @@
  */
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 class UIAdapter {
     
@@ -13,6 +15,7 @@ class UIAdapter {
         isEnabled = true
     }
     
+    #if canImport(UIKit)
     @MainActor
     func captureScreenshot() throws -> [String: Any] {
         guard let window = UIApplication.shared.connectedScenes
@@ -83,4 +86,14 @@ class UIAdapter {
         
         return result
     }
+    #else
+    // macOS stubs
+    func captureScreenshot() throws -> [String: Any] {
+        return ["error": "Screenshot not supported on macOS"]
+    }
+    
+    func getViewHierarchy() -> [String: Any] {
+        return ["error": "View hierarchy not supported on macOS"]
+    }
+    #endif
 }

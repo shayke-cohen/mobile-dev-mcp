@@ -391,6 +391,26 @@ class MCPBridgeClass {
           this.clearTraces();
           result = { success: true };
           break;
+        
+        // Dynamic instrumentation commands (Debug Mode)
+        case 'inject_trace':
+          result = {
+            id: this.injectTrace(
+              params.pattern as string,
+              { logArgs: params.logArgs as boolean, logReturn: params.logReturn as boolean }
+            ),
+            success: true,
+          };
+          break;
+        case 'remove_trace':
+          result = { success: this.removeTrace(params.id as string) };
+          break;
+        case 'clear_injected_traces':
+          result = { cleared: this.clearInjectedTraces(), success: true };
+          break;
+        case 'list_injected_traces':
+          result = { traces: this.listInjectedTraces() };
+          break;
 
         // Action commands
         case 'list_actions':
@@ -636,6 +656,60 @@ class MCPBridgeClass {
   clearTraces(): void {
     this.traces.clear();
     this.traceHistory = [];
+  }
+
+  // ==================== Dynamic Instrumentation API ====================
+
+  private injectedTraces: Map<string, {
+    pattern: RegExp;
+    logArgs: boolean;
+    logReturn: boolean;
+    active: boolean;
+  }> = new Map();
+
+  /**
+   * Inject a trace point at runtime (for Debug Mode)
+   */
+  injectTrace(
+    pattern: string,
+    options: { logArgs?: boolean; logReturn?: boolean } = {}
+  ): string {
+    const id = `inject_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const regexPattern = pattern
+      .replace(/\./g, '\\.')
+      .replace(/\*/g, '.*');
+    
+    this.injectedTraces.set(id, {
+      pattern: new RegExp(`^${regexPattern}$`),
+      logArgs: options.logArgs !== false,
+      logReturn: options.logReturn !== false,
+      active: true,
+    });
+
+    if (this.config.debug) {
+      console.log(`[MCP Debug] Injected trace: ${pattern} (id: ${id})`);
+    }
+
+    return id;
+  }
+
+  removeTrace(id: string): boolean {
+    return this.injectedTraces.delete(id);
+  }
+
+  clearInjectedTraces(): number {
+    const count = this.injectedTraces.size;
+    this.injectedTraces.clear();
+    return count;
+  }
+
+  listInjectedTraces(): Array<{ id: string; pattern: string; active: boolean }> {
+    return Array.from(this.injectedTraces.entries()).map(([id, config]) => ({
+      id,
+      pattern: config.pattern.source,
+      active: config.active,
+    }));
   }
 
   /**

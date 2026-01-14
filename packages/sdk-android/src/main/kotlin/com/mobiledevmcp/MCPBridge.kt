@@ -365,6 +365,93 @@ object MCPBridge {
         traceHistory.clear()
     }
     
+    // ==================== Dynamic Instrumentation API (Debug Mode) ====================
+    
+    data class InjectedTrace(
+        val id: String,
+        val pattern: Regex,
+        val logArgs: Boolean = true,
+        val logReturn: Boolean = true,
+        var active: Boolean = true
+    )
+    
+    private val injectedTraces = mutableMapOf<String, InjectedTrace>()
+    
+    /**
+     * Inject a trace point at runtime (for Debug Mode)
+     * @param pattern Function name pattern (supports wildcards, e.g., "Cart*", "UserService.fetch*")
+     * @param logArgs Whether to log arguments
+     * @param logReturn Whether to log return values
+     * @return Injection ID for later removal
+     */
+    fun injectTrace(pattern: String, logArgs: Boolean = true, logReturn: Boolean = true): String {
+        val id = "inject_${System.currentTimeMillis()}_${(1000..9999).random()}"
+        
+        // Convert pattern to regex
+        val regexPattern = pattern
+            .replace(".", "\\.")
+            .replace("*", ".*")
+        
+        injectedTraces[id] = InjectedTrace(
+            id = id,
+            pattern = Regex("^$regexPattern$"),
+            logArgs = logArgs,
+            logReturn = logReturn,
+            active = true
+        )
+        
+        if (debug) {
+            Log.d(TAG, "[Debug] Injected trace: $pattern (id: $id)")
+        }
+        
+        return id
+    }
+    
+    /**
+     * Remove a specific injected trace
+     */
+    fun removeTrace(id: String): Boolean {
+        val removed = injectedTraces.remove(id) != null
+        if (debug && removed) {
+            Log.d(TAG, "[Debug] Removed trace: $id")
+        }
+        return removed
+    }
+    
+    /**
+     * Clear all injected traces
+     */
+    fun clearInjectedTraces(): Int {
+        val count = injectedTraces.size
+        injectedTraces.clear()
+        if (debug) {
+            Log.d(TAG, "[Debug] Cleared $count injected traces")
+        }
+        return count
+    }
+    
+    /**
+     * List all currently injected traces
+     */
+    fun listInjectedTraces(): List<Map<String, Any?>> {
+        return injectedTraces.values.map { trace ->
+            mapOf(
+                "id" to trace.id,
+                "pattern" to trace.pattern.pattern,
+                "active" to trace.active
+            )
+        }
+    }
+    
+    /**
+     * Check if a function name matches any injected trace pattern
+     */
+    private fun matchesInjectedTrace(name: String): Boolean {
+        return injectedTraces.values.any { trace ->
+            trace.active && trace.pattern.matches(name)
+        }
+    }
+    
     private fun isDebugBuild(): Boolean {
         val context = contextRef?.get() ?: return false
         return isDebugBuild(context)
@@ -571,6 +658,26 @@ object MCPBridge {
             "clear_traces" -> {
                 clearTraces()
                 mapOf("success" to true)
+            }
+            
+            // Dynamic instrumentation commands (Debug Mode)
+            "inject_trace" -> {
+                val pattern = params.optString("pattern", "")
+                if (pattern.isEmpty()) throw Exception("pattern is required")
+                val logArgs = params.optBoolean("logArgs", true)
+                val logReturn = params.optBoolean("logReturn", true)
+                mapOf("id" to injectTrace(pattern, logArgs, logReturn), "success" to true)
+            }
+            "remove_trace" -> {
+                val id = params.optString("id", "")
+                if (id.isEmpty()) throw Exception("id is required")
+                mapOf("success" to removeTrace(id))
+            }
+            "clear_injected_traces" -> {
+                mapOf("cleared" to clearInjectedTraces(), "success" to true)
+            }
+            "list_injected_traces" -> {
+                mapOf("traces" to listInjectedTraces())
             }
             
             // Action commands

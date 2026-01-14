@@ -311,6 +311,27 @@ class MCPBridgeClass {
           this.clearTraces();
           result = { success: true };
           break;
+        
+        // Dynamic instrumentation commands (Debug Mode)
+        case 'inject_trace':
+          result = {
+            id: this.injectTrace(
+              params.pattern as string,
+              { logArgs: params.logArgs as boolean, logReturn: params.logReturn as boolean }
+            ),
+            success: true,
+          };
+          break;
+        case 'remove_trace':
+          result = { success: this.removeTrace(params.id as string) };
+          break;
+        case 'clear_injected_traces':
+          result = { cleared: this.clearInjectedTraces(), success: true };
+          break;
+        case 'list_injected_traces':
+          result = { traces: this.listInjectedTraces() };
+          break;
+
         case 'navigate_to':
           result = await this.executeAction('navigate', params);
           break;
@@ -802,6 +823,124 @@ class MCPBridgeClass {
   clearTraces(): void {
     this.traces.clear();
     this.traceHistory = [];
+  }
+
+  // ==================== Dynamic Instrumentation API ====================
+  // For Debug Mode-style surgical debugging
+
+  private injectedTraces: Map<string, {
+    pattern: RegExp;
+    logArgs: boolean;
+    logReturn: boolean;
+    active: boolean;
+  }> = new Map();
+
+  /**
+   * Inject a trace point at runtime (for Debug Mode)
+   * This allows AI to add targeted traces during debugging sessions.
+   * 
+   * @param pattern - Function name pattern (supports wildcards, e.g., "Cart*", "UserService.fetch*")
+   * @param options - Options for the trace
+   * @returns Injection ID for later removal
+   * 
+   * @example
+   * ```typescript
+   * // Inject trace for all Cart functions
+   * MCPBridge.injectTrace('Cart*');
+   * 
+   * // Inject trace for specific function with options
+   * MCPBridge.injectTrace('UserService.fetchUser', { logArgs: true, logReturn: true });
+   * ```
+   */
+  injectTrace(
+    pattern: string,
+    options: { logArgs?: boolean; logReturn?: boolean } = {}
+  ): string {
+    const id = `inject_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Convert pattern to regex (support * as wildcard)
+    const regexPattern = pattern
+      .replace(/\./g, '\\.')
+      .replace(/\*/g, '.*');
+    
+    this.injectedTraces.set(id, {
+      pattern: new RegExp(`^${regexPattern}$`),
+      logArgs: options.logArgs !== false,
+      logReturn: options.logReturn !== false,
+      active: true,
+    });
+
+    if (this.config.debug) {
+      console.log(`[MCP Debug] Injected trace: ${pattern} (id: ${id})`);
+    }
+
+    // Notify server about injection
+    this.sendMessage({
+      type: 'debug_event',
+      event: 'trace_injected',
+      pattern,
+      id,
+    });
+
+    return id;
+  }
+
+  /**
+   * Remove a specific injected trace
+   */
+  removeTrace(id: string): boolean {
+    const removed = this.injectedTraces.delete(id);
+    
+    if (removed && this.config.debug) {
+      console.log(`[MCP Debug] Removed trace: ${id}`);
+    }
+
+    return removed;
+  }
+
+  /**
+   * Clear all injected traces (cleanup after debugging)
+   */
+  clearInjectedTraces(): number {
+    const count = this.injectedTraces.size;
+    this.injectedTraces.clear();
+    
+    if (this.config.debug) {
+      console.log(`[MCP Debug] Cleared ${count} injected traces`);
+    }
+
+    // Notify server
+    this.sendMessage({
+      type: 'debug_event',
+      event: 'traces_cleared',
+      count,
+    });
+
+    return count;
+  }
+
+  /**
+   * List all currently injected traces
+   */
+  listInjectedTraces(): Array<{ id: string; pattern: string; active: boolean }> {
+    return Array.from(this.injectedTraces.entries()).map(([id, config]) => ({
+      id,
+      pattern: config.pattern.source,
+      active: config.active,
+    }));
+  }
+
+  /**
+   * Check if a function name matches any injected trace pattern
+   * @internal Used by trace() to determine if tracing should be logged
+   */
+  private matchesInjectedTrace(name: string): boolean {
+    for (const [, config] of this.injectedTraces) {
+      if (config.active && config.pattern.test(name)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // ==================== Private Helpers ====================

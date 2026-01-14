@@ -1,6 +1,10 @@
 # @mobile-dev-mcp/babel-plugin
 
-Babel plugin for automatic MCP SDK instrumentation. Automatically wraps functions with tracing calls that report to Cursor through the MCP server.
+Zero-config auto-instrumentation for React Native apps. Automatically wraps functions with tracing calls that report to Cursor through the MCP server.
+
+> **Cross-Platform Equivalents:**
+> - iOS/macOS: [MCPAutoTrace Build Plugin](../sdk-ios)
+> - Android: [com.mobiledevmcp.autotrace Gradle Plugin](../mcp-android-gradle-plugin)
 
 ## Installation
 

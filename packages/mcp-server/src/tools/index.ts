@@ -18,6 +18,7 @@ import { deviceTools, handleDeviceTool } from './device.js';
 import { simulatorTools, handleSimulatorTool } from './simulator.js';
 import { buildTools, handleBuildTool } from './build.js';
 import { actionTools, handleActionTool } from './actions.js';
+import { debugTools, handleDebugTool } from './debug.js';
 
 // Tools that require a connected device
 const deviceRequiredTools = [
@@ -27,6 +28,7 @@ const deviceRequiredTools = [
   ...logsTools,
   ...deviceTools,
   ...actionTools,
+  ...debugTools,
 ];
 
 // Tools that work without a connected device (local tools)
@@ -108,6 +110,8 @@ export function registerAllTools(server: Server, deviceManager: DeviceManager): 
         result = await handleDeviceTool(name, args || {}, deviceManager);
       } else if (actionTools.some(t => t.name === name)) {
         result = await handleActionTool(name, args || {}, deviceManager);
+      } else if (debugTools.some(t => t.name === name)) {
+        result = await handleDebugTool(name, args || {}, deviceManager);
       } else {
         return {
           content: [{ type: 'text', text: `Unknown tool: ${name}` }],

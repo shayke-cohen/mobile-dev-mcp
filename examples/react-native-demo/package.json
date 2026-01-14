@@ -23,6 +23,7 @@
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
     "@babel/runtime": "^7.24.0",
+    "@mobile-dev-mcp/babel-plugin": "0.1.0",
     "@react-native/babel-preset": "0.74.0",
     "@react-native/eslint-config": "0.74.0",
     "@react-native/metro-config": "0.74.0",

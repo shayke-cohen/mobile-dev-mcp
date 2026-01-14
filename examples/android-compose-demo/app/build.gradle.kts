@@ -1,7 +1,15 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    // MCP Auto-Trace: Disabled until Java version conflicts resolved
+    // id("com.mobiledevmcp.autotrace")
 }
+
+// Auto-trace plugin configuration (currently disabled)
+// mcpAutoTrace {
+//     include.set(listOf("com.mobiledevmcp.demo.**"))
+//     exclude.set(listOf("com.mobiledevmcp.demo.ui.theme.**", "**.BuildConfig"))
+// }
 
 android {
     namespace = "com.mobiledevmcp.demo"

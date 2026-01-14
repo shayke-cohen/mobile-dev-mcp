@@ -68,3 +68,7 @@ yarn-error.log*
 Thumbs.db
 *.tmp
 *.temp
+
+# Swift build
+packages/sdk-ios/.build/
+packages/sdk-ios/Package.resolved

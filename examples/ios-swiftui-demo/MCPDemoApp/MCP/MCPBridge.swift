@@ -37,6 +37,12 @@ final class MCPBridge: ObservableObject {
     // Network mocking
     private var networkMocks: [String: NetworkMock] = [:]
     
+    // Tracing
+    private var activeTraces: [String: TraceEntry] = [:]
+    private var traceHistory: [TraceEntry] = []
+    private var traceIdCounter = 0
+    private var injectedTraces: [String: InjectedTrace] = [:]
+    
     private static let DEFAULT_PORT = "8765"
     private static var defaultServerUrl: String {
         "ws://localhost:\(DEFAULT_PORT)"
@@ -329,6 +335,37 @@ final class MCPBridge: ObservableObject {
             return try executeAction(name: "login", params: params)
         case "logout":
             return try executeAction(name: "logout", params: params)
+        
+        // Tracing commands
+        case "get_traces":
+            return getTracesDict(params: params)
+        case "get_active_traces":
+            return getTracesDict(params: ["inProgress": true])
+        case "clear_traces":
+            clearTraces()
+            return ["success": true]
+        
+        // Dynamic instrumentation commands
+        case "inject_trace":
+            guard let pattern = params["pattern"] as? String else {
+                throw MCPError.invalidParams("pattern is required")
+            }
+            let logArgs = params["logArgs"] as? Bool ?? true
+            let logReturn = params["logReturn"] as? Bool ?? true
+            let id = injectTrace(pattern: pattern, logArgs: logArgs, logReturn: logReturn)
+            return ["success": true, "id": id, "pattern": pattern]
+        case "remove_trace":
+            guard let id = params["id"] as? String else {
+                throw MCPError.invalidParams("id is required")
+            }
+            let removed = removeTrace(id: id)
+            return ["success": removed]
+        case "clear_injected_traces":
+            clearInjectedTraces()
+            return ["success": true]
+        case "list_injected_traces":
+            return listInjectedTraces()
+            
         default:
             // Try to find a registered action handler
             if actionHandlers[method] != nil {
@@ -518,6 +555,103 @@ final class MCPBridge: ObservableObject {
         ]
     }
     
+    // MARK: - Tracing Methods
+    
+    func trace(_ name: String, info: TraceInfo = TraceInfo()) {
+        traceIdCounter += 1
+        let id = "trace_\(traceIdCounter)_\(Int64(Date().timeIntervalSince1970 * 1000))"
+        
+        let entry = TraceEntry(
+            id: id,
+            name: name,
+            info: info,
+            timestamp: info.startTime ?? Int64(Date().timeIntervalSince1970 * 1000),
+            completed: false
+        )
+        
+        activeTraces[id] = entry
+        activeTraces["name:\(name)"] = entry
+    }
+    
+    func traceReturn(_ name: String, returnValue: Any? = nil, error: String? = nil) {
+        guard let entry = activeTraces["name:\(name)"] else { return }
+        
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        entry.duration = now - entry.timestamp
+        entry.returnValue = returnValue
+        entry.error = error
+        entry.completed = true
+        
+        traceHistory.append(entry)
+        if traceHistory.count > 1000 {
+            traceHistory.removeFirst()
+        }
+        
+        activeTraces.removeValue(forKey: entry.id)
+        activeTraces.removeValue(forKey: "name:\(name)")
+    }
+    
+    private func getTracesDict(params: [String: Any]) -> [String: Any] {
+        let limit = params["limit"] as? Int ?? 100
+        let inProgress = params["inProgress"] as? Bool ?? false
+        let minDuration = params["minDuration"] as? Int64
+        
+        var traces: [[String: Any]]
+        
+        if inProgress {
+            traces = activeTraces.values.filter { !$0.id.hasPrefix("name:") }.map { $0.toDict() }
+        } else {
+            traces = traceHistory.suffix(limit).map { $0.toDict() }
+            
+            if let minDur = minDuration {
+                traces = traces.filter { ($0["duration"] as? Int64 ?? 0) >= minDur }
+            }
+        }
+        
+        return ["traces": traces, "count": traces.count]
+    }
+    
+    private func clearTraces() {
+        traceHistory.removeAll()
+        activeTraces.removeAll()
+    }
+    
+    // Dynamic instrumentation
+    private func injectTrace(pattern: String, logArgs: Bool, logReturn: Bool) -> String {
+        traceIdCounter += 1
+        let id = "inject_\(traceIdCounter)_\(Int64(Date().timeIntervalSince1970 * 1000))"
+        
+        injectedTraces[id] = InjectedTrace(
+            pattern: pattern,
+            logArgs: logArgs,
+            logReturn: logReturn,
+            createdAt: Int64(Date().timeIntervalSince1970 * 1000)
+        )
+        
+        return id
+    }
+    
+    private func removeTrace(id: String) -> Bool {
+        return injectedTraces.removeValue(forKey: id) != nil
+    }
+    
+    private func clearInjectedTraces() {
+        injectedTraces.removeAll()
+    }
+    
+    private func listInjectedTraces() -> [String: Any] {
+        let traces = injectedTraces.map { (id, trace) in
+            [
+                "id": id,
+                "pattern": trace.pattern,
+                "logArgs": trace.logArgs,
+                "logReturn": trace.logReturn,
+                "createdAt": trace.createdAt
+            ] as [String: Any]
+        }
+        return ["traces": traces, "count": traces.count]
+    }
+    
     // MARK: - Storage Query
     
     private func queryStorage(params: [String: Any]) -> [String: Any] {
@@ -694,6 +828,57 @@ struct NavigationState {
     var currentRoute: String = "home"
     var params: [String: Any]?
     var history: [(route: String, timestamp: Date)] = []
+}
+
+// MARK: - Tracing Types
+
+struct TraceInfo {
+    var args: [String: Any]?
+    var file: String?
+    var startTime: Int64?
+}
+
+class TraceEntry {
+    let id: String
+    let name: String
+    var info: TraceInfo?
+    let timestamp: Int64
+    var duration: Int64?
+    var returnValue: Any?
+    var error: String?
+    var completed: Bool
+    
+    init(id: String, name: String, info: TraceInfo?, timestamp: Int64, completed: Bool = false) {
+        self.id = id
+        self.name = name
+        self.info = info
+        self.timestamp = timestamp
+        self.completed = completed
+    }
+    
+    func toDict() -> [String: Any] {
+        var dict: [String: Any] = [
+            "id": id,
+            "name": name,
+            "timestamp": timestamp,
+            "completed": completed
+        ]
+        if let info = info {
+            if let args = info.args { dict["args"] = args }
+            if let file = info.file { dict["file"] = file }
+        }
+        if let duration = duration { dict["duration"] = duration }
+        if let returnValue = returnValue { dict["returnValue"] = returnValue }
+        if let error = error { dict["error"] = error }
+        return dict
+    }
+}
+
+struct InjectedTrace {
+    let pattern: String
+    let logArgs: Bool
+    let logReturn: Bool
+    let createdAt: Int64
 }
 
 struct NetworkMock {

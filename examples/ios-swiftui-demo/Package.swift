@@ -23,7 +23,11 @@ let package = Package(
             dependencies: [
                 .product(name: "MobileDevMCP", package: "sdk-ios")
             ],
-            path: "Sources"
+            path: "Sources",
+            // Enable zero-config auto-instrumentation
+            plugins: [
+                .plugin(name: "MCPAutoTrace", package: "sdk-ios")
+            ]
         ),
     ]
 )

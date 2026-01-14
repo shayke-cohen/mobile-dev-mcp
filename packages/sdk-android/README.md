@@ -166,9 +166,86 @@ LaunchedEffect(currentRoute) {
 }
 ```
 
-## Function Tracing
+## Auto-Instrumentation (Zero-Config) ⭐
 
-Debug function execution with AI assistance:
+The easiest way to enable tracing - **no code changes needed**:
+
+### Gradle Plugin (Recommended)
+
+**1. Add the plugin to your project:**
+
+```kotlin
+// settings.gradle.kts
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+// app/build.gradle.kts
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.mobiledevmcp.autotrace") version "1.0.0"  // Add this line
+}
+```
+
+**2. (Optional) Configure:**
+
+```kotlin
+mcpAutoTrace {
+    // Only trace your app code
+    include.set(listOf("com.myapp.**"))
+    
+    // Skip generated code
+    exclude.set(listOf(
+        "com.myapp.generated.**",
+        "com.myapp.ui.theme.**"
+    ))
+    
+    // Trace private methods too (default: false)
+    tracePrivate.set(false)
+}
+```
+
+That's it! All your functions are now automatically traced in debug builds.
+
+### What Gets Traced
+
+- ✅ All public methods in your packages
+- ✅ Internal methods
+- ✅ Execution timing
+- ❌ Private methods (unless `tracePrivate = true`)
+- ❌ Constructors and static initializers
+- ❌ Generated code (R, BuildConfig, Dagger, etc.)
+
+### How It Works
+
+The Gradle plugin transforms bytecode at build time:
+
+```kotlin
+// Your code:
+fun addToCart(product: Product) {
+    cartItems.add(product)
+}
+
+// Transformed (debug only):
+fun addToCart(product: Product) {
+    MCPBridge.trace("ViewModel.addToCart")
+    try {
+        cartItems.add(product)
+    } finally {
+        MCPBridge.traceReturn("ViewModel.addToCart")
+    }
+}
+```
+
+---
+
+## Manual Function Tracing
+
+For more control, you can manually trace functions:
 
 ```kotlin
 // Trace suspend functions
@@ -191,6 +268,49 @@ fun calculateTotal(): Double {
 MCPBridge.trace("processOrder", TraceInfo(args = mapOf("orderId" to orderId)))
 // ... processing ...
 MCPBridge.traceReturn("processOrder", mapOf("success" to true))
+```
+
+### Annotation-Based Tracing with @Traced (KSP)
+
+For annotation-based auto-tracing, use the `@Traced` annotation with KSP:
+
+**1. Add dependencies:**
+
+```kotlin
+plugins {
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
+}
+
+dependencies {
+    implementation("com.mobiledevmcp:annotations:0.1.0")
+    ksp("com.mobiledevmcp:processor:0.1.0")
+}
+```
+
+**2. Annotate your classes:**
+
+```kotlin
+import com.mobiledevmcp.annotations.Traced
+import com.mobiledevmcp.annotations.TraceExclude
+
+@Traced
+class UserService(private val api: UserApi) {
+    
+    // Automatically traced
+    suspend fun fetchUser(id: String): User {
+        return api.getUser(id)
+    }
+    
+    // Automatically traced
+    fun validateEmail(email: String): Boolean {
+        return email.contains("@")
+    }
+    
+    @TraceExclude  // Not traced
+    private fun internalHelper(): String {
+        return "helper"
+    }
+}
 ```
 
 ## Feature Flags

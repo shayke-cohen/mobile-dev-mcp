@@ -1,5 +1,8 @@
 /**
  * App ViewModel - Central state management
+ * 
+ * All public methods are auto-traced by the MCP Gradle plugin.
+ * They appear in get_traces() during debug sessions - no manual instrumentation needed.
  */
 
 package com.mobiledevmcp.demo.viewmodel
@@ -189,17 +192,26 @@ class AppViewModel : ViewModel() {
         _state.update { it.copy(products = products) }
     }
     
+    /**
+     * Login user - Auto-traced by MCP Gradle plugin
+     */
     fun login() {
         val user = User("user_123", "John Doe", "john@example.com")
         _state.update { it.copy(currentUser = user, isLoggedIn = true) }
         android.util.Log.i("AppViewModel", "User logged in: ${user.name}")
     }
     
+    /**
+     * Logout user - Auto-traced by MCP Gradle plugin
+     */
     fun logout() {
         _state.update { it.copy(currentUser = null, isLoggedIn = false) }
         android.util.Log.i("AppViewModel", "User logged out")
     }
     
+    /**
+     * Add product to cart - Auto-traced by MCP Gradle plugin
+     */
     fun addToCart(product: Product) {
         _state.update { state ->
             val existingItem = state.cartItems.find { it.productId == product.id }
@@ -219,6 +231,9 @@ class AppViewModel : ViewModel() {
         android.util.Log.i("AppViewModel", "Added to cart: ${product.name}")
     }
     
+    /**
+     * Remove product from cart - Auto-traced by MCP Gradle plugin
+     */
     fun removeFromCart(productId: String) {
         _state.update { state ->
             state.copy(cartItems = state.cartItems.filter { it.productId != productId })
@@ -226,6 +241,9 @@ class AppViewModel : ViewModel() {
         android.util.Log.i("AppViewModel", "Removed from cart: $productId")
     }
     
+    /**
+     * Update cart item quantity - Auto-traced by MCP Gradle plugin
+     */
     fun updateQuantity(productId: String, quantity: Int) {
         _state.update { state ->
             if (quantity <= 0) {
@@ -247,6 +265,9 @@ class AppViewModel : ViewModel() {
         _state.update { it.copy(selectedProduct = product) }
     }
     
+    /**
+     * Clear entire cart - Auto-traced by MCP Gradle plugin
+     */
     fun clearCart() {
         _state.update { it.copy(cartItems = emptyList()) }
         android.util.Log.i("AppViewModel", "Cart cleared")

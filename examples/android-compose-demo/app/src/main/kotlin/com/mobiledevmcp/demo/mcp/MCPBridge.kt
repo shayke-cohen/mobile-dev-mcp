@@ -46,6 +46,12 @@ object MCPBridge {
     // Network mocking
     private val networkMocks = mutableMapOf<String, NetworkMock>()
     
+    // Tracing
+    private val activeTraces = mutableMapOf<String, TraceEntry>()
+    private val traceHistory = mutableListOf<TraceEntry>()
+    private var traceIdCounter = 0
+    private val injectedTraces = mutableMapOf<String, InjectedTrace>()
+    
     // Data classes for component registration
     data class RegisteredComponent(
         val testId: String,
@@ -71,6 +77,43 @@ object MCPBridge {
         val body: Any,
         val headers: Map<String, String>? = null,
         val delay: Long? = null
+    )
+    
+    // Tracing data classes
+    data class TraceInfo(
+        val args: Map<String, Any?>? = null,
+        val file: String? = null,
+        val startTime: Long? = null
+    )
+    
+    data class TraceEntry(
+        val id: String,
+        val name: String,
+        val info: TraceInfo?,
+        val timestamp: Long,
+        var duration: Long? = null,
+        var returnValue: Any? = null,
+        var error: String? = null,
+        var completed: Boolean = false
+    ) {
+        fun toMap(): Map<String, Any?> = mapOf(
+            "id" to id,
+            "name" to name,
+            "timestamp" to timestamp,
+            "completed" to completed,
+            "duration" to duration,
+            "returnValue" to returnValue,
+            "error" to error,
+            "args" to info?.args,
+            "file" to info?.file
+        ).filterValues { it != null }
+    }
+    
+    data class InjectedTrace(
+        val pattern: String,
+        val logArgs: Boolean,
+        val logReturn: Boolean,
+        val createdAt: Long
     )
     
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -387,6 +430,35 @@ object MCPBridge {
             "clear_cart" -> executeAction("clearCart", params.toMap())
             "login" -> executeAction("login", params.toMap())
             "logout" -> executeAction("logout", params.toMap())
+            
+            // Tracing commands
+            "get_traces" -> getTracesDict(params)
+            "get_active_traces" -> getTracesDict(mapOf("inProgress" to true))
+            "clear_traces" -> {
+                clearTraces()
+                mapOf("success" to true)
+            }
+            
+            // Dynamic instrumentation commands
+            "inject_trace" -> {
+                val pattern = params["pattern"] as? String 
+                    ?: throw IllegalArgumentException("pattern is required")
+                val logArgs = params["logArgs"] as? Boolean ?: true
+                val logReturn = params["logReturn"] as? Boolean ?: true
+                val id = injectTrace(pattern, logArgs, logReturn)
+                mapOf("success" to true, "id" to id, "pattern" to pattern)
+            }
+            "remove_trace" -> {
+                val id = params["id"] as? String 
+                    ?: throw IllegalArgumentException("id is required")
+                mapOf("success" to removeTrace(id))
+            }
+            "clear_injected_traces" -> {
+                clearInjectedTraces()
+                mapOf("success" to true)
+            }
+            "list_injected_traces" -> listInjectedTraces()
+            
             else -> {
                 // Try to find a registered action handler
                 if (actionHandlers.containsKey(method)) {
@@ -424,6 +496,100 @@ object MCPBridge {
     
     fun updateComponentBounds(testId: String, bounds: Bounds) {
         components[testId]?.bounds = bounds
+    }
+    
+    // ==================== Tracing ====================
+    
+    fun trace(name: String, info: TraceInfo = TraceInfo()) {
+        traceIdCounter++
+        val id = "trace_${traceIdCounter}_${System.currentTimeMillis()}"
+        
+        val entry = TraceEntry(
+            id = id,
+            name = name,
+            info = info,
+            timestamp = info.startTime ?: System.currentTimeMillis(),
+            completed = false
+        )
+        
+        activeTraces[id] = entry
+        activeTraces["name:$name"] = entry
+    }
+    
+    fun traceReturn(name: String, returnValue: Any? = null, error: String? = null) {
+        val entry = activeTraces["name:$name"] ?: return
+        
+        val now = System.currentTimeMillis()
+        entry.duration = now - entry.timestamp
+        entry.returnValue = returnValue
+        entry.error = error
+        entry.completed = true
+        
+        traceHistory.add(entry)
+        if (traceHistory.size > 1000) {
+            traceHistory.removeAt(0)
+        }
+        
+        activeTraces.remove(entry.id)
+        activeTraces.remove("name:$name")
+    }
+    
+    private fun getTracesDict(params: Map<String, Any?>): Map<String, Any?> {
+        val limit = (params["limit"] as? Number)?.toInt() ?: 100
+        val inProgress = params["inProgress"] as? Boolean ?: false
+        val minDuration = (params["minDuration"] as? Number)?.toLong()
+        
+        val traces = if (inProgress) {
+            activeTraces.values.filter { !it.id.startsWith("name:") }.map { it.toMap() }
+        } else {
+            var result = traceHistory.takeLast(limit).map { it.toMap() }
+            if (minDuration != null) {
+                result = result.filter { (it["duration"] as? Long ?: 0) >= minDuration }
+            }
+            result
+        }
+        
+        return mapOf("traces" to traces, "count" to traces.size)
+    }
+    
+    private fun clearTraces() {
+        traceHistory.clear()
+        activeTraces.clear()
+    }
+    
+    private fun injectTrace(pattern: String, logArgs: Boolean, logReturn: Boolean): String {
+        traceIdCounter++
+        val id = "inject_${traceIdCounter}_${System.currentTimeMillis()}"
+        
+        injectedTraces[id] = InjectedTrace(
+            pattern = pattern,
+            logArgs = logArgs,
+            logReturn = logReturn,
+            createdAt = System.currentTimeMillis()
+        )
+        
+        return id
+    }
+    
+    private fun removeTrace(id: String): Boolean {
+        return injectedTraces.remove(id) != null
+    }
+    
+    private fun clearInjectedTraces() {
+        injectedTraces.clear()
+    }
+    
+    private fun listInjectedTraces(): Map<String, Any?> {
+        val traces = injectedTraces.map { (id, trace) ->
+            mapOf(
+                "id" to id,
+                "pattern" to trace.pattern,
+                "logArgs" to trace.logArgs,
+                "logReturn" to trace.logReturn,
+                "createdAt" to trace.createdAt
+            )
+        }
+        return mapOf("traces" to traces, "count" to traces.size)
     }
     
     // ==================== UI Inspection ====================

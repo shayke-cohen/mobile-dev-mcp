@@ -134,7 +134,43 @@ if (BuildConfig.DEBUG) {
 | [`@mobile-dev-mcp/react-native`](./packages/sdk-react-native) | React Native SDK | `npm install @mobile-dev-mcp/react-native` |
 | [`MobileDevMCP`](./packages/sdk-ios) | iOS & macOS SDK (Swift) | Swift Package Manager |
 | [`com.mobiledevmcp:sdk`](./packages/sdk-android) | Android SDK (Kotlin) | Maven Central |
-| [`@mobile-dev-mcp/babel-plugin`](./packages/babel-plugin-mcp) | Auto-instrumentation | `npm install -D @mobile-dev-mcp/babel-plugin` |
+| [`@mobile-dev-mcp/babel-plugin`](./packages/babel-plugin-mcp) | RN Auto-instrumentation | `npm install -D @mobile-dev-mcp/babel-plugin` |
+| [`MCPAutoTrace`](./packages/sdk-ios) | iOS/macOS Auto-instrumentation | Swift Build Plugin |
+| [`com.mobiledevmcp.autotrace`](./packages/mcp-android-gradle-plugin) | Android Auto-instrumentation | Gradle Plugin |
+
+## Zero-Config Auto-Instrumentation
+
+All platforms support **automatic function tracing** - no manual code changes needed:
+
+### React Native (Babel Plugin)
+```javascript
+// babel.config.js
+module.exports = {
+  plugins: [
+    ['@mobile-dev-mcp/babel-plugin', { traceClasses: true, traceAsync: true }]
+  ]
+};
+```
+
+### iOS / macOS (Swift Build Plugin)
+```swift
+// Package.swift
+.target(
+    name: "MyApp",
+    dependencies: ["MobileDevMCP"],
+    plugins: [.plugin(name: "MCPAutoTrace", package: "MobileDevMCP")]
+)
+```
+
+### Android (Gradle Plugin)
+```kotlin
+// app/build.gradle.kts
+plugins {
+    id("com.mobiledevmcp.autotrace") version "1.0.0"
+}
+```
+
+Once enabled, **all functions are automatically traced** during debug builds. Use `get_traces` to see execution flow, timing, and arguments - perfect for AI-assisted debugging.
 
 ## Demo Apps
 

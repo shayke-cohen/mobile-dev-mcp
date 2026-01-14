@@ -56,6 +56,11 @@ class MockMobileApp {
       ]
     };
     this.featureFlags = { dark_mode: false, new_checkout: true };
+    
+    // Tracing state
+    this.traces = [];
+    this.injectedTraces = new Map();
+    this.traceIdCounter = 0;
   }
 
   connect() {
@@ -131,6 +136,46 @@ class MockMobileApp {
         case 'list_network_requests':
           result = [{ id: 'req_1', url: 'https://api.test.com/data', method: 'GET', status: 200 }];
           break;
+        
+        // Tracing commands
+        case 'get_traces':
+          result = { traces: this.traces.slice(0, params.limit || 100) };
+          break;
+        case 'get_active_traces':
+          result = { traces: this.traces.filter(t => !t.completed) };
+          break;
+        case 'clear_traces':
+          this.traces = [];
+          result = { success: true };
+          break;
+        case 'inject_trace':
+          const injectId = `inject_${Date.now()}_${++this.traceIdCounter}`;
+          this.injectedTraces.set(injectId, {
+            pattern: params.pattern,
+            logArgs: params.logArgs !== false,
+            logReturn: params.logReturn !== false,
+            active: true
+          });
+          result = { id: injectId, success: true };
+          break;
+        case 'remove_trace':
+          result = { success: this.injectedTraces.delete(params.id) };
+          break;
+        case 'clear_injected_traces':
+          const cleared = this.injectedTraces.size;
+          this.injectedTraces.clear();
+          result = { cleared, success: true };
+          break;
+        case 'list_injected_traces':
+          result = {
+            traces: Array.from(this.injectedTraces.entries()).map(([id, config]) => ({
+              id,
+              pattern: config.pattern,
+              active: config.active
+            }))
+          };
+          break;
+          
         default:
           throw new Error(`Unknown method: ${method}`);
       }

@@ -22,6 +22,7 @@
  */
 
 import Foundation
+import CoreGraphics
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -332,6 +333,81 @@ public final class MCPBridge: ObservableObject {
         traceHistory.removeAll()
     }
     
+    // MARK: - Dynamic Instrumentation API (Debug Mode)
+    
+    private var injectedTraces: [String: InjectedTrace] = [:]
+    
+    /// Inject a trace point at runtime (for Debug Mode)
+    /// - Parameters:
+    ///   - pattern: Function name pattern (supports wildcards, e.g., "Cart*", "UserService.fetch*")
+    ///   - logArgs: Whether to log arguments
+    ///   - logReturn: Whether to log return values
+    /// - Returns: Injection ID for later removal
+    @discardableResult
+    public func injectTrace(_ pattern: String, logArgs: Bool = true, logReturn: Bool = true) -> String {
+        let id = "inject_\(Int(Date().timeIntervalSince1970 * 1000))_\(Int.random(in: 1000...9999))"
+        
+        // Convert pattern to regex
+        let regexPattern = pattern
+            .replacingOccurrences(of: ".", with: "\\.")
+            .replacingOccurrences(of: "*", with: ".*")
+        
+        injectedTraces[id] = InjectedTrace(
+            id: id,
+            pattern: try? NSRegularExpression(pattern: "^\(regexPattern)$"),
+            logArgs: logArgs,
+            logReturn: logReturn,
+            active: true
+        )
+        
+        if debug {
+            print("[MCP Debug] Injected trace: \(pattern) (id: \(id))")
+        }
+        
+        return id
+    }
+    
+    /// Remove a specific injected trace
+    public func removeTrace(_ id: String) -> Bool {
+        let removed = injectedTraces.removeValue(forKey: id) != nil
+        if debug && removed {
+            print("[MCP Debug] Removed trace: \(id)")
+        }
+        return removed
+    }
+    
+    /// Clear all injected traces
+    public func clearInjectedTraces() -> Int {
+        let count = injectedTraces.count
+        injectedTraces.removeAll()
+        if debug {
+            print("[MCP Debug] Cleared \(count) injected traces")
+        }
+        return count
+    }
+    
+    /// List all currently injected traces
+    public func listInjectedTraces() -> [[String: Any]] {
+        return injectedTraces.values.map { trace in
+            [
+                "id": trace.id,
+                "pattern": trace.pattern?.pattern ?? "",
+                "active": trace.active
+            ]
+        }
+    }
+    
+    /// Check if a function name matches any injected trace pattern
+    private func matchesInjectedTrace(_ name: String) -> Bool {
+        for trace in injectedTraces.values where trace.active {
+            if let regex = trace.pattern,
+               regex.firstMatch(in: name, range: NSRange(name.startIndex..., in: name)) != nil {
+                return true
+            }
+        }
+        return false
+    }
+    
     // MARK: - Private Methods
     
     private func connect() {
@@ -507,6 +583,26 @@ public final class MCPBridge: ObservableObject {
         case "clear_traces":
             clearTraces()
             return ["success": true]
+        
+        // Dynamic instrumentation commands (Debug Mode)
+        case "inject_trace":
+            guard let pattern = params["pattern"] as? String else {
+                throw MCPError.invalidParams("pattern is required")
+            }
+            let logArgs = params["logArgs"] as? Bool ?? true
+            let logReturn = params["logReturn"] as? Bool ?? true
+            let id = injectTrace(pattern, logArgs: logArgs, logReturn: logReturn)
+            return ["id": id, "success": true]
+        case "remove_trace":
+            guard let id = params["id"] as? String else {
+                throw MCPError.invalidParams("id is required")
+            }
+            return ["success": removeTrace(id)]
+        case "clear_injected_traces":
+            return ["cleared": clearInjectedTraces(), "success": true]
+        case "list_injected_traces":
+            return ["traces": listInjectedTraces()]
+            
         case "navigate_to":
             return try executeAction(name: "navigate", params: params)
         case "execute_action":
@@ -555,7 +651,7 @@ public final class MCPBridge: ObservableObject {
                 dict["props"] = props
             }
             if let bounds = comp.bounds {
-                dict["bounds"] = ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height]
+                dict["bounds"] = ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.size.width, "height": bounds.size.height]
             }
             return dict
         }
@@ -576,7 +672,7 @@ public final class MCPBridge: ObservableObject {
             return [
                 "testId": comp.testId,
                 "type": comp.type,
-                "bounds": ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height],
+                "bounds": ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.size.width, "height": bounds.size.height],
                 "visible": comp.bounds != nil
             ]
         }
@@ -596,7 +692,7 @@ public final class MCPBridge: ObservableObject {
                     "found": true,
                     "testId": comp.testId,
                     "type": comp.type,
-                    "bounds": ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height],
+                    "bounds": ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.size.width, "height": bounds.size.height],
                     "text": comp.getText?() ?? NSNull(),
                     "interactive": comp.onTap != nil
                 ]
@@ -619,7 +715,7 @@ public final class MCPBridge: ObservableObject {
         }.map { comp -> [String: Any] in
             var dict: [String: Any] = ["testId": comp.testId, "type": comp.type]
             if let bounds = comp.bounds {
-                dict["bounds"] = ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.width, "height": bounds.height]
+                dict["bounds"] = ["x": bounds.origin.x, "y": bounds.origin.y, "width": bounds.size.width, "height": bounds.size.height]
             }
             dict["text"] = comp.getText?() ?? NSNull()
             return dict
@@ -954,6 +1050,15 @@ public struct TraceFilter {
         self.limit = limit
         self.inProgress = inProgress
     }
+}
+
+/// Injected trace configuration for Debug Mode
+struct InjectedTrace {
+    let id: String
+    let pattern: NSRegularExpression?
+    let logArgs: Bool
+    let logReturn: Bool
+    var active: Bool
 }
 
 // MARK: - Error Types
