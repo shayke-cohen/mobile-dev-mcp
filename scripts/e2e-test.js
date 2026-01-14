@@ -826,6 +826,163 @@ class E2ETestRunner {
     }
   }
 
+  // ==================== SDK Action Tests ====================
+  
+  async testSDKActions() {
+    logStep('SDK ACTIONS', 'Testing SDK action commands (navigate, cart, etc.)...');
+    
+    // Test list_actions
+    await this.test('list_actions returns registered actions', async () => {
+      const result = await this.mcpClient.callTool('list_actions');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const actions = JSON.parse(result.content[0].text);
+      if (!Array.isArray(actions) || actions.length === 0) {
+        throw new Error('No actions registered');
+      }
+      logVerbose(`Available actions: ${actions.join(', ')}`);
+    });
+    
+    // Test navigation
+    await this.test('navigate_to changes screen', async () => {
+      // Navigate to products
+      const result = await this.mcpClient.callTool('navigate_to', { route: 'products' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      // Verify via state
+      await sleep(500);
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.currentTab !== 'products') {
+        throw new Error(`Expected currentTab=products, got ${state.currentTab}`);
+      }
+    });
+    
+    // Test add to cart
+    await this.test('add_to_cart adds product', async () => {
+      // First, clear cart
+      await this.mcpClient.callTool('clear_cart');
+      await sleep(200);
+      
+      // Add product ID "1" (Wireless Headphones)
+      const result = await this.mcpClient.callTool('add_to_cart', { productId: '1' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      // Verify cart has item
+      await sleep(300);
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'cartCount' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.cartCount !== 1) {
+        throw new Error(`Expected cartCount=1, got ${state.cartCount}`);
+      }
+    });
+    
+    // Test add more to cart
+    await this.test('add_to_cart increases quantity', async () => {
+      // Add same product again
+      await this.mcpClient.callTool('add_to_cart', { productId: '1' });
+      await sleep(200);
+      
+      // Verify cart count increased
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'cartCount' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.cartCount !== 2) {
+        throw new Error(`Expected cartCount=2, got ${state.cartCount}`);
+      }
+    });
+    
+    // Test cart total calculation
+    await this.test('cart total is calculated correctly', async () => {
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'cartTotal' });
+      const state = JSON.parse(stateResult.content[0].text);
+      // Product 1 is $149.99, quantity 2 = $299.98
+      if (Math.abs(state.cartTotal - 299.98) > 0.01) {
+        throw new Error(`Expected cartTotal=299.98, got ${state.cartTotal}`);
+      }
+    });
+    
+    // Test navigate to cart
+    await this.test('navigate to cart and verify', async () => {
+      await this.mcpClient.callTool('navigate_to', { route: 'cart' });
+      await sleep(300);
+      
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.currentTab !== 'cart') {
+        throw new Error(`Expected currentTab=cart, got ${state.currentTab}`);
+      }
+    });
+    
+    // Test remove from cart
+    await this.test('remove_from_cart removes product', async () => {
+      const result = await this.mcpClient.callTool('remove_from_cart', { productId: '1' });
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      await sleep(200);
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'cartCount' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.cartCount !== 0) {
+        throw new Error(`Expected cartCount=0 after remove, got ${state.cartCount}`);
+      }
+    });
+    
+    // Test login
+    await this.test('login sets user', async () => {
+      const result = await this.mcpClient.callTool('login');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      await sleep(200);
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'user' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (!state.user || !state.user.name) {
+        throw new Error('User not set after login');
+      }
+    });
+    
+    // Test logout
+    await this.test('logout clears user', async () => {
+      const result = await this.mcpClient.callTool('logout');
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      await sleep(200);
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'user' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.user !== null) {
+        throw new Error('User not cleared after logout');
+      }
+    });
+    
+    // Test navigate back home
+    await this.test('navigate back to home', async () => {
+      await this.mcpClient.callTool('navigate_to', { route: 'home' });
+      await sleep(300);
+      
+      const stateResult = await this.mcpClient.callTool('get_app_state', { path: 'currentTab' });
+      const state = JSON.parse(stateResult.content[0].text);
+      if (state.currentTab !== 'home') {
+        throw new Error(`Expected currentTab=home, got ${state.currentTab}`);
+      }
+    });
+  }
+
   // ==================== UI Automation Tests ====================
 
   async testUIAutomation(platform) {
@@ -1089,11 +1246,12 @@ class E2ETestRunner {
         await this.runReactNativeTests('android');
       }
       
-      // If we have a connected app, test app tools
+      // If we have a connected app, test app tools and SDK actions
       try {
         const result = await this.mcpClient.callTool('list_connected_devices');
         if (!result.isError && !result.content[0].text.includes('No device')) {
           await this.testAppTools();
+          await this.testSDKActions();
         } else {
           logWarn('No app connected - skipping app tool tests');
           logInfo('Run a demo app to enable full tests');

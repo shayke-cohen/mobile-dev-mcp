@@ -20,6 +20,7 @@ interface MCPCommand {
 }
 
 type StateGetter = () => unknown;
+type ActionHandler = (params: Record<string, unknown>) => Promise<unknown> | unknown;
 
 // Activity log entry
 interface ActivityEntry {
@@ -40,6 +41,7 @@ interface MCPState {
 class MCPBridgeClass {
   private ws: WebSocket | null = null;
   private stateGetters: Map<string, StateGetter> = new Map();
+  private actionHandlers: Map<string, ActionHandler> = new Map();
   private logs: Array<{ level: string; message: string; timestamp: number }> = [];
   private networkRequests: Array<{
     id: string;
@@ -261,8 +263,39 @@ class MCPBridgeClass {
           result = this.getAppInfo();
           break;
 
+        // Action commands
+        case 'list_actions':
+          result = this.getRegisteredActions();
+          break;
+        case 'navigate_to':
+          result = await this.executeAction('navigate', params);
+          break;
+        case 'execute_action':
+          result = await this.executeAction(params.action as string, params);
+          break;
+        case 'add_to_cart':
+          result = await this.executeAction('addToCart', params);
+          break;
+        case 'remove_from_cart':
+          result = await this.executeAction('removeFromCart', params);
+          break;
+        case 'clear_cart':
+          result = await this.executeAction('clearCart', params);
+          break;
+        case 'login':
+          result = await this.executeAction('login', params);
+          break;
+        case 'logout':
+          result = await this.executeAction('logout', params);
+          break;
+
         default:
-          throw new Error(`Unknown method: ${method}`);
+          // Try to find a registered action handler
+          if (this.actionHandlers.has(method)) {
+            result = await this.executeAction(method, params);
+          } else {
+            throw new Error(`Unknown method: ${method}`);
+          }
       }
 
       this.sendResponse(id, result);
@@ -284,6 +317,51 @@ class MCPBridgeClass {
     if (this.config.debug) {
       console.log(`[MCP SDK] Exposed state: ${key}`);
     }
+  }
+
+  /**
+   * Register an action handler
+   * Actions can be triggered remotely via MCP commands
+   */
+  registerAction(name: string, handler: ActionHandler): void {
+    this.actionHandlers.set(name, handler);
+    if (this.config.debug) {
+      console.log(`[MCP SDK] Registered action: ${name}`);
+    }
+  }
+
+  /**
+   * Register multiple action handlers at once
+   */
+  registerActions(actions: Record<string, ActionHandler>): void {
+    Object.entries(actions).forEach(([name, handler]) => {
+      this.registerAction(name, handler);
+    });
+  }
+
+  /**
+   * Execute a registered action
+   */
+  private async executeAction(action: string, params: Record<string, unknown>): Promise<unknown> {
+    const handler = this.actionHandlers.get(action);
+    if (!handler) {
+      throw new Error(`Action not registered: ${action}`);
+    }
+    
+    try {
+      const result = await handler(params);
+      return { success: true, action, result };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Action failed: ${message}`);
+    }
+  }
+
+  /**
+   * Get list of registered actions
+   */
+  getRegisteredActions(): string[] {
+    return Array.from(this.actionHandlers.keys());
   }
 
   /**

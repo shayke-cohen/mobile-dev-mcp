@@ -95,6 +95,66 @@ function App(): React.JSX.Element {
     }
   }, [cart, user, currentTab]);
 
+  // Register MCP action handlers (allows remote control of the app)
+  useEffect(() => {
+    if (__DEV__) {
+      MCPBridge.registerActions({
+        // Navigation
+        navigate: (params) => {
+          const route = params.route as Tab;
+          if (['home', 'products', 'cart', 'profile'].includes(route)) {
+            setCurrentTab(route);
+            return { navigatedTo: route };
+          }
+          throw new Error(`Invalid route: ${route}`);
+        },
+
+        // Cart actions
+        addToCart: (params) => {
+          const productId = params.productId as string;
+          const product = PRODUCTS.find(p => p.id === productId);
+          if (!product) {
+            throw new Error(`Product not found: ${productId}`);
+          }
+          if (!product.inStock) {
+            throw new Error(`Product out of stock: ${product.name}`);
+          }
+          addToCart(product);
+          return { added: product.name, productId };
+        },
+
+        removeFromCart: (params) => {
+          const productId = params.productId as string;
+          removeFromCart(productId);
+          return { removed: productId };
+        },
+
+        clearCart: () => {
+          setCart([]);
+          return { cleared: true };
+        },
+
+        updateQuantity: (params) => {
+          const productId = params.productId as string;
+          const delta = params.delta as number;
+          updateQuantity(productId, delta);
+          return { updated: productId, delta };
+        },
+
+        // User actions
+        login: () => {
+          login();
+          return { loggedIn: true, user: { id: 'user_123', name: 'John Doe' } };
+        },
+
+        logout: () => {
+          logout();
+          return { loggedOut: true };
+        },
+      });
+    }
+  }, [addToCart, removeFromCart, updateQuantity, login, logout]);
+
   const addToCart = (product: Product) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
