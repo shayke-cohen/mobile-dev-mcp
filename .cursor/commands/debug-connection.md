@@ -10,7 +10,7 @@ Troubleshoot when the mobile app isn't connecting to the MCP server.
    ```
    If not, start it:
    ```bash
-   pnpm dev:server
+   yarn dev:server
    ```
 
 2. **Can you reach the server?**
@@ -28,7 +28,7 @@ Troubleshoot when the mobile app isn't connecting to the MCP server.
 
 ### Issue: "Connection refused"
 **Cause**: MCP server not running
-**Fix**: Run `pnpm dev:server` from the project root
+**Fix**: Run `yarn dev:server` from the project root
 
 ### Issue: Android emulator can't connect
 **Cause**: `localhost` in emulator doesn't point to host machine

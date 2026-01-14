@@ -20,8 +20,8 @@
  *   node scripts/e2e-test.js --verbose            # Verbose output
  * 
  * For debugging, run the server separately:
- *   Terminal 1: pnpm start:server
- *   Terminal 2: pnpm test:e2e:existing --platform=ios
+ *   Terminal 1: yarn start:server
+ *   Terminal 2: yarn test:e2e:existing --platform=ios
  */
 
 const { spawn, execSync } = require('child_process');
@@ -148,7 +148,7 @@ class MCPClient {
       const ws = new WebSocket(`ws://localhost:${CONFIG.wsPort}`);
       const timeout = setTimeout(() => {
         ws.close();
-        reject(new Error(`Cannot connect to existing server at ws://localhost:${CONFIG.wsPort}. Make sure to run: pnpm start:server`));
+        reject(new Error(`Cannot connect to existing server at ws://localhost:${CONFIG.wsPort}. Make sure to run: yarn start:server`));
       }, 5000);
       
       ws.on('open', () => {
@@ -160,7 +160,7 @@ class MCPClient {
       
       ws.on('error', (err) => {
         clearTimeout(timeout);
-        reject(new Error(`Cannot connect to existing server: ${err.message}. Make sure to run: pnpm start:server`));
+        reject(new Error(`Cannot connect to existing server: ${err.message}. Make sure to run: yarn start:server`));
       });
     });
   }

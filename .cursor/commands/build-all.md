@@ -6,12 +6,12 @@ Build all packages in the monorepo.
 
 1. **Install dependencies**
    ```bash
-   pnpm install
+   yarn install
    ```
 
 2. **Run the build**
    ```bash
-   pnpm build
+   yarn build
    ```
 
 3. **Verify build succeeded**
@@ -20,13 +20,13 @@ Build all packages in the monorepo.
    - Check that `packages/babel-plugin-mcp/dist/` exists
 
 4. **If build fails**
-   - Run `pnpm typecheck` to identify TypeScript errors
-   - Run `pnpm lint` to check for linting issues
+   - Run `yarn typecheck` to identify TypeScript errors
+   - Run `yarn lint` to check for linting issues
    - Fix any reported issues
 
 ## Clean Build
 
 If you need a fresh build:
 ```bash
-pnpm clean && pnpm install && pnpm build
+yarn clean && yarn install && yarn build
 ```

@@ -24,7 +24,7 @@ mobile-dev-mcp/
 ### Prerequisites
 
 - Node.js 18+
-- pnpm 9+ (`npm install -g pnpm`)
+- yarn 9+ (`npm install -g yarn`)
 - TypeScript knowledge
 - For iOS: Xcode 15+, Swift 5.9+
 - For Android: Android Studio, Kotlin 1.9+
@@ -37,13 +37,13 @@ git clone https://github.com/mobile-dev-mcp/mobile-dev-mcp.git
 cd mobile-dev-mcp
 
 # Install dependencies
-pnpm install
+yarn install
 
 # Build all packages
-pnpm build
+yarn build
 
 # Run MCP server in development
-pnpm dev:server
+yarn dev:server
 ```
 
 ## Making Changes
@@ -52,7 +52,7 @@ pnpm dev:server
 
 1. Add new tools in `src/tools/`
 2. Register in `src/tools/index.ts`
-3. Build with `pnpm build`
+3. Build with `yarn build`
 4. Test with sample apps
 
 ### React Native SDK (`packages/sdk-react-native/`)
@@ -130,11 +130,11 @@ export async function handleMyNewTool(
 ### MCP Server
 ```bash
 cd packages/mcp-server
-pnpm test
+yarn test
 ```
 
 ### Manual Testing
-1. Start MCP server: `pnpm dev:server`
+1. Start MCP server: `yarn dev:server`
 2. Run a sample app
 3. Configure Cursor to use local MCP server
 4. Test tools via Cursor AI queries
@@ -144,7 +144,7 @@ pnpm test
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Ensure builds pass: `pnpm build`
+4. Ensure builds pass: `yarn build`
 5. Write/update tests if applicable
 6. Update documentation
 7. Submit PR with clear description

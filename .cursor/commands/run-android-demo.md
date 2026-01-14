@@ -9,7 +9,7 @@ Run the native Android Jetpack Compose demo app in an emulator.
 
 1. **Ensure MCP server is running**
    - Check if server is running on ws://localhost:8765
-   - If not, start it with `pnpm dev:server` from root
+   - If not, start it with `yarn dev:server` from root
 
 2. **List available emulators**
    ```bash

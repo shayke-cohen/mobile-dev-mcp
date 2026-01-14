@@ -26,7 +26,7 @@ echo ""
 if [ ! -d "$SERVER_DIR/dist" ]; then
     echo -e "${YELLOW}⚠️  Server not built. Building now...${NC}"
     cd "$ROOT_DIR"
-    pnpm build
+    yarn build
 fi
 
 # Run unit tests
@@ -34,7 +34,7 @@ echo "📋 Running unit tests..."
 echo ""
 
 cd "$SERVER_DIR"
-if pnpm test --run 2>/dev/null; then
+if yarn test --run 2>/dev/null; then
     echo -e "${GREEN}✅ Unit tests passed${NC}"
 else
     echo -e "${YELLOW}⚠️  Some unit tests failed or skipped${NC}"
@@ -58,7 +58,7 @@ check_tool() {
 }
 
 check_tool "node" "Node.js runtime"
-check_tool "pnpm" "Package manager"
+check_tool "yarn" "Package manager"
 check_tool "xcrun" "iOS simulator control" || true
 check_tool "adb" "Android debug bridge" || true
 

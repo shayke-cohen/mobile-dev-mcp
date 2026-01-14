@@ -97,7 +97,7 @@ async getAnalyticsEvents(params: { limit?: number }): Promise<AnalyticsEvent[]> 
 
 ## Testing
 
-1. Build SDK: `cd packages/sdk-react-native && pnpm build`
+1. Build SDK: `cd packages/sdk-react-native && yarn build`
 2. Update demo app to use new SDK version
 3. Rebuild demo app
 4. Test via MCP tool
@@ -110,4 +110,4 @@ async getAnalyticsEvents(params: { limit?: number }): Promise<AnalyticsEvent[]> 
 - [ ] Hook added (if applicable)
 - [ ] Server tool updated (if applicable)
 - [ ] Tested in demo app
-- [ ] Types pass (`pnpm typecheck`)
+- [ ] Types pass (`yarn typecheck`)

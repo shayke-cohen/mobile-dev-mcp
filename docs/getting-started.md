@@ -4,7 +4,7 @@ This guide will help you set up the Mobile Dev MCP server and integrate the SDK 
 
 ## Prerequisites
 
-- Node.js 18+ and pnpm
+- Node.js 18+ and yarn
 - Cursor IDE with MCP support
 - For iOS: macOS with Xcode and iOS Simulator
 - For Android: Android Studio with an emulator or adb
@@ -16,8 +16,8 @@ This guide will help you set up the Mobile Dev MCP server and integrate the SDK 
 ```bash
 git clone https://github.com/shayke-cohen/mobile-dev-mcp.git
 cd mobile-dev-mcp
-pnpm install
-pnpm build
+yarn install
+yarn build
 ```
 
 ### Step 2: Configure Cursor

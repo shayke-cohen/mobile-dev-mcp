@@ -10,7 +10,7 @@ Run the React Native demo app on iOS or Android simulator.
 
 1. **Ensure MCP server is running**
    - Check if server is running on ws://localhost:8765
-   - If not, start it with `pnpm dev:server` from root
+   - If not, start it with `yarn dev:server` from root
 
 2. **Navigate to demo directory**
    ```bash

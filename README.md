@@ -54,8 +54,8 @@ A powerful [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) serv
 ```bash
 git clone https://github.com/shayke-cohen/mobile-dev-mcp.git
 cd mobile-dev-mcp
-pnpm install
-pnpm build
+yarn install
+yarn build
 ```
 
 ### 2. Configure Cursor
@@ -545,14 +545,14 @@ Demo apps include an **MCP Status Banner** showing:
 
 ```bash
 # Run unit tests
-pnpm test
+yarn test
 
 # Run E2E tests (iOS + Android)
-pnpm test:e2e
+yarn test:e2e
 
 # Run E2E for specific platform
-pnpm test:e2e:ios
-pnpm test:e2e:android
+yarn test:e2e:ios
+yarn test:e2e:android
 
 # Interactive test client
 node scripts/test-client.js
@@ -576,11 +576,11 @@ Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.m
 # Setup development environment
 git clone https://github.com/shayke-cohen/mobile-dev-mcp.git
 cd mobile-dev-mcp
-pnpm install
-pnpm build
+yarn install
+yarn build
 
 # Run in development mode
-pnpm dev:server
+yarn dev:server
 ```
 
 ## 📄 License

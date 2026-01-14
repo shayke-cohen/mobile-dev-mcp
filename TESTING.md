@@ -6,11 +6,11 @@ This guide explains how to test the Mobile Dev MCP server with and without Curso
 
 ```bash
 # Build everything first
-pnpm install
-pnpm build
+yarn install
+yarn build
 
 # Run E2E tests
-pnpm test:e2e
+yarn test:e2e
 
 # Run automated tests
 node scripts/test-client.js --mode=test
@@ -25,30 +25,30 @@ For better visibility into server logs and easier debugging, run the server in a
 
 ```bash
 # Terminal 1: Start server in standalone mode
-pnpm start:server
+yarn start:server
 
 # Terminal 2: Run E2E tests against existing server
-pnpm test:e2e:existing --platform=ios
+yarn test:e2e:existing --platform=ios
 ```
 
 ### Server Modes
 
 | Mode | Command | Description |
 |------|---------|-------------|
-| **Standalone** | `pnpm start:server` | WebSocket only, for testing/debugging |
+| **Standalone** | `yarn start:server` | WebSocket only, for testing/debugging |
 | **Normal** | (via Cursor) | stdio + WebSocket, for Cursor IDE |
 
 ### Standalone Server Options
 
 ```bash
 # Default port 8765
-pnpm start:server
+yarn start:server
 
 # Custom port
-MCP_PORT=9000 pnpm start:server
+MCP_PORT=9000 yarn start:server
 
 # Debug logging
-pnpm start:server:debug
+yarn start:server:debug
 ```
 
 The standalone server displays all activity in the terminal, making it easier to debug issues.
@@ -61,10 +61,10 @@ Run the built-in unit tests:
 
 ```bash
 # Run all tests
-pnpm test
+yarn test
 
 # Run only server tests
-pnpm --filter @mobile-dev-mcp/server test
+yarn --filter @mobile-dev-mcp/server test
 ```
 
 ### 2. Interactive Test Client
@@ -220,7 +220,7 @@ The MCP server shows this when no mobile app is connected via WebSocket:
 
 ### Server Won't Start
 
-1. Check the server is built: `pnpm build`
+1. Check the server is built: `yarn build`
 2. Verify the path in your MCP config
 3. Check for port conflicts on 8765
 
@@ -263,7 +263,7 @@ The SDKs automatically handle connection issues:
 
 ### Tests Fail
 
-1. Rebuild: `pnpm build`
+1. Rebuild: `yarn build`
 2. Check Node.js version: `node --version` (requires 18+)
 3. Check for required tools: `xcrun` (iOS), `adb` (Android)
 
@@ -335,16 +335,16 @@ The e2e test suite performs a full integration test:
 
 ```bash
 # Run all e2e tests (iOS + Android)
-pnpm test:e2e
+yarn test:e2e
 
 # iOS only
-pnpm test:e2e:ios
+yarn test:e2e:ios
 
 # Android only
-pnpm test:e2e:android
+yarn test:e2e:android
 
-# Use existing server (for debugging - run pnpm start:server first)
-pnpm test:e2e:existing --platform=ios
+# Use existing server (for debugging - run yarn start:server first)
+yarn test:e2e:existing --platform=ios
 
 # Skip build (test already running app)
 node scripts/e2e-test.js --skip-build
@@ -359,10 +359,10 @@ For easier debugging, run the server in one terminal and tests in another:
 
 ```bash
 # Terminal 1: Start server with debug logging
-pnpm start:server:debug
+yarn start:server:debug
 
 # Terminal 2: Run tests
-pnpm test:e2e:existing --platform=android -v
+yarn test:e2e:existing --platform=android -v
 ```
 
 This lets you see server logs in real-time while tests run.

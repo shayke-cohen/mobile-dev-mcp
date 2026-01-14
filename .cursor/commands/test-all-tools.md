@@ -3,7 +3,7 @@
 Run a complete test of all MCP tools against a running demo app.
 
 ## Prerequisites
-- MCP server running (`pnpm dev:server`)
+- MCP server running (`yarn dev:server`)
 - A demo app running and connected
 - Run `list_connected_devices` first to verify connection
 

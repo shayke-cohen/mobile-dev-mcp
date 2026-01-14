@@ -3,7 +3,7 @@
 Test the MCP state inspection tools against a running demo app.
 
 ## Prerequisites
-- MCP server running (`pnpm dev:server`)
+- MCP server running (`yarn dev:server`)
 - A demo app running and connected
 
 ## Test Scenarios

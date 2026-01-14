@@ -18,7 +18,7 @@ const { spawn } = require('child_process');
 const readline = require('readline');
 const path = require('path');
 
-// Try to load ws from mcp-server's node_modules (pnpm workspace)
+// Try to load ws from mcp-server's node_modules (yarn workspace)
 let WebSocket;
 try {
   WebSocket = require('ws');

@@ -66,8 +66,8 @@ In `packages/sdk-react-native/src/`:
 
 ### 5. Test the Tool
 
-1. Rebuild: `pnpm build`
-2. Restart MCP server: `pnpm dev:server`
+1. Rebuild: `yarn build`
+2. Restart MCP server: `yarn dev:server`
 3. If device-required, reinstall app with updated SDK
 4. Test the tool via Cursor
 
@@ -95,4 +95,4 @@ export const deviceTools = [
 - [ ] Handler implemented (or routed to SDK)
 - [ ] SDK updated (if device-required)
 - [ ] Tool tested and working
-- [ ] Types pass (`pnpm typecheck`)
+- [ ] Types pass (`yarn typecheck`)

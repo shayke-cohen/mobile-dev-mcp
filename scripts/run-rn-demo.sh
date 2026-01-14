@@ -17,7 +17,7 @@ cd "$PROJECT_DIR"
 # Check if node_modules exists
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing dependencies..."
-    npm install || yarn install || pnpm install
+    yarn install
 fi
 
 if [ "$PLATFORM" = "ios" ]; then

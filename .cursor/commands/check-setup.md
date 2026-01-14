@@ -10,11 +10,11 @@ node --version
 ```
 **Required**: v18.0.0 or higher
 
-### 2. pnpm Installed
+### 2. yarn Installed
 ```bash
-pnpm --version
+yarn --version
 ```
-**Required**: pnpm 9.x (install with `npm install -g pnpm`)
+**Required**: yarn 9.x (install with `npm install -g yarn`)
 
 ### 3. Dependencies Installed
 ```bash
@@ -24,7 +24,7 @@ ls node_modules/@modelcontextprotocol
 
 If missing, run:
 ```bash
-pnpm install
+yarn install
 ```
 
 ### 4. Packages Built
@@ -36,7 +36,7 @@ ls packages/sdk-react-native/dist
 
 If missing, run:
 ```bash
-pnpm build
+yarn build
 ```
 
 ### 5. iOS Development (macOS only)
@@ -56,24 +56,24 @@ emulator -list-avds
 
 ### 7. TypeScript
 ```bash
-pnpm typecheck
+yarn typecheck
 ```
 **Expected**: No errors
 
 ### 8. Tests Pass
 ```bash
-pnpm test
+yarn test
 ```
 **Expected**: All tests pass
 
 ## Environment Checklist
 
 - [ ] Node.js 18+ installed
-- [ ] pnpm installed
-- [ ] Dependencies installed (`pnpm install`)
-- [ ] Packages built (`pnpm build`)
-- [ ] TypeScript compiles (`pnpm typecheck`)
-- [ ] Tests pass (`pnpm test`)
+- [ ] yarn installed
+- [ ] Dependencies installed (`yarn install`)
+- [ ] Packages built (`yarn build`)
+- [ ] TypeScript compiles (`yarn typecheck`)
+- [ ] Tests pass (`yarn test`)
 - [ ] (iOS) Xcode installed with simulators
 - [ ] (Android) Android Studio with SDK and emulators
 
@@ -81,8 +81,8 @@ pnpm test
 
 If setup seems broken, try a clean install:
 ```bash
-pnpm clean
+yarn clean
 rm -rf node_modules
-pnpm install
-pnpm build
+yarn install
+yarn build
 ```

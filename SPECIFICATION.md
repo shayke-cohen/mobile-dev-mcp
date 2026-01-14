@@ -1327,7 +1327,7 @@ mobile-dev-mcp/
 │   └── publish.sh
 │
 ├── package.json                  # Root package (workspaces)
-├── pnpm-workspace.yaml
+├── yarn workspaces
 ├── turbo.json                    # Turborepo config
 ├── .github/
 │   └── workflows/
@@ -1343,7 +1343,7 @@ mobile-dev-mcp/
 ### Package Manager Configuration
 
 ```yaml
-# pnpm-workspace.yaml
+# yarn workspaces
 packages:
   - 'packages/*'
   - 'examples/*'

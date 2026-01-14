@@ -9,7 +9,7 @@ npm install --save-dev @mobile-dev-mcp/babel-plugin
 # or
 yarn add -D @mobile-dev-mcp/babel-plugin
 # or
-pnpm add -D @mobile-dev-mcp/babel-plugin
+yarn add -D @mobile-dev-mcp/babel-plugin
 ```
 
 ## Usage

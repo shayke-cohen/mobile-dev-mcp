@@ -6,17 +6,17 @@ Start the MCP server and a demo app for local development.
 
 1. **Check prerequisites**
    - Verify Node.js 18+ is installed
-   - Verify pnpm is installed
+   - Verify yarn is installed
    - For iOS: Verify Xcode and simulators are available
    - For Android: Verify Android Studio and emulators are set up
 
 2. **Install dependencies** (if needed)
-   - Run `pnpm install` in the root directory
+   - Run `yarn install` in the root directory
 
 3. **Start the MCP server** (choose one):
    - For Cursor integration: Server starts automatically via stdio
-   - For debugging/testing: `pnpm start:server` (runs in standalone WebSocket-only mode)
-   - For debug logging: `pnpm start:server:debug`
+   - For debugging/testing: `yarn start:server` (runs in standalone WebSocket-only mode)
+   - For debug logging: `yarn start:server:debug`
 
 4. **Ask which demo app to run**
    - React Native (iOS or Android)
@@ -39,5 +39,5 @@ Start the MCP server and a demo app for local development.
 | Mode | Command | Use Case |
 |------|---------|----------|
 | Cursor Integration | (automatic) | Normal usage with Cursor AI |
-| Standalone | `pnpm start:server` | Debugging, testing, development |
-| Standalone Debug | `pnpm start:server:debug` | Verbose logging |
+| Standalone | `yarn start:server` | Debugging, testing, development |
+| Standalone Debug | `yarn start:server:debug` | Verbose logging |

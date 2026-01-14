@@ -6,9 +6,9 @@ Create a well-structured pull request for your changes.
 
 ### 1. Ensure Code Quality
 ```bash
-pnpm typecheck
-pnpm lint
-pnpm test
+yarn typecheck
+yarn lint
+yarn test
 ```
 
 Fix any issues before proceeding.

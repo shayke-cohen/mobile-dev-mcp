@@ -6,7 +6,7 @@ Run the test suite and fix any failures.
 
 ### 1. Run All Tests
 ```bash
-pnpm test
+yarn test
 ```
 
 ### 2. If Tests Fail
@@ -21,7 +21,7 @@ Analyze the failures:
 To focus on a failing test:
 ```bash
 cd packages/mcp-server
-pnpm test src/__tests__/specific-file.test.ts
+yarn test src/__tests__/specific-file.test.ts
 ```
 
 ### 4. Run Tests in Watch Mode
@@ -29,7 +29,7 @@ pnpm test src/__tests__/specific-file.test.ts
 For iterative fixing:
 ```bash
 cd packages/mcp-server
-pnpm test --watch
+yarn test --watch
 ```
 
 ### 5. Fix Failures
@@ -43,7 +43,7 @@ For each failure:
 ### 6. Check Coverage (Optional)
 
 ```bash
-pnpm test --coverage
+yarn test --coverage
 ```
 
 ## Test Locations

@@ -12,7 +12,7 @@
 #   MCP_PORT=9000 ./scripts/start-server.sh
 #
 # Then run tests in another terminal:
-#   pnpm test:e2e --use-existing-server
+#   yarn test:e2e --use-existing-server
 
 set -e
 
@@ -43,7 +43,7 @@ MCP_PORT=${MCP_PORT:-8765}
 if [ ! -f "$SERVER_PATH" ]; then
   echo "⚠️  Server not built. Building now..."
   cd "$ROOT_DIR"
-  pnpm build
+  yarn build
 fi
 
 echo ""
@@ -56,8 +56,8 @@ echo "  Mode:      Standalone (WebSocket only, no stdio)"
 echo ""
 echo "  This server accepts connections from:"
 echo "    • Mobile SDKs (iOS, Android, React Native)"
-echo "    • E2E tests (pnpm test:e2e --use-existing-server)"
-echo "    • Test client (pnpm test:client)"
+echo "    • E2E tests (yarn test:e2e --use-existing-server)"
+echo "    • Test client (yarn test:client)"
 echo ""
 echo "  Press Ctrl+C to stop"
 echo ""
