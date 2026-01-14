@@ -9,46 +9,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-#### MCP Server
-- Initial release of `@mobile-dev-mcp/server`
-- WebSocket bridge for mobile app communication
-- Device management tools (simulators/emulators)
-- Screenshot capture for iOS and Android
-- App state inspection
-- Feature flag management
-- Network request monitoring
+#### MCP Server (`@mobile-dev-mcp/server`)
+- Initial release of MCP server for Cursor IDE
+- WebSocket bridge for real-time mobile app communication
+- 54 tools for device management, app inspection, and control
+- Device management (iOS Simulator, Android Emulator)
+- Screenshot capture for iOS, Android, and macOS
+- App state inspection and manipulation
+- Feature flag management with remote toggle
+- Network request monitoring and mocking
 - Log capture and error tracking
+- Storage query (AsyncStorage, UserDefaults, SharedPreferences)
 
-#### React Native SDK
-- Initial release of `@mobile-dev-mcp/react-native`
+#### React Native SDK (`@mobile-dev-mcp/react-native`)
 - State exposure API (`exposeState`)
 - Action registration API (`registerAction`, `registerActions`)
 - Component registration for UI inspection (`registerComponent`)
 - Navigation state tracking (`setNavigationState`)
+- **Function tracing** (`trace`, `traceReturn`, `traceAsync`, `traceSync`)
 - Network interception and mocking
 - Log capture
 - Feature flags support
 - React hook for SDK state (`useMCPState`)
 
-#### iOS SDK
-- Initial release of `MobileDevMCP` Swift package
+#### iOS SDK (`MobileDevMCP`)
+- Swift Package Manager and CocoaPods support
 - State exposure API
 - Action registration API
 - Component registration for UI inspection
 - Navigation state tracking
+- **Function tracing** (`trace`, `traceReturn`, `traceAsync`, `traceSync`)
 - UserDefaults query support
 - Network mocking
 - SwiftUI integration with `@ObservableObject`
 
-#### Android SDK
-- Initial release of `com.mobiledevmcp:sdk`
+#### macOS SDK (`MobileDevMCP`)
+- **Full macOS support** using same SDK as iOS
+- Native macOS SwiftUI integration
+- Sidebar navigation pattern support
+- All features from iOS SDK available on macOS
+- macOS-specific device info (hostname, serial number)
+
+#### Android SDK (`com.mobiledevmcp:sdk`)
 - State exposure API
-- Action registration API (with coroutine support)
+- Action registration API with coroutine support
 - Component registration for UI inspection
 - Navigation state tracking
+- **Function tracing** (`trace`, `traceReturn`, `traceAsync`, `traceSync`)
 - SharedPreferences query support
 - Network mocking
 - Jetpack Compose integration with `StateFlow`
+
+#### Babel Plugin (`@mobile-dev-mcp/babel-plugin`)
+- Auto-instrumentation for React Native functions
+- Configurable function tracing
+- File pattern matching for selective instrumentation
 
 #### UI Inspection Tools
 - `get_component_tree` - Get registered component hierarchy
@@ -65,6 +80,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `add_to_cart` / `remove_from_cart` / `clear_cart` - Cart actions
 - `login` / `logout` - Authentication actions
 
+#### Tracing Tools
+- `get_traces` - Get function trace history with filtering
+- `get_active_traces` - Get in-progress traces
+- `clear_traces` - Clear trace history
+
 #### Validation Tools
 - `get_navigation_state` - Get current route and history
 - `query_storage` - Query AsyncStorage/UserDefaults/SharedPreferences
@@ -75,27 +95,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Demo Apps
 - React Native e-commerce demo app
 - iOS SwiftUI e-commerce demo app
+- **macOS SwiftUI e-commerce demo app**
 - Android Compose e-commerce demo app
 - Full SDK integration examples
 - Component registration examples
 
 #### Testing
 - Comprehensive E2E test suite
-- 39 tests for iOS
+- 34 tests for iOS
+- 34 tests for **macOS**
 - 40 tests for Android
 - 39 tests for React Native
-- UI automation tests with AppleScript (iOS) and ADB (Android)
+- UI automation tests with AppleScript (iOS/macOS) and ADB (Android)
 
 ### Security
 - SDK only active in DEBUG/development builds
 - No data collection or external communication
 - All communication is local (WebSocket to localhost)
+- Production builds exclude SDK code entirely
 
 ## [Unreleased]
 
 ### Planned
-- Auto-instrumentation for common UI frameworks
-- Performance monitoring
+- Visual regression testing support
+- Performance monitoring dashboard
 - Crash reporting integration
 - Remote debugging tools
-- Visual regression testing support
+- VS Code extension support
+- Web app SDK (React, Vue, Angular)

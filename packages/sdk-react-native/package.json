@@ -1,7 +1,7 @@
 {
   "name": "@mobile-dev-mcp/react-native",
   "version": "0.1.0",
-  "description": "MCP SDK for React Native apps - enables AI-assisted development in Cursor",
+  "description": "React Native SDK for AI-assisted mobile development with Cursor IDE - state inspection, action triggers, UI inspection, and function tracing",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "react-native": "src/index.ts",
@@ -28,21 +28,32 @@
   "files": [
     "src",
     "ios",
-    "android"
+    "android",
+    "README.md"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp.git",
     "directory": "packages/sdk-react-native"
   },
+  "bugs": {
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp/issues"
+  },
+  "homepage": "https://github.com/mobile-dev-mcp/mobile-dev-mcp/tree/main/packages/sdk-react-native#readme",
   "keywords": [
     "react-native",
     "mcp",
+    "model-context-protocol",
     "cursor",
     "ai",
     "debugging",
-    "development"
+    "development-tools",
+    "state-management",
+    "tracing",
+    "ui-inspection"
   ],
+  "author": "Mobile Dev MCP Contributors",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   }

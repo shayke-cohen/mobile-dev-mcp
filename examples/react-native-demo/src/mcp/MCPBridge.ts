@@ -62,6 +62,34 @@ interface NetworkMock {
   };
 }
 
+// Tracing types
+interface TraceInfo {
+  args?: Record<string, unknown>;
+  file?: string;
+  startTime?: number;
+  metadata?: Record<string, unknown>;
+}
+
+interface TraceEntry {
+  id: string;
+  name: string;
+  info: TraceInfo;
+  timestamp: number;
+  duration?: number;
+  returnValue?: unknown;
+  error?: string;
+  completed: boolean;
+}
+
+interface TraceFilter {
+  name?: string;
+  file?: string;
+  minDuration?: number;
+  since?: number;
+  limit?: number;
+  inProgress?: boolean;
+}
+
 class MCPBridgeClass {
   private ws: WebSocket | null = null;
   private stateGetters: Map<string, StateGetter> = new Map();
@@ -94,6 +122,11 @@ class MCPBridgeClass {
     currentRoute: 'home',
     history: [],
   };
+  
+  // Tracing
+  private traces: Map<string, TraceEntry> = new Map();
+  private traceHistory: TraceEntry[] = [];
+  private traceIdCounter = 0;
   private config: Required<MCPConfig> = {
     serverUrl: this.getDefaultServerUrl(),
     debug: true,
@@ -168,7 +201,7 @@ class MCPBridgeClass {
           appName: 'MCP Demo Store',
           appVersion: '1.0.0',
           deviceId: `rn_${Platform.OS}_${Date.now()}`,
-          capabilities: ['state', 'logs', 'network', 'featureFlags'],
+          capabilities: ['state', 'logs', 'network', 'featureFlags', 'actions', 'ui', 'tracing'],
         });
         this.logActivity('Sent handshake');
       };
@@ -347,6 +380,18 @@ class MCPBridgeClass {
           result = await this.replayNetworkRequest(params);
           break;
 
+        // Tracing commands
+        case 'get_traces':
+          result = this.getTraces(params as TraceFilter);
+          break;
+        case 'get_active_traces':
+          result = this.getTraces({ inProgress: true });
+          break;
+        case 'clear_traces':
+          this.clearTraces();
+          result = { success: true };
+          break;
+
         // Action commands
         case 'list_actions':
           result = this.getRegisteredActions();
@@ -446,6 +491,151 @@ class MCPBridgeClass {
    */
   getRegisteredActions(): string[] {
     return Array.from(this.actionHandlers.keys());
+  }
+
+  // ==================== Tracing API ====================
+
+  /**
+   * Trace a function call (called at function entry)
+   * Used by the Babel plugin for auto-instrumentation
+   */
+  trace(name: string, info: TraceInfo = {}): string {
+    if (typeof __DEV__ !== 'undefined' && !__DEV__) {
+      return '';
+    }
+
+    const id = `trace_${++this.traceIdCounter}_${Date.now()}`;
+    const entry: TraceEntry = {
+      id,
+      name,
+      info,
+      timestamp: info.startTime || Date.now(),
+      completed: false,
+    };
+
+    this.traces.set(id, entry);
+    this.traces.set(`name:${name}`, entry);
+
+    if (this.config.debug) {
+      console.log(`[MCP Trace] → ${name}`, info.args || {});
+    }
+
+    return id;
+  }
+
+  /**
+   * Complete a trace (called at function exit)
+   * Used by the Babel plugin for auto-instrumentation
+   */
+  traceReturn(name: string, returnValue?: unknown, error?: string): void {
+    if (typeof __DEV__ !== 'undefined' && !__DEV__) {
+      return;
+    }
+
+    const entry = this.traces.get(`name:${name}`);
+    if (!entry) {
+      return;
+    }
+
+    const now = Date.now();
+    entry.duration = now - entry.timestamp;
+    entry.returnValue = returnValue;
+    entry.error = error;
+    entry.completed = true;
+
+    this.traceHistory.push(entry);
+    if (this.traceHistory.length > 1000) {
+      this.traceHistory = this.traceHistory.slice(-1000);
+    }
+
+    this.traces.delete(entry.id);
+    this.traces.delete(`name:${name}`);
+
+    if (this.config.debug) {
+      const status = error ? `✗ ${error}` : '✓';
+      console.log(`[MCP Trace] ← ${name} (${entry.duration}ms) ${status}`);
+    }
+  }
+
+  /**
+   * Trace an async function with automatic entry/exit tracking
+   */
+  async traceAsync<T>(
+    name: string,
+    fn: () => Promise<T>,
+    info: TraceInfo = {}
+  ): Promise<T> {
+    this.trace(name, { ...info, startTime: Date.now() });
+    try {
+      const result = await fn();
+      this.traceReturn(name, result);
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.traceReturn(name, undefined, message);
+      throw error;
+    }
+  }
+
+  /**
+   * Trace a synchronous function
+   */
+  traceSync<T>(name: string, fn: () => T, info: TraceInfo = {}): T {
+    this.trace(name, { ...info, startTime: Date.now() });
+    try {
+      const result = fn();
+      this.traceReturn(name, result);
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.traceReturn(name, undefined, message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get trace history with optional filtering
+   */
+  getTraces(filter: TraceFilter = {}): { traces: TraceEntry[]; count: number; activeCount: number } {
+    let traces = [...this.traceHistory];
+
+    if (filter.name) {
+      const pattern = new RegExp(filter.name, 'i');
+      traces = traces.filter(t => pattern.test(t.name));
+    }
+
+    if (filter.file) {
+      const pattern = new RegExp(filter.file, 'i');
+      traces = traces.filter(t => t.info.file && pattern.test(t.info.file));
+    }
+
+    if (filter.minDuration !== undefined) {
+      traces = traces.filter(t => (t.duration || 0) >= filter.minDuration!);
+    }
+
+    if (filter.since !== undefined) {
+      const since = Date.now() - filter.since;
+      traces = traces.filter(t => t.timestamp >= since);
+    }
+
+    if (filter.inProgress) {
+      traces = Array.from(this.traces.values()).filter(t => !t.id.startsWith('name:'));
+    }
+
+    const limit = filter.limit || 100;
+    return {
+      traces: traces.slice(-limit).reverse(),
+      count: traces.length,
+      activeCount: Math.floor(this.traces.size / 2),
+    };
+  }
+
+  /**
+   * Clear trace history
+   */
+  clearTraces(): void {
+    this.traces.clear();
+    this.traceHistory = [];
   }
 
   /**

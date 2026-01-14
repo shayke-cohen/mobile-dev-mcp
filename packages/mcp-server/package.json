@@ -1,7 +1,7 @@
 {
   "name": "@mobile-dev-mcp/server",
   "version": "0.1.0",
-  "description": "MCP server for mobile development with Cursor",
+  "description": "MCP server for AI-assisted mobile development with Cursor IDE - supports iOS, Android, React Native, and macOS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -32,8 +32,33 @@
     "node": ">=18.0.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp.git",
+    "directory": "packages/mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp/issues"
+  },
+  "homepage": "https://github.com/mobile-dev-mcp/mobile-dev-mcp#readme",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cursor",
+    "ai",
+    "mobile",
+    "ios",
+    "android",
+    "react-native",
+    "macos",
+    "debugging",
+    "development-tools"
+  ],
+  "author": "Mobile Dev MCP Contributors",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   }

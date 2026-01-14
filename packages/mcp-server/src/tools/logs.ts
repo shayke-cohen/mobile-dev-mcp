@@ -62,27 +62,78 @@ export const logsTools = [
       },
     },
   },
+  // ==================== Tracing Tools ====================
   {
-    name: 'get_function_trace',
-    description: 'Get execution trace of function calls (if tracing is enabled via Babel plugin)',
+    name: 'get_traces',
+    description: 'Get function execution traces (requires auto-instrumentation via Babel plugin for React Native, or manual tracing for native apps). Shows function calls with timing, arguments, and return values.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        functionName: {
+        name: {
           type: 'string',
-          description: 'Filter by function name (supports wildcards)',
+          description: 'Filter by function name pattern (e.g., "Cart", "User.fetch")',
+        },
+        file: {
+          type: 'string',
+          description: 'Filter by source file pattern (e.g., "CartService")',
+        },
+        minDuration: {
+          type: 'number',
+          description: 'Only show traces longer than this duration (ms)',
+        },
+        since: {
+          type: 'number',
+          description: 'Only show traces from the last N milliseconds',
         },
         limit: {
           type: 'number',
-          description: 'Maximum number of trace entries',
+          description: 'Maximum number of traces to return (default: 100)',
         },
-        includeArgs: {
-          type: 'boolean',
-          description: 'Include function arguments (default: true)',
+      },
+    },
+  },
+  {
+    name: 'get_active_traces',
+    description: 'Get currently executing function traces (functions that have started but not yet returned). Useful for finding stuck or long-running operations.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'clear_traces',
+    description: 'Clear all trace history. Useful to start fresh before reproducing a bug.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'get_slow_traces',
+    description: 'Get the slowest function executions. Useful for performance analysis.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        minDuration: {
+          type: 'number',
+          description: 'Minimum duration in ms (default: 100)',
         },
-        includeReturns: {
-          type: 'boolean',
-          description: 'Include return values (default: true)',
+        limit: {
+          type: 'number',
+          description: 'Maximum number of traces to return (default: 20)',
+        },
+      },
+    },
+  },
+  {
+    name: 'get_failed_traces',
+    description: 'Get function executions that threw errors. Useful for debugging exceptions.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        limit: {
+          type: 'number',
+          description: 'Maximum number of traces to return (default: 20)',
         },
       },
     },
@@ -94,10 +145,38 @@ export async function handleLogsTool(
   args: Record<string, unknown>,
   deviceManager: DeviceManager
 ): Promise<unknown> {
+  // Map tool names to SDK commands
+  let method = name;
+  let params = args;
+
+  // Handle special trace tools
+  if (name === 'get_slow_traces') {
+    method = 'get_traces';
+    params = {
+      minDuration: args.minDuration || 100,
+      limit: args.limit || 20,
+    };
+  } else if (name === 'get_failed_traces') {
+    method = 'get_traces';
+    // Filter for traces with errors on the SDK side
+    params = {
+      limit: args.limit || 20,
+      hasError: true,
+    };
+  }
+
   const result = await deviceManager.sendCommand(null, {
-    method: name,
-    params: args,
+    method,
+    params,
   });
+
+  // Post-process for get_failed_traces to filter only errored traces
+  if (name === 'get_failed_traces' && result && typeof result === 'object') {
+    const typedResult = result as { traces?: Array<{ error?: string }> };
+    if (typedResult.traces) {
+      typedResult.traces = typedResult.traces.filter(t => t.error);
+    }
+  }
 
   return result;
 }

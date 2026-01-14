@@ -2,6 +2,9 @@
 
 A sample e-commerce app demonstrating the Mobile Dev MCP SDK integration for AI-assisted development on macOS.
 
+[![Platform](https://img.shields.io/badge/Platform-macOS%2014+-blue.svg)](https://developer.apple.com/macos/)
+[![Swift](https://img.shields.io/badge/Swift-5.9+-orange.svg)](https://swift.org)
+
 ## Features
 
 - 🖥️ Native macOS SwiftUI interface with sidebar navigation

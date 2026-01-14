@@ -46,6 +46,11 @@ object MCPBridge {
     // Network mocking
     private val networkMocks = mutableMapOf<String, NetworkMock>()
     
+    // Tracing
+    private val activeTraces = mutableMapOf<String, TraceEntry>()
+    private val traceHistory = mutableListOf<TraceEntry>()
+    private var traceIdCounter = 0
+    
     // Data classes for component registration
     data class RegisteredComponent(
         val testId: String,
@@ -71,6 +76,34 @@ object MCPBridge {
         val body: Any,
         val headers: Map<String, String>? = null,
         val delay: Long? = null
+    )
+    
+    // Tracing data classes
+    data class TraceInfo(
+        val args: Map<String, Any?>? = null,
+        val file: String? = null,
+        val startTime: Long? = null,
+        val metadata: Map<String, Any?>? = null
+    )
+    
+    data class TraceEntry(
+        val id: String,
+        val name: String,
+        val info: TraceInfo,
+        val timestamp: Long,
+        var duration: Long? = null,
+        var returnValue: Any? = null,
+        var error: String? = null,
+        var completed: Boolean = false
+    )
+    
+    data class TraceFilter(
+        val name: String? = null,
+        val file: String? = null,
+        val minDuration: Long? = null,
+        val since: Long? = null,
+        val limit: Int? = null,
+        val inProgress: Boolean? = null
     )
     
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -181,6 +214,164 @@ object MCPBridge {
         return featureFlags[key] ?: false
     }
     
+    // ==================== Tracing API ====================
+    
+    /**
+     * Trace a function call (called at function entry)
+     * @param name Function name (e.g., "UserService.fetchUser")
+     * @param info Trace info including args, file, timing
+     * @return Trace ID for correlation
+     */
+    fun trace(name: String, info: TraceInfo = TraceInfo()): String {
+        if (!isDebugBuild()) return ""
+        
+        traceIdCounter++
+        val id = "trace_${traceIdCounter}_${System.currentTimeMillis()}"
+        
+        val entry = TraceEntry(
+            id = id,
+            name = name,
+            info = info,
+            timestamp = info.startTime ?: System.currentTimeMillis(),
+            completed = false
+        )
+        
+        activeTraces[id] = entry
+        activeTraces["name:$name"] = entry
+        
+        if (debug) {
+            Log.d(TAG, "[Trace] → $name ${info.args ?: emptyMap<String, Any>()}")
+        }
+        
+        return id
+    }
+    
+    /**
+     * Convenience overload for trace with args map
+     */
+    fun trace(name: String, args: Map<String, Any?>, file: String? = null): String {
+        return trace(name, TraceInfo(args = args, file = file, startTime = System.currentTimeMillis()))
+    }
+    
+    /**
+     * Complete a trace (called at function exit)
+     * @param name Function name
+     * @param returnValue Return value (optional)
+     * @param error Error message if function threw (optional)
+     */
+    fun traceReturn(name: String, returnValue: Any? = null, error: String? = null) {
+        if (!isDebugBuild()) return
+        
+        val entry = activeTraces["name:$name"] ?: return
+        
+        val now = System.currentTimeMillis()
+        entry.duration = now - entry.timestamp
+        entry.returnValue = returnValue
+        entry.error = error
+        entry.completed = true
+        
+        traceHistory.add(entry)
+        if (traceHistory.size > 1000) {
+            traceHistory.removeAt(0)
+        }
+        
+        activeTraces.remove(entry.id)
+        activeTraces.remove("name:$name")
+        
+        if (debug) {
+            val status = if (error != null) "✗ $error" else "✓"
+            Log.d(TAG, "[Trace] ← $name (${entry.duration}ms) $status")
+        }
+    }
+    
+    /**
+     * Trace an async function with automatic entry/exit tracking
+     */
+    suspend fun <T> traceAsync(
+        name: String,
+        info: TraceInfo = TraceInfo(),
+        block: suspend () -> T
+    ): T {
+        val traceInfo = info.copy(startTime = System.currentTimeMillis())
+        trace(name, traceInfo)
+        
+        return try {
+            val result = block()
+            traceReturn(name, result)
+            result
+        } catch (e: Exception) {
+            traceReturn(name, error = e.message)
+            throw e
+        }
+    }
+    
+    /**
+     * Trace a synchronous function
+     */
+    fun <T> traceSync(
+        name: String,
+        info: TraceInfo = TraceInfo(),
+        block: () -> T
+    ): T {
+        val traceInfo = info.copy(startTime = System.currentTimeMillis())
+        trace(name, traceInfo)
+        
+        return try {
+            val result = block()
+            traceReturn(name, result)
+            result
+        } catch (e: Exception) {
+            traceReturn(name, error = e.message)
+            throw e
+        }
+    }
+    
+    /**
+     * Get trace history with optional filtering
+     */
+    fun getTraces(filter: TraceFilter = TraceFilter()): List<TraceEntry> {
+        var traces = if (filter.inProgress == true) {
+            activeTraces.values.filter { !it.id.startsWith("name:") }.toList()
+        } else {
+            traceHistory.toList()
+        }
+        
+        filter.name?.let { pattern ->
+            traces = traces.filter { it.name.contains(pattern, ignoreCase = true) }
+        }
+        
+        filter.file?.let { pattern ->
+            traces = traces.filter { it.info.file?.contains(pattern, ignoreCase = true) == true }
+        }
+        
+        filter.minDuration?.let { min ->
+            traces = traces.filter { (it.duration ?: 0) >= min }
+        }
+        
+        filter.since?.let { since ->
+            val sinceTimestamp = System.currentTimeMillis() - since
+            traces = traces.filter { it.timestamp >= sinceTimestamp }
+        }
+        
+        val limit = filter.limit ?: 100
+        return traces.takeLast(limit).reversed()
+    }
+    
+    /**
+     * Clear trace history
+     */
+    fun clearTraces() {
+        activeTraces.clear()
+        traceHistory.clear()
+    }
+    
+    private fun isDebugBuild(): Boolean {
+        val context = contextRef?.get() ?: return false
+        return isDebugBuild(context)
+    }
+    
+    // ==================== Logging API ====================
+    
     /**
      * Enable log capture
      */
@@ -263,7 +454,7 @@ object MCPBridge {
                         it.packageManager.getPackageInfo(it.packageName, 0).versionName
                     } ?: "1.0.0")
                     put("deviceId", "android_${Build.MODEL}_${System.currentTimeMillis()}")
-                    put("capabilities", org.json.JSONArray(listOf("state", "logs", "network", "featureFlags")))
+                    put("capabilities", org.json.JSONArray(listOf("state", "logs", "network", "featureFlags", "actions", "ui", "tracing")))
                 }
                 webSocket.send(handshake.toString())
                 logActivity("Sent handshake")
@@ -373,6 +564,14 @@ object MCPBridge {
             // Network mocking commands
             "mock_network_request" -> mockNetworkRequest(params)
             "clear_network_mocks" -> clearNetworkMocks(params)
+            
+            // Tracing commands
+            "get_traces" -> getTracesMap(params)
+            "get_active_traces" -> getTracesMap(JSONObject().put("inProgress", true))
+            "clear_traces" -> {
+                clearTraces()
+                mapOf("success" to true)
+            }
             
             // Action commands
             "list_actions" -> getRegisteredActions()
@@ -619,6 +818,41 @@ object MCPBridge {
             networkMocks.clear()
             mapOf("success" to true, "clearedCount" to count, "remainingMocks" to 0)
         }
+    }
+    
+    private fun getTracesMap(params: JSONObject): Map<String, Any?> {
+        val filter = TraceFilter(
+            name = params.optString("name", null),
+            file = params.optString("file", null),
+            minDuration = params.optLong("minDuration", -1).takeIf { it >= 0 },
+            since = params.optLong("since", -1).takeIf { it >= 0 },
+            limit = params.optInt("limit", -1).takeIf { it >= 0 },
+            inProgress = if (params.has("inProgress")) params.getBoolean("inProgress") else null
+        )
+        
+        val traces = getTraces(filter)
+        val traceMaps = traces.map { entry ->
+            mutableMapOf<String, Any?>(
+                "id" to entry.id,
+                "name" to entry.name,
+                "timestamp" to entry.timestamp,
+                "completed" to entry.completed,
+                "info" to mutableMapOf<String, Any?>().apply {
+                    entry.info.args?.let { put("args", it) }
+                    entry.info.file?.let { put("file", it) }
+                    entry.info.startTime?.let { put("startTime", it) }
+                }
+            ).apply {
+                entry.duration?.let { put("duration", it) }
+                entry.error?.let { put("error", it) }
+            }
+        }
+        
+        return mapOf(
+            "traces" to traceMaps,
+            "count" to traceMaps.size,
+            "activeCount" to activeTraces.size / 2 // Divide by 2 because we store both id and name keys
+        )
     }
     
     private fun JSONObject.toMap(): Map<String, Any?> {

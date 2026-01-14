@@ -3,6 +3,7 @@
 AI-assisted mobile development with Cursor IDE using the Model Context Protocol (MCP).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/@mobile-dev-mcp/server.svg)](https://www.npmjs.com/package/@mobile-dev-mcp/server)
 
 ## Overview
 
@@ -14,6 +15,16 @@ Mobile Dev MCP enables AI assistants in Cursor to understand and interact with y
 - 📊 **Network Monitoring** - AI can see API requests and create mocks
 - 🧭 **Navigation Tracking** - AI knows your current screen and navigation history
 - 🚩 **Feature Flags** - AI can toggle features for testing
+- 🔬 **Function Tracing** - AI can trace function calls for debugging
+
+## Supported Platforms
+
+| Platform | SDK | Status |
+|----------|-----|--------|
+| React Native | `@mobile-dev-mcp/react-native` | ✅ Production Ready |
+| iOS (SwiftUI/UIKit) | `MobileDevMCP` | ✅ Production Ready |
+| Android (Compose/Views) | `com.mobiledevmcp:sdk` | ✅ Production Ready |
+| macOS (SwiftUI) | `MobileDevMCP` | ✅ Production Ready |
 
 ## Quick Start
 
@@ -39,7 +50,7 @@ Add to your Cursor MCP settings (`~/.cursor/mcp.json`):
 npm install @mobile-dev-mcp/react-native
 ```
 
-**iOS (Swift Package Manager):**
+**iOS / macOS (Swift Package Manager):**
 ```swift
 .package(url: "https://github.com/mobile-dev-mcp/mobile-dev-mcp.git", from: "0.1.0")
 ```
@@ -73,7 +84,7 @@ useEffect(() => {
 }, []);
 ```
 
-**iOS (Swift):**
+**iOS / macOS (Swift):**
 ```swift
 #if DEBUG
 MCPBridge.shared.initialize()
@@ -117,21 +128,128 @@ if (BuildConfig.DEBUG) {
 
 ## Packages
 
-| Package | Description | npm |
-|---------|-------------|-----|
-| [`@mobile-dev-mcp/server`](./packages/mcp-server) | MCP server for Cursor | [![npm](https://img.shields.io/npm/v/@mobile-dev-mcp/server)](https://www.npmjs.com/package/@mobile-dev-mcp/server) |
-| [`@mobile-dev-mcp/react-native`](./packages/sdk-react-native) | React Native SDK | [![npm](https://img.shields.io/npm/v/@mobile-dev-mcp/react-native)](https://www.npmjs.com/package/@mobile-dev-mcp/react-native) |
-| [`MobileDevMCP`](./packages/sdk-ios) | iOS SDK (Swift) | Swift Package Manager |
+| Package | Description | Install |
+|---------|-------------|---------|
+| [`@mobile-dev-mcp/server`](./packages/mcp-server) | MCP server for Cursor | `npx @mobile-dev-mcp/server` |
+| [`@mobile-dev-mcp/react-native`](./packages/sdk-react-native) | React Native SDK | `npm install @mobile-dev-mcp/react-native` |
+| [`MobileDevMCP`](./packages/sdk-ios) | iOS & macOS SDK (Swift) | Swift Package Manager |
 | [`com.mobiledevmcp:sdk`](./packages/sdk-android) | Android SDK (Kotlin) | Maven Central |
+| [`@mobile-dev-mcp/babel-plugin`](./packages/babel-plugin-mcp) | Auto-instrumentation | `npm install -D @mobile-dev-mcp/babel-plugin` |
 
 ## Demo Apps
 
 The repository includes demo apps for each platform:
 
-- [`examples/react-native-demo`](./examples/react-native-demo) - React Native e-commerce app
-- [`examples/ios-swiftui-demo`](./examples/ios-swiftui-demo) - iOS SwiftUI e-commerce app
-- [`examples/android-compose-demo`](./examples/android-compose-demo) - Android Compose e-commerce app
-- [`examples/macos-swiftui-demo`](./examples/macos-swiftui-demo) - macOS SwiftUI e-commerce app
+| Platform | Demo App | Description |
+|----------|----------|-------------|
+| React Native | [`examples/react-native-demo`](./examples/react-native-demo) | E-commerce app with full SDK integration |
+| iOS | [`examples/ios-swiftui-demo`](./examples/ios-swiftui-demo) | SwiftUI e-commerce app |
+| Android | [`examples/android-compose-demo`](./examples/android-compose-demo) | Jetpack Compose e-commerce app |
+| macOS | [`examples/macos-swiftui-demo`](./examples/macos-swiftui-demo) | macOS SwiftUI e-commerce app |
+
+## Available MCP Tools
+
+### Device Management
+| Tool | Description |
+|------|-------------|
+| `list_simulators` | List iOS simulators and Android emulators |
+| `boot_simulator` | Start a simulator/emulator |
+| `list_connected_devices` | List apps connected via SDK |
+
+### App Inspection
+| Tool | Description |
+|------|-------------|
+| `get_app_state` | Get app state values |
+| `get_device_info` | Get device information |
+| `get_logs` | Get console logs |
+| `get_recent_errors` | Get recent error logs |
+
+### UI Inspection
+| Tool | Description |
+|------|-------------|
+| `get_component_tree` | Get UI hierarchy with testIds |
+| `find_element` | Find elements by testId/type/text |
+| `get_element_text` | Get text content by testId |
+| `simulate_interaction` | Tap/input by testId |
+
+### Actions
+| Tool | Description |
+|------|-------------|
+| `list_actions` | List registered action handlers |
+| `execute_action` | Run any registered action |
+| `navigate_to` | Navigate to a route |
+| `add_to_cart` / `remove_from_cart` | Cart actions |
+| `login` / `logout` | Auth actions |
+
+### Feature Flags
+| Tool | Description |
+|------|-------------|
+| `list_feature_flags` | List all feature flags |
+| `toggle_feature_flag` | Toggle a flag value |
+
+### Network
+| Tool | Description |
+|------|-------------|
+| `list_network_requests` | List captured API requests |
+| `mock_network_request` | Create a network mock |
+| `clear_network_mocks` | Clear active mocks |
+
+### Tracing (New!)
+| Tool | Description |
+|------|-------------|
+| `get_traces` | Get function trace history |
+| `get_active_traces` | Get in-progress traces |
+| `clear_traces` | Clear trace history |
+
+### Screenshots
+| Tool | Description |
+|------|-------------|
+| `simulator_screenshot` | Capture iOS/macOS screenshot |
+| `emulator_screenshot` | Capture Android screenshot |
+
+## SDK Features
+
+### State Exposure
+```typescript
+// Expose any state for AI inspection
+MCPBridge.exposeState('cart', () => cartItems);
+MCPBridge.exposeState('user', () => currentUser);
+```
+
+### Action Registration
+```typescript
+// Register actions AI can trigger
+MCPBridge.registerAction('checkout', async (params) => {
+  await processCheckout(params);
+  return { success: true };
+});
+```
+
+### UI Component Registration
+```typescript
+// Register components for AI to find/interact with
+MCPBridge.registerComponent('submit-btn', {
+  type: 'Button',
+  onPress: () => submit(),
+  getText: () => 'Submit Order'
+});
+```
+
+### Function Tracing
+```typescript
+// Trace function execution for debugging
+const result = await MCPBridge.traceAsync('fetchUser', async () => {
+  return await api.getUser(userId);
+}, { args: { userId } });
+
+// Or use the Babel plugin for automatic instrumentation
+```
+
+### Navigation Tracking
+```typescript
+// Track current screen
+MCPBridge.setNavigationState('products', { category: 'electronics' });
+```
 
 ## Testing
 
@@ -140,46 +258,11 @@ The repository includes demo apps for each platform:
 yarn test:e2e
 
 # Platform-specific tests
-yarn test:e2e:ios
-yarn test:e2e:android
-yarn test:e2e:rn
-yarn test:e2e:macos
+yarn test:e2e:ios       # iOS tests (34 tests)
+yarn test:e2e:android   # Android tests
+yarn test:e2e:rn        # React Native tests
+yarn test:e2e:macos     # macOS tests (34 tests)
 ```
-
-## Available MCP Tools
-
-### Device Management
-- `list_simulators` / `list_emulators` - List available devices
-- `boot_simulator` / `boot_emulator` - Start a device
-- `list_connected_devices` - List apps connected via SDK
-
-### App Inspection
-- `get_app_state` - Get app state values
-- `get_device_info` - Get device information
-- `get_logs` / `get_recent_errors` - Get console logs
-
-### UI Inspection
-- `get_component_tree` - Get UI hierarchy
-- `find_element` - Find by testId/type/text
-- `simulate_interaction` - Tap/input by testId
-
-### Actions
-- `list_actions` - List registered actions
-- `execute_action` - Run an action
-- `navigate_to` - Navigate to route
-
-### Feature Flags
-- `list_feature_flags` - List all flags
-- `toggle_feature_flag` - Toggle a flag
-
-### Network
-- `list_network_requests` - List API requests
-- `mock_network_request` - Create mock
-- `clear_network_mocks` - Clear mocks
-
-### Screenshots
-- `simulator_screenshot` - iOS screenshot
-- `emulator_screenshot` - Android screenshot
 
 ## Development
 
@@ -188,18 +271,32 @@ yarn test:e2e:macos
 yarn install
 
 # Start MCP server in dev mode
-yarn dev:server
+yarn dev
 
 # Run demo apps
 cd examples/react-native-demo && yarn ios
-cd examples/ios-swiftui-demo && open MCPDemoApp.xcodeproj
+cd examples/ios-swiftui-demo && swift run
 cd examples/android-compose-demo && ./gradlew installDebug
+cd examples/macos-swiftui-demo && swift run
 ```
+
+## Security
+
+- 🔒 **Debug Only** - SDK only active in DEBUG/development builds
+- 🚫 **No Data Collection** - No telemetry or external communication
+- 🏠 **Local Only** - All communication via localhost WebSocket
+- ✅ **Production Safe** - SDK code completely excluded from release builds
 
 ## Contributing
 
-Contributions are welcome! Please read our contributing guidelines first.
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## License
 
 MIT © Mobile Dev MCP
+
+---
+
+<p align="center">
+  <b>Built for developers who want AI to truly understand their mobile apps.</b>
+</p>

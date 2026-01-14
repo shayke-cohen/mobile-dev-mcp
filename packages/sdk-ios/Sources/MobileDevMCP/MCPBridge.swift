@@ -50,6 +50,11 @@ public final class MCPBridge: ObservableObject {
     private var navigationState: NavigationState = NavigationState()
     private var networkMocks: [String: NetworkMock] = [:]
     
+    // Tracing
+    private var activeTraces: [String: TraceEntry] = [:]
+    private var traceHistory: [TraceEntry] = []
+    private var traceIdCounter: Int = 0
+    
     private static let DEFAULT_PORT = "8765"
     private static var defaultServerUrl: String {
         "ws://localhost:\(DEFAULT_PORT)"
@@ -196,6 +201,137 @@ public final class MCPBridge: ObservableObject {
         return serverUrl
     }
     
+    // MARK: - Tracing API
+    
+    /// Trace a function call (called at function entry)
+    /// - Parameters:
+    ///   - name: Function name (e.g., "UserService.fetchUser")
+    ///   - info: Trace info including args, file, timing
+    /// - Returns: Trace ID for correlation
+    @discardableResult
+    public func trace(_ name: String, info: TraceInfo = TraceInfo()) -> String {
+        #if DEBUG
+        traceIdCounter += 1
+        let id = "trace_\(traceIdCounter)_\(Int(Date().timeIntervalSince1970 * 1000))"
+        
+        let entry = TraceEntry(
+            id: id,
+            name: name,
+            info: info,
+            timestamp: info.startTime ?? Date().timeIntervalSince1970 * 1000,
+            completed: false
+        )
+        
+        activeTraces[id] = entry
+        activeTraces["name:\(name)"] = entry
+        
+        if debug {
+            print("[MCP Trace] → \(name)", info.args ?? [:])
+        }
+        
+        return id
+        #else
+        return ""
+        #endif
+    }
+    
+    /// Complete a trace (called at function exit)
+    /// - Parameters:
+    ///   - name: Function name
+    ///   - returnValue: Return value (optional)
+    ///   - error: Error message if function threw (optional)
+    public func traceReturn(_ name: String, returnValue: Any? = nil, error: String? = nil) {
+        #if DEBUG
+        guard var entry = activeTraces["name:\(name)"] else { return }
+        
+        let now = Date().timeIntervalSince1970 * 1000
+        entry.duration = now - entry.timestamp
+        entry.returnValue = returnValue
+        entry.error = error
+        entry.completed = true
+        
+        traceHistory.append(entry)
+        if traceHistory.count > 1000 {
+            traceHistory = Array(traceHistory.suffix(1000))
+        }
+        
+        activeTraces.removeValue(forKey: entry.id)
+        activeTraces.removeValue(forKey: "name:\(name)")
+        
+        if debug {
+            let status = error != nil ? "✗ \(error!)" : "✓"
+            print("[MCP Trace] ← \(name) (\(entry.duration ?? 0)ms) \(status)")
+        }
+        #endif
+    }
+    
+    /// Trace an async function with automatic entry/exit tracking
+    public func traceAsync<T>(_ name: String, info: TraceInfo = TraceInfo(), _ fn: () async throws -> T) async rethrows -> T {
+        var traceInfo = info
+        traceInfo.startTime = Date().timeIntervalSince1970 * 1000
+        let _ = trace(name, info: traceInfo)
+        
+        do {
+            let result = try await fn()
+            traceReturn(name, returnValue: result)
+            return result
+        } catch {
+            traceReturn(name, error: error.localizedDescription)
+            throw error
+        }
+    }
+    
+    /// Trace a synchronous function
+    public func traceSync<T>(_ name: String, info: TraceInfo = TraceInfo(), _ fn: () throws -> T) rethrows -> T {
+        var traceInfo = info
+        traceInfo.startTime = Date().timeIntervalSince1970 * 1000
+        let _ = trace(name, info: traceInfo)
+        
+        do {
+            let result = try fn()
+            traceReturn(name, returnValue: result)
+            return result
+        } catch {
+            traceReturn(name, error: error.localizedDescription)
+            throw error
+        }
+    }
+    
+    /// Get trace history with optional filtering
+    public func getTraces(filter: TraceFilter = TraceFilter()) -> [TraceEntry] {
+        var traces = traceHistory
+        
+        if let namePattern = filter.name {
+            traces = traces.filter { $0.name.lowercased().contains(namePattern.lowercased()) }
+        }
+        
+        if let filePattern = filter.file {
+            traces = traces.filter { $0.info.file?.lowercased().contains(filePattern.lowercased()) == true }
+        }
+        
+        if let minDuration = filter.minDuration {
+            traces = traces.filter { ($0.duration ?? 0) >= minDuration }
+        }
+        
+        if let since = filter.since {
+            let sinceTimestamp = Date().timeIntervalSince1970 * 1000 - since
+            traces = traces.filter { $0.timestamp >= sinceTimestamp }
+        }
+        
+        if filter.inProgress == true {
+            traces = activeTraces.values.filter { !$0.id.hasPrefix("name:") }
+        }
+        
+        let limit = filter.limit ?? 100
+        return Array(traces.suffix(limit).reversed())
+    }
+    
+    /// Clear trace history
+    public func clearTraces() {
+        activeTraces.removeAll()
+        traceHistory.removeAll()
+    }
+    
     // MARK: - Private Methods
     
     private func connect() {
@@ -221,7 +357,7 @@ public final class MCPBridge: ObservableObject {
             "appName": Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "iOS App",
             "appVersion": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0",
             "deviceId": deviceId,
-            "capabilities": ["state", "logs", "network", "featureFlags", "actions", "ui"]
+            "capabilities": ["state", "logs", "network", "featureFlags", "actions", "ui", "tracing"]
         ]
         
         sendMessage(handshake)
@@ -364,6 +500,13 @@ public final class MCPBridge: ObservableObject {
             return clearNetworkMocks(params: params)
         case "list_actions":
             return getRegisteredActions()
+        case "get_traces":
+            return getTracesDict(params: params)
+        case "get_active_traces":
+            return getTracesDict(params: ["inProgress": true])
+        case "clear_traces":
+            clearTraces()
+            return ["success": true]
         case "navigate_to":
             return try executeAction(name: "navigate", params: params)
         case "execute_action":
@@ -597,6 +740,44 @@ public final class MCPBridge: ObservableObject {
         return ["success": true, "clearedCount": count, "remainingMocks": 0]
     }
     
+    private func getTracesDict(params: [String: Any]) -> [String: Any] {
+        let filter = TraceFilter(
+            name: params["name"] as? String,
+            file: params["file"] as? String,
+            minDuration: params["minDuration"] as? TimeInterval,
+            since: params["since"] as? TimeInterval,
+            limit: params["limit"] as? Int,
+            inProgress: params["inProgress"] as? Bool
+        )
+        
+        let traces = getTraces(filter: filter)
+        let traceDicts = traces.map { entry -> [String: Any] in
+            var dict: [String: Any] = [
+                "id": entry.id,
+                "name": entry.name,
+                "timestamp": entry.timestamp,
+                "completed": entry.completed
+            ]
+            
+            var infoDict: [String: Any] = [:]
+            if let args = entry.info.args { infoDict["args"] = args }
+            if let file = entry.info.file { infoDict["file"] = file }
+            if let startTime = entry.info.startTime { infoDict["startTime"] = startTime }
+            dict["info"] = infoDict
+            
+            if let duration = entry.duration { dict["duration"] = duration }
+            if let error = entry.error { dict["error"] = error }
+            
+            return dict
+        }
+        
+        return [
+            "traces": traceDicts,
+            "count": traceDicts.count,
+            "activeCount": activeTraces.count / 2 // Divide by 2 because we store both id and name keys
+        ]
+    }
+    
     private func getAppState(params: [String: Any]) -> [String: Any] {
         var result: [String: Any] = [:]
         
@@ -727,6 +908,51 @@ public struct NetworkMock {
         public let body: Any
         public var headers: [String: String]?
         public var delay: TimeInterval?
+    }
+}
+
+// MARK: - Tracing Types
+
+public struct TraceInfo {
+    public var args: [String: Any]?
+    public var file: String?
+    public var startTime: TimeInterval?
+    public var metadata: [String: Any]?
+    
+    public init(args: [String: Any]? = nil, file: String? = nil, startTime: TimeInterval? = nil, metadata: [String: Any]? = nil) {
+        self.args = args
+        self.file = file
+        self.startTime = startTime
+        self.metadata = metadata
+    }
+}
+
+public struct TraceEntry {
+    public let id: String
+    public let name: String
+    public var info: TraceInfo
+    public let timestamp: TimeInterval
+    public var duration: TimeInterval?
+    public var returnValue: Any?
+    public var error: String?
+    public var completed: Bool
+}
+
+public struct TraceFilter {
+    public var name: String?
+    public var file: String?
+    public var minDuration: TimeInterval?
+    public var since: TimeInterval?
+    public var limit: Int?
+    public var inProgress: Bool?
+    
+    public init(name: String? = nil, file: String? = nil, minDuration: TimeInterval? = nil, since: TimeInterval? = nil, limit: Int? = nil, inProgress: Bool? = nil) {
+        self.name = name
+        self.file = file
+        self.minDuration = minDuration
+        self.since = since
+        self.limit = limit
+        self.inProgress = inProgress
     }
 }
 

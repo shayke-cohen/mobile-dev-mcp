@@ -1,167 +1,244 @@
 # Contributing to Mobile Dev MCP
 
-Thank you for your interest in contributing! This document provides guidelines and instructions.
+Thank you for your interest in contributing to Mobile Dev MCP! This document provides guidelines and instructions for contributing.
 
-## Project Structure
+## Code of Conduct
 
-```
-mobile-dev-mcp/
-├── packages/
-│   ├── mcp-server/          # Node.js MCP server
-│   ├── sdk-react-native/    # React Native SDK
-│   ├── sdk-ios/             # Swift/iOS SDK  
-│   ├── sdk-android/         # Kotlin/Android SDK
-│   └── babel-plugin/        # Auto-instrumentation (future)
-├── examples/
-│   ├── react-native-demo/   # RN sample app
-│   ├── ios-swiftui-demo/    # iOS sample app
-│   └── android-compose-demo/ # Android sample app
-└── docs/                    # Documentation
-```
+Please be respectful and constructive in all interactions. We welcome contributors of all experience levels.
 
-## Development Setup
+## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- yarn 9+ (`npm install -g yarn`)
-- TypeScript knowledge
-- For iOS: Xcode 15+, Swift 5.9+
-- For Android: Android Studio, Kotlin 1.9+
+- Yarn 1.22+
+- For iOS development: Xcode 15+, macOS 13+
+- For Android development: Android Studio, JDK 17+
+- For React Native: React Native CLI
 
-### Getting Started
+### Setup
+
+1. **Fork and clone the repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/mobile-dev-mcp.git
+   cd mobile-dev-mcp
+   ```
+
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
+
+3. **Build all packages**
+   ```bash
+   yarn build
+   ```
+
+4. **Run the MCP server in dev mode**
+   ```bash
+   yarn dev
+   ```
+
+### Project Structure
+
+```
+mobile-dev-mcp/
+├── packages/
+│   ├── mcp-server/          # MCP server for Cursor
+│   ├── sdk-react-native/    # React Native SDK
+│   ├── sdk-ios/             # iOS/macOS SDK (Swift)
+│   ├── sdk-android/         # Android SDK (Kotlin)
+│   └── babel-plugin-mcp/    # Babel plugin for auto-instrumentation
+├── examples/
+│   ├── react-native-demo/   # React Native demo app
+│   ├── ios-swiftui-demo/    # iOS demo app
+│   ├── android-compose-demo/# Android demo app
+│   └── macos-swiftui-demo/  # macOS demo app
+└── scripts/                 # Build and test scripts
+```
+
+## Development Workflow
+
+### Running Tests
 
 ```bash
-# Clone the repo
-git clone https://github.com/mobile-dev-mcp/mobile-dev-mcp.git
-cd mobile-dev-mcp
-
-# Install dependencies
-yarn install
-
-# Build all packages
-yarn build
-
-# Run MCP server in development
-yarn dev:server
-```
-
-## Making Changes
-
-### MCP Server (`packages/mcp-server/`)
-
-1. Add new tools in `src/tools/`
-2. Register in `src/tools/index.ts`
-3. Build with `yarn build`
-4. Test with sample apps
-
-### React Native SDK (`packages/sdk-react-native/`)
-
-1. Adapters handle specific functionality (state, network, etc.)
-2. MCPBridge.ts is the public API
-3. Test with `examples/react-native-demo/`
-
-### iOS SDK (`packages/sdk-ios/`)
-
-1. Swift Package structure
-2. MCPBridge.swift is the main entry
-3. Adapters/ contains feature implementations
-4. Test with `examples/ios-swiftui-demo/`
-
-### Android SDK (`packages/sdk-android/`)
-
-1. Gradle library module
-2. MCPBridge.kt is the singleton entry
-3. adapters/ contains feature implementations
-4. Test with `examples/android-compose-demo/`
-
-## Code Style
-
-### TypeScript
-- Use strict mode
-- Prefer async/await over callbacks
-- Document public APIs with JSDoc
-
-### Swift
-- Follow Swift API Design Guidelines
-- Use `#if DEBUG` for development-only code
-- Document with Swift DocC comments
-
-### Kotlin
-- Follow Kotlin coding conventions
-- Use coroutines for async operations
-- Document with KDoc comments
-
-## Adding New MCP Tools
-
-1. **Define the tool** in `packages/mcp-server/src/tools/`:
-
-```typescript
-export const myNewTool = {
-  name: 'my_new_tool',
-  description: 'What this tool does',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      param1: { type: 'string', description: '...' }
-    }
-  }
-};
-```
-
-2. **Add handler** in the same file:
-
-```typescript
-export async function handleMyNewTool(
-  args: Record<string, unknown>,
-  deviceManager: DeviceManager
-): Promise<unknown> {
-  return deviceManager.sendCommand(null, {
-    method: 'my_new_tool',
-    params: args
-  });
-}
-```
-
-3. **Implement in SDKs** - Add handler in each SDK's command dispatcher
-
-## Testing
-
-### MCP Server
-```bash
-cd packages/mcp-server
+# Run all tests
 yarn test
+
+# Run E2E tests
+yarn test:e2e
+
+# Platform-specific E2E tests
+yarn test:e2e:ios
+yarn test:e2e:android
+yarn test:e2e:rn
+yarn test:e2e:macos
 ```
 
-### Manual Testing
-1. Start MCP server: `yarn dev:server`
-2. Run a sample app
-3. Configure Cursor to use local MCP server
-4. Test tools via Cursor AI queries
+### Running Demo Apps
 
-## Pull Request Process
+```bash
+# React Native (iOS)
+cd examples/react-native-demo && yarn ios
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes
-4. Ensure builds pass: `yarn build`
-5. Write/update tests if applicable
-6. Update documentation
-7. Submit PR with clear description
+# React Native (Android)
+cd examples/react-native-demo && yarn android
 
-## Commit Messages
+# iOS SwiftUI
+cd examples/ios-swiftui-demo && swift run
 
-Follow conventional commits:
-- `feat: add new tool for X`
-- `fix: resolve connection issue`
-- `docs: update setup instructions`
-- `chore: update dependencies`
+# Android Compose
+cd examples/android-compose-demo && ./gradlew installDebug
 
-## Questions?
+# macOS SwiftUI
+cd examples/macos-swiftui-demo && swift run
+```
 
-- Open a GitHub issue for bugs
-- Start a discussion for feature ideas
-- Check existing issues before creating new ones
+### Code Style
+
+- **TypeScript/JavaScript**: We use ESLint and Prettier
+- **Swift**: Follow Swift API Design Guidelines
+- **Kotlin**: Follow Kotlin Coding Conventions
+
+Run linting:
+```bash
+yarn lint
+```
+
+## Contributing Guidelines
+
+### Reporting Bugs
+
+1. Check existing issues first
+2. Use the bug report template
+3. Include:
+   - Platform (iOS, Android, React Native, macOS)
+   - SDK version
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Logs if applicable
+
+### Suggesting Features
+
+1. Check existing issues/discussions
+2. Use the feature request template
+3. Explain the use case and benefits
+4. Consider implementation complexity
+
+### Pull Requests
+
+1. **Create a branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes**
+   - Follow existing code style
+   - Add tests for new functionality
+   - Update documentation if needed
+
+3. **Test your changes**
+   ```bash
+   yarn test
+   yarn test:e2e
+   ```
+
+4. **Commit with a descriptive message**
+   ```bash
+   git commit -m "feat: add new feature description"
+   ```
+   
+   We follow [Conventional Commits](https://www.conventionalcommits.org/):
+   - `feat:` New feature
+   - `fix:` Bug fix
+   - `docs:` Documentation only
+   - `style:` Code style (formatting, etc.)
+   - `refactor:` Code refactoring
+   - `test:` Adding tests
+   - `chore:` Maintenance tasks
+
+5. **Push and create PR**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+6. **PR Requirements**
+   - Clear description of changes
+   - Tests pass
+   - Documentation updated
+   - No breaking changes (or clearly documented)
+
+## Adding a New Tool
+
+To add a new MCP tool:
+
+1. **Define the tool** in `packages/mcp-server/src/tools/`
+   ```typescript
+   export const myNewTool = {
+     name: 'my_new_tool',
+     description: 'Description of what it does',
+     inputSchema: {
+       type: 'object',
+       properties: {
+         param1: { type: 'string', description: 'Parameter description' }
+       },
+       required: ['param1']
+     }
+   };
+   ```
+
+2. **Implement the handler** in the same file
+   ```typescript
+   export async function handleMyNewTool(params: MyNewToolParams) {
+     // Implementation
+     return { result: 'success' };
+   }
+   ```
+
+3. **Register in index.ts**
+
+4. **Add SDK support** if it requires device communication
+
+5. **Add tests**
+
+6. **Update documentation**
+
+## Adding SDK Features
+
+### React Native
+
+1. Add types in `packages/sdk-react-native/src/types.ts`
+2. Implement in `packages/sdk-react-native/src/MCPBridge.ts`
+3. Export from `packages/sdk-react-native/src/index.ts`
+4. Add tests and update README
+
+### iOS/macOS
+
+1. Add to `packages/sdk-ios/Sources/MobileDevMCP/MCPBridge.swift`
+2. Add command handling in `handleCommand`
+3. Update README
+
+### Android
+
+1. Add to `packages/sdk-android/src/main/kotlin/com/mobiledevmcp/MCPBridge.kt`
+2. Add command handling in `handleCommandSuspend`
+3. Update README
+
+## Release Process
+
+Releases are managed by maintainers:
+
+1. Update version numbers
+2. Update CHANGELOG.md
+3. Create release PR
+4. After merge, tag release
+5. Publish to npm/CocoaPods/Maven
+
+## Getting Help
+
+- 📖 [Documentation](./README.md)
+- 💬 [GitHub Discussions](https://github.com/mobile-dev-mcp/mobile-dev-mcp/discussions)
+- 🐛 [Issue Tracker](https://github.com/mobile-dev-mcp/mobile-dev-mcp/issues)
 
 ## License
 

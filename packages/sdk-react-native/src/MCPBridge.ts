@@ -16,6 +16,9 @@ import type {
   NetworkMock,
   NavigationState,
   StateCallback,
+  TraceInfo,
+  TraceEntry,
+  TraceFilter,
 } from './types';
 
 declare const __DEV__: boolean;
@@ -42,6 +45,11 @@ class MCPBridgeClass {
     currentRoute: 'home',
     history: [],
   };
+  
+  // Tracing storage
+  private traces: Map<string, TraceEntry> = new Map();
+  private traceHistory: TraceEntry[] = [];
+  private traceIdCounter = 0;
   
   private config: Required<MCPConfig> = {
     serverUrl: this.getDefaultServerUrl(),
@@ -124,7 +132,7 @@ class MCPBridgeClass {
             appName: 'React Native App',
             appVersion: '1.0.0',
             deviceId: `rn_${Platform.OS}_${Date.now()}`,
-            capabilities: ['state', 'logs', 'network', 'featureFlags', 'actions', 'ui'],
+            capabilities: ['state', 'logs', 'network', 'featureFlags', 'actions', 'ui', 'tracing'],
           });
         } catch {
           this.sendMessage({
@@ -133,7 +141,7 @@ class MCPBridgeClass {
             appName: 'React Native App',
             appVersion: '1.0.0',
             deviceId: `rn_${Date.now()}`,
-            capabilities: ['state', 'logs', 'network', 'featureFlags', 'actions', 'ui'],
+            capabilities: ['state', 'logs', 'network', 'featureFlags', 'actions', 'ui', 'tracing'],
           });
         }
         this.logActivity('Sent handshake');
@@ -292,6 +300,16 @@ class MCPBridgeClass {
           break;
         case 'list_actions':
           result = this.getRegisteredActions();
+          break;
+        case 'get_traces':
+          result = this.getTraces(params as TraceFilter);
+          break;
+        case 'get_active_traces':
+          result = this.getTraces({ inProgress: true });
+          break;
+        case 'clear_traces':
+          this.clearTraces();
+          result = { success: true };
           break;
         case 'navigate_to':
           result = await this.executeAction('navigate', params);
@@ -607,6 +625,183 @@ class MCPBridgeClass {
    */
   getRegisteredActions(): string[] {
     return Array.from(this.actionHandlers.keys());
+  }
+
+  // ==================== Tracing API ====================
+
+  /**
+   * Trace a function call (called at function entry)
+   * Used by the Babel plugin for auto-instrumentation
+   * 
+   * @example
+   * ```typescript
+   * // Called automatically by Babel plugin:
+   * MCPBridge.trace('UserService.fetchUser', { 
+   *   args: { userId: '123' }, 
+   *   file: 'UserService.ts',
+   *   startTime: Date.now()
+   * });
+   * ```
+   */
+  trace(name: string, info: TraceInfo = {}): string {
+    if (typeof __DEV__ !== 'undefined' && !__DEV__) {
+      return '';
+    }
+
+    const id = `trace_${++this.traceIdCounter}_${Date.now()}`;
+    const entry: TraceEntry = {
+      id,
+      name,
+      info,
+      timestamp: info.startTime || Date.now(),
+      completed: false,
+    };
+
+    this.traces.set(id, entry);
+
+    // Also store by name for quick lookup by traceReturn
+    this.traces.set(`name:${name}`, entry);
+
+    if (this.config.debug) {
+      console.log(`[MCP Trace] → ${name}`, info.args || {});
+    }
+
+    return id;
+  }
+
+  /**
+   * Complete a trace (called at function exit)
+   * Used by the Babel plugin for auto-instrumentation
+   * 
+   * @example
+   * ```typescript
+   * // Called automatically by Babel plugin:
+   * MCPBridge.traceReturn('UserService.fetchUser', { success: true });
+   * ```
+   */
+  traceReturn(name: string, returnValue?: unknown, error?: string): void {
+    if (typeof __DEV__ !== 'undefined' && !__DEV__) {
+      return;
+    }
+
+    const entry = this.traces.get(`name:${name}`);
+    if (!entry) {
+      return;
+    }
+
+    const now = Date.now();
+    entry.duration = now - entry.timestamp;
+    entry.returnValue = returnValue;
+    entry.error = error;
+    entry.completed = true;
+
+    // Move to history
+    this.traceHistory.push(entry);
+    if (this.traceHistory.length > 1000) {
+      this.traceHistory = this.traceHistory.slice(-1000);
+    }
+
+    // Clean up active traces
+    this.traces.delete(entry.id);
+    this.traces.delete(`name:${name}`);
+
+    if (this.config.debug) {
+      const status = error ? `✗ ${error}` : '✓';
+      console.log(`[MCP Trace] ← ${name} (${entry.duration}ms) ${status}`);
+    }
+  }
+
+  /**
+   * Trace a function with automatic entry/exit tracking
+   * Useful for manual instrumentation
+   * 
+   * @example
+   * ```typescript
+   * const result = await MCPBridge.traceAsync('fetchUser', async () => {
+   *   return await api.getUser(id);
+   * }, { args: { id } });
+   * ```
+   */
+  async traceAsync<T>(
+    name: string,
+    fn: () => Promise<T>,
+    info: TraceInfo = {}
+  ): Promise<T> {
+    const traceId = this.trace(name, { ...info, startTime: Date.now() });
+    try {
+      const result = await fn();
+      this.traceReturn(name, result);
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.traceReturn(name, undefined, message);
+      throw error;
+    }
+  }
+
+  /**
+   * Trace a synchronous function
+   * 
+   * @example
+   * ```typescript
+   * const total = MCPBridge.traceSync('calculateTotal', () => {
+   *   return items.reduce((sum, item) => sum + item.price, 0);
+   * });
+   * ```
+   */
+  traceSync<T>(name: string, fn: () => T, info: TraceInfo = {}): T {
+    const traceId = this.trace(name, { ...info, startTime: Date.now() });
+    try {
+      const result = fn();
+      this.traceReturn(name, result);
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.traceReturn(name, undefined, message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get trace history with optional filtering
+   */
+  getTraces(filter: TraceFilter = {}): TraceEntry[] {
+    let traces = [...this.traceHistory];
+
+    if (filter.name) {
+      const pattern = new RegExp(filter.name, 'i');
+      traces = traces.filter(t => pattern.test(t.name));
+    }
+
+    if (filter.file) {
+      const pattern = new RegExp(filter.file, 'i');
+      traces = traces.filter(t => t.info.file && pattern.test(t.info.file));
+    }
+
+    if (filter.minDuration !== undefined) {
+      traces = traces.filter(t => (t.duration || 0) >= filter.minDuration!);
+    }
+
+    if (filter.since !== undefined) {
+      const since = Date.now() - filter.since;
+      traces = traces.filter(t => t.timestamp >= since);
+    }
+
+    if (filter.inProgress) {
+      // Return active traces instead
+      traces = Array.from(this.traces.values()).filter(t => !t.id.startsWith('name:'));
+    }
+
+    const limit = filter.limit || 100;
+    return traces.slice(-limit).reverse();
+  }
+
+  /**
+   * Clear trace history
+   */
+  clearTraces(): void {
+    this.traces.clear();
+    this.traceHistory = [];
   }
 
   // ==================== Private Helpers ====================
