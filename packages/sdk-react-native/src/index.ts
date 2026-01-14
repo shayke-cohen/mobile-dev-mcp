@@ -1,30 +1,35 @@
 /**
- * Mobile Dev MCP - React Native SDK
+ * @mobile-dev-mcp/react-native
  * 
- * Enables AI-assisted development by connecting your React Native app to Cursor IDE.
+ * React Native SDK for Mobile Dev MCP - AI-assisted mobile development
  * 
  * @example
  * ```typescript
  * import { MCPBridge } from '@mobile-dev-mcp/react-native';
  * 
- * if (__DEV__) {
- *   MCPBridge.initialize({
- *     serverUrl: 'ws://localhost:8765'
- *   });
- *   
- *   // Expose your Redux store
- *   MCPBridge.exposeState('store', () => store.getState());
- * }
+ * // Initialize in your app entry point
+ * MCPBridge.initialize();
+ * 
+ * // Expose state for AI inspection
+ * MCPBridge.exposeState('user', () => currentUser);
+ * MCPBridge.exposeState('cart', () => cartItems);
+ * 
+ * // Register actions for AI control
+ * MCPBridge.registerAction('addToCart', (params) => {
+ *   addToCart(params.productId);
+ *   return { success: true };
+ * });
  * ```
  */
 
 export { MCPBridge } from './MCPBridge';
-export type { MCPConfig, StateGetter } from './types';
-
-// Auto-init module for minimal setup
-export { autoInit } from './auto-init';
-
-// Adapters (for advanced usage)
-export { StateAdapter } from './adapters/StateAdapter';
-export { NetworkAdapter } from './adapters/NetworkAdapter';
-export { LogAdapter } from './adapters/LogAdapter';
+export type {
+  MCPConfig,
+  MCPState,
+  MCPCommand,
+  StateGetter,
+  ActionHandler,
+  ActivityEntry,
+  RegisteredComponent,
+  ComponentConfig,
+} from './types';
