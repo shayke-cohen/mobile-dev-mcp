@@ -2,6 +2,7 @@
  * Tests for Release Build Tools
  */
 
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { handleReleaseTool, releaseTools } from '../tools/release.js';
 import * as fs from 'fs';
 import * as path from 'path';

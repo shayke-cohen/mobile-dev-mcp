@@ -9,10 +9,6 @@ Zero-config auto-instrumentation for React Native apps. Automatically wraps func
 ## Installation
 
 ```bash
-npm install --save-dev @mobile-dev-mcp/babel-plugin
-# or
-yarn add -D @mobile-dev-mcp/babel-plugin
-# or
 yarn add -D @mobile-dev-mcp/babel-plugin
 ```
 

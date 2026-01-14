@@ -1,6 +1,6 @@
 # Mobile Dev MCP
 
-AI-assisted mobile development with Cursor IDE using the Model Context Protocol (MCP).
+AI-assisted mobile and web development with Cursor IDE using the Model Context Protocol (MCP).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://img.shields.io/npm/v/@mobile-dev-mcp/server.svg)](https://www.npmjs.com/package/@mobile-dev-mcp/server)
@@ -25,6 +25,7 @@ Mobile Dev MCP enables AI assistants in Cursor to understand and interact with y
 | iOS (SwiftUI/UIKit) | `MobileDevMCP` | ✅ Production Ready |
 | Android (Compose/Views) | `com.mobiledevmcp:sdk` | ✅ Production Ready |
 | macOS (SwiftUI) | `MobileDevMCP` | ✅ Production Ready |
+| React Web | `@mobile-dev-mcp/react` | ✅ Production Ready |
 
 ## Quick Start
 
@@ -47,7 +48,12 @@ Add to your Cursor MCP settings (`~/.cursor/mcp.json`):
 
 **React Native:**
 ```bash
-npm install @mobile-dev-mcp/react-native
+yarn add @mobile-dev-mcp/react-native
+```
+
+**React Web:**
+```bash
+yarn add @mobile-dev-mcp/react
 ```
 
 **iOS / macOS (Swift Package Manager):**
@@ -84,6 +90,35 @@ useEffect(() => {
 }, []);
 ```
 
+**React Web:**
+```tsx
+import { MCPProvider, useMCPState, useMCPAction } from '@mobile-dev-mcp/react';
+
+function App() {
+  return (
+    <MCPProvider>
+      <MyApp />
+    </MCPProvider>
+  );
+}
+
+function MyApp() {
+  const [cart, setCart] = useState([]);
+  
+  // Expose state to AI
+  useMCPState('cart', () => cart);
+  
+  // Register actions AI can trigger
+  useMCPAction('addToCart', async (params) => {
+    const product = await fetchProduct(params.productId);
+    setCart(prev => [...prev, product]);
+    return { success: true };
+  });
+  
+  return <div>...</div>;
+}
+```
+
 **iOS / macOS (Swift):**
 ```swift
 #if DEBUG
@@ -118,12 +153,12 @@ if (BuildConfig.DEBUG) {
                                                 │
                                                 │ WebSocket
                                                 ▼
-            ┌───────────────────────────────────────────────────────┐
-            │                    Native Apps                         │
-            ├─────────────┬─────────────┬─────────────┬─────────────┤
-            │ React Native│    iOS      │   Android   │   macOS     │
-            │    SDK      │    SDK      │     SDK     │    SDK      │
-            └─────────────┴─────────────┴─────────────┴─────────────┘
+            ┌───────────────────────────────────────────────────────────────────┐
+            │                    Native Apps & Web                               │
+            ├─────────────┬─────────────┬─────────────┬─────────────┬───────────┤
+            │ React Native│    iOS      │   Android   │   macOS     │ React Web │
+            │    SDK      │    SDK      │     SDK     │    SDK      │    SDK    │
+            └─────────────┴─────────────┴─────────────┴─────────────┴───────────┘
 ```
 
 ## Packages
@@ -131,10 +166,11 @@ if (BuildConfig.DEBUG) {
 | Package | Description | Install |
 |---------|-------------|---------|
 | [`@mobile-dev-mcp/server`](./packages/mcp-server) | MCP server for Cursor | `npx @mobile-dev-mcp/server` |
-| [`@mobile-dev-mcp/react-native`](./packages/sdk-react-native) | React Native SDK | `npm install @mobile-dev-mcp/react-native` |
+| [`@mobile-dev-mcp/react-native`](./packages/sdk-react-native) | React Native SDK | `yarn add @mobile-dev-mcp/react-native` |
+| [`@mobile-dev-mcp/react`](./packages/sdk-react) | React Web SDK | `yarn add @mobile-dev-mcp/react` |
 | [`MobileDevMCP`](./packages/sdk-ios) | iOS & macOS SDK (Swift) | Swift Package Manager |
 | [`com.mobiledevmcp:sdk`](./packages/sdk-android) | Android SDK (Kotlin) | Maven Central |
-| [`@mobile-dev-mcp/babel-plugin`](./packages/babel-plugin-mcp) | RN Auto-instrumentation | `npm install -D @mobile-dev-mcp/babel-plugin` |
+| [`@mobile-dev-mcp/babel-plugin`](./packages/babel-plugin-mcp) | RN/Web Auto-instrumentation | `yarn add -D @mobile-dev-mcp/babel-plugin` |
 | [`MCPAutoTrace`](./packages/sdk-ios) | iOS/macOS Auto-instrumentation | Swift Build Plugin |
 | [`com.mobiledevmcp.autotrace`](./packages/mcp-android-gradle-plugin) | Android Auto-instrumentation | Gradle Plugin |
 
@@ -142,7 +178,7 @@ if (BuildConfig.DEBUG) {
 
 All platforms support **automatic function tracing** - no manual code changes needed:
 
-### React Native (Babel Plugin)
+### React Native & React Web (Babel Plugin)
 ```javascript
 // babel.config.js
 module.exports = {
@@ -182,6 +218,7 @@ The repository includes demo apps for each platform:
 | iOS | [`examples/ios-swiftui-demo`](./examples/ios-swiftui-demo) | SwiftUI e-commerce app |
 | Android | [`examples/android-compose-demo`](./examples/android-compose-demo) | Jetpack Compose e-commerce app |
 | macOS | [`examples/macos-swiftui-demo`](./examples/macos-swiftui-demo) | macOS SwiftUI e-commerce app |
+| React Web | [`examples/react-web-demo`](./examples/react-web-demo) | React e-commerce web app |
 
 ## Available MCP Tools
 
@@ -294,10 +331,11 @@ MCPBridge.setNavigationState('products', { category: 'electronics' });
 yarn test:e2e
 
 # Platform-specific tests
-yarn test:e2e:ios       # iOS tests (34 tests)
+yarn test:e2e:ios       # iOS tests
 yarn test:e2e:android   # Android tests
 yarn test:e2e:rn        # React Native tests
-yarn test:e2e:macos     # macOS tests (34 tests)
+yarn test:e2e:macos     # macOS tests
+yarn test:e2e:web       # React Web tests
 ```
 
 ## Development
@@ -314,6 +352,7 @@ cd examples/react-native-demo && yarn ios
 cd examples/ios-swiftui-demo && swift run
 cd examples/android-compose-demo && ./gradlew installDebug
 cd examples/macos-swiftui-demo && swift run
+cd examples/react-web-demo && yarn dev
 ```
 
 ## Security

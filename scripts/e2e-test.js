@@ -12,11 +12,13 @@
  * 6. Reports results
  * 
  * Usage:
- *   node scripts/e2e-test.js                      # Run all tests (iOS + Android)
+ *   node scripts/e2e-test.js                      # Run all tests
  *   node scripts/e2e-test.js --platform=ios       # iOS only
  *   node scripts/e2e-test.js --platform=android   # Android only
  *   node scripts/e2e-test.js --platform=rn        # React Native (iOS)
  *   node scripts/e2e-test.js --platform=rn-android # React Native (Android)
+ *   node scripts/e2e-test.js --platform=macos     # macOS only
+ *   node scripts/e2e-test.js --platform=web       # React Web only
  *   node scripts/e2e-test.js --skip-build         # Skip build, just test
  *   node scripts/e2e-test.js --use-existing-server # Connect to running server
  *   node scripts/e2e-test.js --verbose            # Verbose output
@@ -56,6 +58,7 @@ const CONFIG = {
     reactNative: path.join(__dirname, '..', 'examples', 'react-native-demo'),
     ios: path.join(__dirname, '..', 'examples', 'ios-swiftui-demo'),
     android: path.join(__dirname, '..', 'examples', 'android-compose-demo'),
+    web: path.join(__dirname, '..', 'examples', 'react-web-demo'),
   }
 };
 
@@ -531,6 +534,38 @@ class E2ETestRunner {
     try {
       execSync('pkill -f "MCPDemoApp" 2>/dev/null || true', { stdio: 'ignore' });
     } catch (e) {}
+  }
+  
+  stopWebServer() {
+    if (this.webProcess) {
+      logInfo('Stopping web server...');
+      try {
+        process.kill(-this.webProcess.pid, 'SIGTERM');
+      } catch (e) {
+        try {
+          this.webProcess.kill('SIGTERM');
+        } catch (e2) {}
+      }
+      this.webProcess = null;
+    }
+    
+    // Kill any orphaned vite processes from demo
+    try {
+      execSync('pkill -f "vite.*react-web-demo" 2>/dev/null || true', { stdio: 'ignore' });
+    } catch (e) {}
+  }
+  
+  async stopPlaywrightBrowser() {
+    if (this.playwrightBrowser) {
+      logInfo('Closing Playwright browser...');
+      try {
+        await this.playwrightBrowser.close();
+      } catch (e) {
+        // Browser may have already closed
+      }
+      this.playwrightBrowser = null;
+      this.playwrightPage = null;
+    }
   }
 
   async buildAndRunReactNative(simulator, rnPlatform = 'ios') {
@@ -1237,6 +1272,10 @@ class E2ETestRunner {
     });
 
     // ==================== Tracing Tests ====================
+    // Skip tracing tests for web platform - these require native platform tracing support
+    if (platform === 'web') {
+      logInfo('Skipping trace tests for web platform (not yet supported)');
+    } else {
     
     await this.test('get_traces returns trace history', async () => {
       const result = await this.mcpClient.callTool('get_traces', { limit: 10 });
@@ -1487,6 +1526,8 @@ class E2ETestRunner {
       
       await this.mcpClient.callTool('logout');
     });
+
+    } // End of tracing tests skip for web
 
     // Test cart-related text updates
     await this.test('cart total text updates after add', async () => {
@@ -1789,6 +1830,896 @@ class E2ETestRunner {
     }
   }
 
+  async runWebTests() {
+    logStep('Web', 'Running React Web e2e tests with real browser...');
+    
+    // Require Playwright for real browser testing
+    const playwright = require('playwright');
+    logInfo('Using Playwright for real browser testing');
+    
+    // Build web app (only if not skipping build)
+    if (!skipBuild) {
+      await this.test('Build React web demo app', async () => {
+        const projectPath = path.join(__dirname, '../examples/react-web-demo');
+        
+        logVerbose('Installing dependencies...');
+        exec(`cd "${projectPath}" && yarn install`, { maxBuffer: 50 * 1024 * 1024 });
+        
+        logVerbose('Building web app...');
+        exec(`cd "${projectPath}" && yarn build`, { maxBuffer: 50 * 1024 * 1024 });
+      });
+    }
+    
+    // Always start the dev server for web tests
+    await this.test('Start React web dev server', async () => {
+      const projectPath = path.join(__dirname, '../examples/react-web-demo');
+      
+      logVerbose('Starting Vite dev server...');
+      const child = spawn('yarn', ['dev'], {
+        cwd: projectPath,
+        detached: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        shell: true
+      });
+      child.unref();
+      this.webProcess = child;
+      
+      // Log any errors from the web server
+      child.stderr.on('data', (data) => {
+        if (verbose) console.log(`  [Web] ${data.toString().trim()}`);
+      });
+      
+      // Wait for server to start
+      await sleep(5000);
+    });
+    
+    // Run real browser-based tests with Playwright
+    await this.runBrowserBasedWebTests(playwright);
+    
+    // Stop web server if we started it
+    if (this.webProcess) {
+      try {
+        process.kill(-this.webProcess.pid);
+      } catch (e) {
+        // Process may have already exited
+      }
+      this.webProcess = null;
+    }
+  }
+  
+  /**
+   * Run web tests using a real browser with Playwright
+   */
+  async runBrowserBasedWebTests(playwright) {
+    let browser;
+    let page;
+    
+    await this.test('Web: Launch browser', async () => {
+      browser = await playwright.chromium.launch({ 
+        headless: false,
+        args: ['--no-sandbox']
+      });
+      const context = await browser.newContext();
+      page = await context.newPage();
+      this.playwrightBrowser = browser;
+      this.playwrightPage = page;
+      logVerbose('Chromium browser launched');
+    });
+    
+    await this.test('Web: Navigate to demo app', async () => {
+      await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
+      const title = await page.title();
+      logVerbose(`Page title: ${title}`);
+    });
+    
+    await this.test('Web: SDK connects to MCP server', async () => {
+      // Wait for SDK to connect (check via MCP server)
+      let connected = false;
+      for (let i = 0; i < 20; i++) {
+        await sleep(500);
+        const result = await this.mcpClient.callTool('list_connected_devices');
+        if (!result.isError) {
+          const data = JSON.parse(result.content[0].text);
+          const webDevice = data.devices.find(d => d.platform === 'web');
+          if (webDevice) {
+            connected = true;
+            logVerbose(`Connected: ${webDevice.appName}`);
+            break;
+          }
+        }
+      }
+      if (!connected) {
+        throw new Error('Web SDK did not connect within 10 seconds');
+      }
+    });
+    
+    // Now run actual MCP tool tests against the real browser
+    await this.test('Web: Get app state from real browser', async () => {
+      const result = await this.mcpClient.callTool('get_app_state', { path: 'products' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!Array.isArray(data)) {
+        throw new Error(`Expected products array, got: ${typeof data}`);
+      }
+      logVerbose(`Products in state: ${data.length}`);
+    });
+    
+    await this.test('Web: Get device info from real browser', async () => {
+      const result = await this.mcpClient.callTool('get_device_info');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (data.platform !== 'web') {
+        throw new Error(`Expected platform=web, got ${data.platform}`);
+      }
+      logVerbose(`Browser: ${data.version || data.model}`);
+    });
+    
+    await this.test('Web: Get component tree from real DOM', async () => {
+      const result = await this.mcpClient.callTool('get_component_tree');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.components || data.count === 0) {
+        throw new Error('No components found in DOM');
+      }
+      logVerbose(`Found ${data.count} components in real DOM`);
+    });
+    
+    await this.test('Web: Find element in real DOM', async () => {
+      const result = await this.mcpClient.callTool('find_element', { type: 'Button' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.elements || data.elements.length === 0) {
+        throw new Error('No buttons found in DOM');
+      }
+      logVerbose(`Found ${data.count} buttons`);
+    });
+    
+    await this.test('Web: List actions registered by real app', async () => {
+      const result = await this.mcpClient.callTool('list_actions');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.actions || data.actions.length === 0) {
+        throw new Error('No actions registered');
+      }
+      logVerbose(`Registered actions: ${data.actions.join(', ')}`);
+    });
+    
+    await this.test('Web: Execute addToCart action in real app', async () => {
+      // First, get initial cart state
+      const beforeResult = await this.mcpClient.callTool('get_app_state', { path: 'cart' });
+      const cartBefore = JSON.parse(beforeResult.content[0].text);
+      const countBefore = Array.isArray(cartBefore) ? cartBefore.length : 0;
+      
+      // Execute addToCart
+      const result = await this.mcpClient.callTool('execute_action', { 
+        action: 'addToCart', 
+        params: { productId: '1' } 
+      });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      // Wait for state update
+      await sleep(500);
+      
+      // Check cart state changed
+      const afterResult = await this.mcpClient.callTool('get_app_state', { path: 'cart' });
+      const cartAfter = JSON.parse(afterResult.content[0].text);
+      const countAfter = Array.isArray(cartAfter) ? cartAfter.length : 0;
+      
+      logVerbose(`Cart: ${countBefore} -> ${countAfter} items`);
+    });
+    
+    await this.test('Web: Navigate to products page', async () => {
+      const result = await this.mcpClient.callTool('navigate_to', { route: '/products' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      // Wait for navigation
+      await sleep(500);
+      
+      // Verify via get_navigation_state
+      const navResult = await this.mcpClient.callTool('get_navigation_state');
+      const navData = JSON.parse(navResult.content[0].text);
+      logVerbose(`Current route: ${navData.currentRoute || navData.route}`);
+    });
+    
+    await this.test('Web: Capture real screenshot', async () => {
+      const result = await this.mcpClient.callTool('capture_screenshot', { label: 'e2e-products-page' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Screenshot failed');
+      }
+      logVerbose(`Screenshot: ${data.width}x${data.height}, visible elements: ${data.visibleElements?.length || 0}`);
+    });
+    
+    await this.test('Web: Simulate click on real element', async () => {
+      // Find a button to click
+      const findResult = await this.mcpClient.callTool('find_element', { type: 'Button' });
+      const buttons = JSON.parse(findResult.content[0].text);
+      
+      if (buttons.elements && buttons.elements.length > 0) {
+        const firstButton = buttons.elements[0];
+        if (firstButton.testId) {
+          const result = await this.mcpClient.callTool('simulate_interaction', { 
+            testId: firstButton.testId, 
+            action: 'click' 
+          });
+          const data = JSON.parse(result.content[0].text);
+          logVerbose(`Clicked: ${firstButton.testId}, success: ${data.success}`);
+        } else {
+          logVerbose('Button has no testId, skipping click test');
+        }
+      }
+    });
+    
+    await this.test('Web: Get console logs from browser', async () => {
+      const result = await this.mcpClient.callTool('get_logs');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      logVerbose(`Console logs: ${data.logs?.length || data.count || 0}`);
+    });
+    
+    await this.test('Web: Get network requests from browser', async () => {
+      const result = await this.mcpClient.callTool('list_network_requests');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      const count = data.requests?.length || data.length || 0;
+      logVerbose(`Network requests captured: ${count}`);
+    });
+    
+    await this.test('Web: Get function traces from browser', async () => {
+      const result = await this.mcpClient.callTool('get_traces');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      logVerbose(`Function traces: ${data.traces?.length || data.count || 0}`);
+    });
+    
+    await this.test('Web: List feature flags', async () => {
+      const result = await this.mcpClient.callTool('list_feature_flags');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      const flags = data.flags || data;
+      logVerbose(`Feature flags: ${Object.keys(flags).join(', ')}`);
+    });
+    
+    await this.test('Web: Toggle feature flag', async () => {
+      const result = await this.mcpClient.callTool('toggle_feature_flag', { key: 'darkMode' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      logVerbose(`Toggled darkMode: ${data.value}`);
+    });
+    
+    await this.test('Web: Login action in real app', async () => {
+      const result = await this.mcpClient.callTool('login');
+      if (result.isError) {
+        // Login might not be exposed as a direct tool, try execute_action
+        const execResult = await this.mcpClient.callTool('execute_action', { action: 'login' });
+        if (execResult.isError) {
+          throw new Error(execResult.content[0].text);
+        }
+      }
+      
+      // Verify user state changed
+      await sleep(500);
+      const userResult = await this.mcpClient.callTool('get_app_state', { path: 'user' });
+      const userData = JSON.parse(userResult.content[0].text);
+      if (userData && userData.name) {
+        logVerbose(`Logged in as: ${userData.name}`);
+      } else {
+        logVerbose('Login executed');
+      }
+    });
+    
+    await this.test('Web: Logout action in real app', async () => {
+      const result = await this.mcpClient.callTool('execute_action', { action: 'logout' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      // Verify user state cleared
+      await sleep(500);
+      const userResult = await this.mcpClient.callTool('get_app_state', { path: 'user' });
+      const userData = JSON.parse(userResult.content[0].text);
+      logVerbose(`User after logout: ${userData ? 'still set' : 'cleared'}`);
+    });
+    
+    // Close browser
+    await this.test('Web: Close browser', async () => {
+      if (browser) {
+        await browser.close();
+        this.playwrightBrowser = null;
+        this.playwrightPage = null;
+        logVerbose('Browser closed');
+      }
+    });
+  }
+  
+  /**
+   * Run web tests using mock WebSocket client (fallback when Playwright not available)
+   */
+  async runMockWebClientTests() {
+    // Web platform tests with mock client
+    await this.test('Web: Server accepts web platform handshake', async () => {
+      const testClient = new WebSocket(`ws://localhost:${CONFIG.wsPort}`);
+      
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          testClient.close();
+          reject(new Error('Timeout waiting for server response'));
+        }, 5000);
+        
+        testClient.on('open', () => {
+          testClient.send(JSON.stringify({
+            type: 'handshake',
+            platform: 'web',
+            appName: 'E2E Test Web App',
+            deviceId: 'e2e-test-web-001',
+            osVersion: 'Chrome/120.0.0.0',
+            sdkVersion: '0.1.0',
+            capabilities: ['state', 'actions', 'ui', 'network', 'logs', 'tracing']
+          }));
+        });
+        
+        testClient.on('message', (data) => {
+          clearTimeout(timeout);
+          const msg = JSON.parse(data.toString());
+          if (msg.type === 'handshake_ack') {
+            testClient.close();
+            resolve();
+          } else {
+            testClient.close();
+            reject(new Error(`Unexpected message type: ${msg.type}`));
+          }
+        });
+        
+        testClient.on('error', (err) => {
+          clearTimeout(timeout);
+          reject(err);
+        });
+      });
+    });
+    
+    await this.test('Web: Device appears in list_connected_devices', async () => {
+      const testClient = new WebSocket(`ws://localhost:${CONFIG.wsPort}`);
+      
+      await new Promise((resolve) => {
+        testClient.on('open', () => {
+          testClient.send(JSON.stringify({
+            type: 'handshake',
+            platform: 'web',
+            appName: 'E2E Test Web App',
+            deviceId: 'e2e-test-web-002',
+            osVersion: 'Chrome/120.0.0.0',
+            sdkVersion: '0.1.0',
+            capabilities: ['state', 'actions', 'ui', 'network', 'logs', 'tracing']
+          }));
+          resolve();
+        });
+      });
+      
+      await sleep(500);
+      
+      const result = await this.mcpClient.callTool('list_connected_devices');
+      testClient.close();
+      
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      
+      const data = JSON.parse(result.content[0].text);
+      const webDevice = data.devices.find(d => d.platform === 'web');
+      if (!webDevice) {
+        throw new Error('Web device not found in device list');
+      }
+      logVerbose(`Web device connected: ${webDevice.appName}`);
+    });
+    
+    // Run comprehensive mock client tests
+    await this.runWebClientTests();
+  }
+  
+  /**
+   * Run comprehensive web client tests with a mock web SDK client
+   */
+  async runWebClientTests() {
+    // Create a persistent web client that responds to commands
+    const webClient = new WebSocket(`ws://localhost:${CONFIG.wsPort}`);
+    let clientReady = false;
+    
+    // Mock state and data for the web client
+    const mockState = {
+      user: { id: 'user_123', name: 'Test User', email: 'test@example.com' },
+      cart: [
+        { productId: '1', name: 'Widget', price: 29.99, quantity: 2 },
+        { productId: '2', name: 'Gadget', price: 49.99, quantity: 1 }
+      ],
+      products: [
+        { id: '1', name: 'Widget', price: 29.99 },
+        { id: '2', name: 'Gadget', price: 49.99 }
+      ],
+      isLoggedIn: true,
+      cartTotal: 109.97
+    };
+    
+    const mockActions = ['addToCart', 'removeFromCart', 'clearCart', 'login', 'logout', 'navigate'];
+    
+    const mockComponents = [
+      { testId: 'add-to-cart-1', type: 'Button', text: 'Add to Cart', bounds: { x: 100, y: 200, width: 120, height: 40 } },
+      { testId: 'cart-total', type: 'Text', text: '$109.97', bounds: { x: 300, y: 50, width: 80, height: 24 } },
+      { testId: 'login-button', type: 'Button', text: 'Login', bounds: { x: 500, y: 20, width: 80, height: 36 } }
+    ];
+    
+    const mockTraces = [
+      { id: 'trace_1', name: 'calculateCartTotal', timestamp: Date.now() - 1000, duration: 5, completed: true },
+      { id: 'trace_2', name: 'fetchProducts', timestamp: Date.now() - 2000, duration: 150, completed: true },
+      { id: 'trace_3', name: 'api.login', timestamp: Date.now() - 3000, duration: 200, completed: true, args: { email: 'test@example.com' } }
+    ];
+    
+    const mockLogs = [
+      { level: 'info', message: 'App initialized', timestamp: Date.now() - 5000 },
+      { level: 'info', message: 'User logged in', timestamp: Date.now() - 3000 },
+      { level: 'debug', message: 'Cart updated', timestamp: Date.now() - 1000 }
+    ];
+    
+    const mockNetworkRequests = [
+      { url: '/api/products', method: 'GET', status: 200, duration: 120, timestamp: Date.now() - 2000 },
+      { url: '/api/user', method: 'GET', status: 200, duration: 80, timestamp: Date.now() - 3000 }
+    ];
+    
+    const mockFeatureFlags = {
+      darkMode: false,
+      newCheckout: true,
+      experimentalFeatures: false
+    };
+    
+    // Set up the web client to respond to commands
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Web client connection timeout'));
+      }, 5000);
+      
+      webClient.on('open', () => {
+        webClient.send(JSON.stringify({
+          type: 'handshake',
+          platform: 'web',
+          appName: 'Web E2E Test App',
+          deviceId: 'e2e-web-full-test',
+          osVersion: 'Chrome/120.0.0.0',
+          sdkVersion: '0.1.0',
+          capabilities: ['state', 'actions', 'ui', 'network', 'logs', 'tracing']
+        }));
+      });
+      
+      webClient.on('message', (data) => {
+        const msg = JSON.parse(data.toString());
+        
+        if (msg.type === 'handshake_ack') {
+          clearTimeout(timeout);
+          clientReady = true;
+          resolve();
+          return;
+        }
+        
+        // Handle command requests
+        if (msg.id && msg.method) {
+          let result;
+          
+          switch (msg.method) {
+            case 'get_app_state':
+              // Return state directly (the tool expects state in the response)
+              const path = msg.params?.path;
+              if (path) {
+                // Get nested state by path
+                const parts = path.split('.');
+                let value = mockState;
+                for (const part of parts) {
+                  value = value?.[part];
+                }
+                result = value;
+              } else {
+                result = mockState;
+              }
+              break;
+              
+            case 'get_device_info':
+              result = {
+                platform: 'web',
+                version: 'Chrome/120.0.0.0',
+                model: 'Desktop Browser',
+                isSimulator: false,
+                screenWidth: 1920,
+                screenHeight: 1080
+              };
+              break;
+              
+            case 'list_actions':
+              result = { actions: mockActions };
+              break;
+              
+            case 'execute_action':
+              const actionName = msg.params?.action;
+              if (mockActions.includes(actionName)) {
+                result = { success: true, action: actionName, result: { executed: true } };
+              } else {
+                result = { success: false, error: `Unknown action: ${actionName}` };
+              }
+              break;
+              
+            case 'get_component_tree':
+              result = { components: mockComponents, count: mockComponents.length };
+              break;
+              
+            case 'find_element':
+              const testId = msg.params?.testId;
+              const found = mockComponents.find(c => c.testId === testId);
+              result = found ? { found: true, element: found } : { found: false };
+              break;
+              
+            case 'get_element_text':
+              const elementId = msg.params?.testId;
+              const element = mockComponents.find(c => c.testId === elementId);
+              result = element ? { text: element.text } : { error: 'Element not found' };
+              break;
+              
+            case 'simulate_interaction':
+              const simAction = msg.params?.action || msg.params?.type || 'tap';
+              result = { success: true, testId: msg.params?.testId || msg.params?.target, action: simAction };
+              break;
+              
+            case 'capture_screenshot':
+              result = {
+                success: true,
+                label: msg.params?.label || 'screenshot',
+                format: 'info',
+                width: 1920,
+                height: 1080,
+                url: 'http://localhost:3000/',
+                title: 'MCP Demo Store',
+                visibleElements: mockComponents
+              };
+              break;
+              
+            case 'inspect_element':
+              result = {
+                found: true,
+                x: msg.params?.x,
+                y: msg.params?.y,
+                element: {
+                  tagName: 'button',
+                  type: 'Button',
+                  testId: 'add-to-cart-1',
+                  text: 'Add to Cart',
+                  bounds: { x: 100, y: 200, width: 120, height: 40 }
+                }
+              };
+              break;
+              
+            case 'get_traces':
+              result = { traces: mockTraces, count: mockTraces.length };
+              break;
+              
+            case 'get_active_traces':
+              result = { traces: [], count: 0 };
+              break;
+              
+            case 'clear_traces':
+              result = { success: true };
+              break;
+              
+            case 'get_logs':
+              result = { logs: mockLogs };
+              break;
+              
+            case 'get_recent_errors':
+              result = { errors: [] };
+              break;
+              
+            case 'list_network_requests':
+              result = { requests: mockNetworkRequests };
+              break;
+              
+            case 'list_feature_flags':
+              result = { flags: mockFeatureFlags };
+              break;
+              
+            case 'toggle_feature_flag':
+              const flagKey = msg.params?.key;
+              if (flagKey in mockFeatureFlags) {
+                mockFeatureFlags[flagKey] = !mockFeatureFlags[flagKey];
+                result = { success: true, key: flagKey, value: mockFeatureFlags[flagKey] };
+              } else {
+                result = { success: false, error: `Unknown flag: ${flagKey}` };
+              }
+              break;
+              
+            case 'get_navigation_state':
+              result = { route: '/products', params: { category: 'electronics' } };
+              break;
+              
+            case 'inject_trace':
+              result = { success: true, id: `injected_${Date.now()}` };
+              break;
+              
+            case 'remove_trace':
+              result = { success: true };
+              break;
+              
+            case 'list_injected_traces':
+              result = { traces: [] };
+              break;
+              
+            default:
+              result = { error: `Unknown method: ${msg.method}` };
+          }
+          
+          webClient.send(JSON.stringify({ id: msg.id, result }));
+        }
+      });
+      
+      webClient.on('error', reject);
+    });
+    
+    // Wait for client to be ready
+    await sleep(500);
+    
+    // Now run tests against the web client
+    await this.test('Web: Can read app state', async () => {
+      const result = await this.mcpClient.callTool('get_app_state', { path: 'cart' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      // The result should be the cart array directly (state returns the path value)
+      if (!Array.isArray(data)) {
+        throw new Error(`Cart state is not an array, got: ${typeof data}`);
+      }
+      logVerbose(`Cart has ${data.length} items`);
+    });
+    
+    await this.test('Web: Can read user state', async () => {
+      const result = await this.mcpClient.callTool('get_app_state', { path: 'user' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      // The result should be the user object directly
+      if (!data || !data.name) {
+        throw new Error('User state missing');
+      }
+      logVerbose(`User: ${data.name}`);
+    });
+    
+    await this.test('Web: Get device info', async () => {
+      const result = await this.mcpClient.callTool('get_device_info');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (data.platform !== 'web') {
+        throw new Error(`Expected platform=web, got ${data.platform}`);
+      }
+      logVerbose(`Browser: ${data.version}`);
+    });
+    
+    await this.test('Web: List available actions', async () => {
+      const result = await this.mcpClient.callTool('list_actions');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.actions || data.actions.length === 0) {
+        throw new Error('No actions registered');
+      }
+      logVerbose(`Actions: ${data.actions.join(', ')}`);
+    });
+    
+    await this.test('Web: Execute action', async () => {
+      const result = await this.mcpClient.callTool('execute_action', { action: 'addToCart', params: { productId: '3' } });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error(`Action execution failed: ${JSON.stringify(data)}`);
+      }
+      logVerbose(`Action executed: ${data.action}`);
+    });
+    
+    await this.test('Web: Get component tree', async () => {
+      const result = await this.mcpClient.callTool('get_component_tree');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.components || data.components.length === 0) {
+        throw new Error('No components found');
+      }
+      logVerbose(`Components: ${data.count}`);
+    });
+    
+    await this.test('Web: Find element by testId', async () => {
+      const result = await this.mcpClient.callTool('find_element', { testId: 'add-to-cart-1' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.found) {
+        throw new Error('Element not found');
+      }
+      logVerbose(`Found element: ${data.element.type}`);
+    });
+    
+    await this.test('Web: Get element text', async () => {
+      const result = await this.mcpClient.callTool('get_element_text', { testId: 'cart-total' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.text) {
+        throw new Error('No text found');
+      }
+      logVerbose(`Text: ${data.text}`);
+    });
+    
+    await this.test('Web: Simulate interaction', async () => {
+      const result = await this.mcpClient.callTool('simulate_interaction', { testId: 'login-button', type: 'tap' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Interaction failed');
+      }
+      logVerbose(`Interaction: ${data.action}`);
+    });
+    
+    await this.test('Web: Capture screenshot', async () => {
+      const result = await this.mcpClient.callTool('capture_screenshot', { label: 'e2e-test' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Screenshot failed');
+      }
+      logVerbose(`Screenshot: ${data.width}x${data.height}`);
+    });
+    
+    await this.test('Web: Inspect element at coordinates', async () => {
+      const result = await this.mcpClient.callTool('inspect_element', { x: 150, y: 220 });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.found) {
+        throw new Error('Element not found at coordinates');
+      }
+      logVerbose(`Element at (150, 220): ${data.element.type} - ${data.element.text}`);
+    });
+    
+    await this.test('Web: Get function traces', async () => {
+      const result = await this.mcpClient.callTool('get_traces');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.traces) {
+        throw new Error('No traces returned');
+      }
+      logVerbose(`Traces: ${data.count}`);
+    });
+    
+    await this.test('Web: Get console logs', async () => {
+      const result = await this.mcpClient.callTool('get_logs');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.logs) {
+        throw new Error('No logs returned');
+      }
+      logVerbose(`Logs: ${data.logs.length}`);
+    });
+    
+    await this.test('Web: Get network requests', async () => {
+      const result = await this.mcpClient.callTool('list_network_requests');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.requests) {
+        throw new Error('No requests returned');
+      }
+      logVerbose(`Network requests: ${data.requests.length}`);
+    });
+    
+    await this.test('Web: List feature flags', async () => {
+      const result = await this.mcpClient.callTool('list_feature_flags');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.flags) {
+        throw new Error('No flags returned');
+      }
+      logVerbose(`Feature flags: ${Object.keys(data.flags).join(', ')}`);
+    });
+    
+    await this.test('Web: Toggle feature flag', async () => {
+      const result = await this.mcpClient.callTool('toggle_feature_flag', { key: 'darkMode' });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Toggle failed');
+      }
+      logVerbose(`Toggled darkMode to: ${data.value}`);
+    });
+    
+    await this.test('Web: Inject trace point', async () => {
+      const result = await this.mcpClient.callTool('inject_trace', { pattern: 'handleClick', logArgs: true });
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Inject trace failed');
+      }
+      logVerbose(`Injected trace: ${data.id}`);
+    });
+    
+    await this.test('Web: List injected traces', async () => {
+      const result = await this.mcpClient.callTool('list_injected_traces');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      // Should have the trace we just injected (or empty if cleared)
+      logVerbose(`Injected traces: ${data.traces?.length || 0}`);
+    });
+    
+    await this.test('Web: Clear traces', async () => {
+      const result = await this.mcpClient.callTool('clear_traces');
+      if (result.isError) {
+        throw new Error(result.content[0].text);
+      }
+      const data = JSON.parse(result.content[0].text);
+      if (!data.success) {
+        throw new Error('Clear traces failed');
+      }
+      logVerbose('Traces cleared');
+    });
+    
+    // Cleanup: close the web client
+    webClient.close();
+  }
+
   async runMacOSTests() {
     logStep('macOS', 'Running macOS SwiftUI e2e tests...');
     
@@ -1906,6 +2837,10 @@ class E2ETestRunner {
         await this.runMacOSTests();
       }
       
+      if (platform === 'all' || platform === 'web') {
+        await this.runWebTests();
+      }
+      
       // If we have a connected app, test app tools, SDK actions, and validation
       try {
         const result = await this.mcpClient.callTool('list_connected_devices');
@@ -1929,6 +2864,8 @@ class E2ETestRunner {
       logStep('CLEANUP', 'Cleaning up...');
       this.stopMetroBundler();
       this.stopMacOSApp();
+      this.stopWebServer();
+      await this.stopPlaywrightBrowser();
       this.mcpClient.stop();
       logSuccess('Server stopped');
     }

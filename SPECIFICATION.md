@@ -324,8 +324,6 @@ SDK Core
 #### Installation
 
 ```bash
-npm install @mobile-dev-mcp/react-native
-# or
 yarn add @mobile-dev-mcp/react-native
 ```
 
@@ -1427,7 +1425,7 @@ Agent: Fixed! Performance improved from 28fps to 58fps.
 
 ```bash
 # 1. Install SDK
-npm install @mobile-dev-mcp/react-native
+yarn add @mobile-dev-mcp/react-native
 
 # 2. Add to App.tsx
 import '@mobile-dev-mcp/auto-init';  // One line!

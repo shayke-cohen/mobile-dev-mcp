@@ -18,8 +18,6 @@ React Native SDK for Mobile Dev MCP - enables AI-assisted development in Cursor 
 ## Installation
 
 ```bash
-npm install @mobile-dev-mcp/react-native
-# or
 yarn add @mobile-dev-mcp/react-native
 ```
 
@@ -156,7 +154,7 @@ MCPBridge.traceReturn('processOrder', { success: true });
 For automatic function tracing, use the Babel plugin:
 
 ```bash
-npm install -D @mobile-dev-mcp/babel-plugin
+yarn add -D @mobile-dev-mcp/babel-plugin
 ```
 
 ```javascript

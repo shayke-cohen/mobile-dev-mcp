@@ -24,7 +24,7 @@ MCP (Model Context Protocol) server for AI-assisted mobile development with Curs
 npx @mobile-dev-mcp/server
 
 # Or install globally
-npm install -g @mobile-dev-mcp/server
+yarn global add @mobile-dev-mcp/server
 mobile-dev-mcp
 ```
 
@@ -147,8 +147,9 @@ Install the SDK in your mobile app:
 
 | Platform | Installation |
 |----------|-------------|
-| **React Native** | `npm install @mobile-dev-mcp/react-native` |
-| **iOS / macOS** | Swift Package Manager or CocoaPods |
+| **React Native** | `yarn add @mobile-dev-mcp/react-native` |
+| **React Web** | `yarn add @mobile-dev-mcp/react` |
+| **iOS / macOS** | Swift Package Manager |
 | **Android** | `debugImplementation("com.mobiledevmcp:sdk:0.1.0")` |
 
 ## Configuration

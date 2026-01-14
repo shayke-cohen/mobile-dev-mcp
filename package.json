@@ -27,16 +27,18 @@
     "test:e2e:rn": "node scripts/e2e-test.js --platform=rn",
     "test:e2e:rn-android": "node scripts/e2e-test.js --platform=rn-android",
     "test:e2e:macos": "node scripts/e2e-test.js --platform=macos",
+    "test:e2e:web": "node scripts/e2e-test.js --platform=web",
     "test:e2e:existing": "node scripts/e2e-test.js --use-existing-server",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
+    "eslint": "^9.17.0",
+    "playwright": "^1.57.0",
+    "prettier": "^3.4.0",
     "turbo": "^2.3.0",
     "typescript": "^5.7.0",
-    "prettier": "^3.4.0",
-    "eslint": "^9.17.0",
     "ws": "^8.18.0"
   },
   "packageManager": "yarn@1.22.22",

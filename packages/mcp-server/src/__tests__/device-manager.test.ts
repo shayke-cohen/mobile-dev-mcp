@@ -272,5 +272,39 @@ describe('DeviceManager', () => {
         });
       });
     });
+
+    it('should accept web platform handshake', async () => {
+      const client = new WebSocket(`ws://localhost:${serverPort}`);
+      
+      await new Promise<void>((resolve, reject) => {
+        client.on('open', () => {
+          client.send(JSON.stringify({
+            type: 'handshake',
+            platform: 'web',
+            appName: 'WebTestApp',
+            appVersion: '1.0.0',
+            capabilities: ['state', 'actions', 'ui', 'network', 'logs', 'tracing'],
+          }));
+        });
+
+        client.on('message', (data) => {
+          const message = JSON.parse(data.toString());
+          expect(message.type).toBe('handshake_ack');
+          expect(message.deviceId).toBeDefined();
+          
+          setTimeout(() => {
+            const devices = deviceManager.getConnectedDevices();
+            const webDevice = devices.find(d => d.platform === 'web');
+            expect(webDevice).toBeDefined();
+            expect(webDevice?.appName).toBe('WebTestApp');
+            client.close();
+            resolve();
+          }, 50);
+        });
+
+        client.on('error', reject);
+        setTimeout(() => reject(new Error('Timeout')), 5000);
+      });
+    });
   });
 });

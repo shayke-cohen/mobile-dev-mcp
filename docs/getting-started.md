@@ -1,6 +1,6 @@
 # Getting Started with Mobile Dev MCP
 
-This guide will help you set up the Mobile Dev MCP server and integrate the SDK into your mobile application.
+This guide will help you set up the Mobile Dev MCP server and integrate the SDK into your mobile or web application.
 
 ## Prerequisites
 
@@ -8,6 +8,7 @@ This guide will help you set up the Mobile Dev MCP server and integrate the SDK 
 - Cursor IDE with MCP support
 - For iOS: macOS with Xcode and iOS Simulator
 - For Android: Android Studio with an emulator or adb
+- For Web: Any modern browser with WebSocket support
 
 ## Installation
 
@@ -55,8 +56,6 @@ If the MCP server is working, you'll see responses from the tools.
 #### Install the SDK
 
 ```bash
-npm install @mobile-dev-mcp/react-native
-# or
 yarn add @mobile-dev-mcp/react-native
 ```
 
@@ -157,7 +156,7 @@ function App() {
 Add the Babel plugin for automatic function tracing:
 
 ```bash
-npm install --save-dev @mobile-dev-mcp/babel-plugin
+yarn add -D @mobile-dev-mcp/babel-plugin
 ```
 
 Update `babel.config.js`:
@@ -174,6 +173,73 @@ module.exports = {
   ],
 };
 ```
+
+### React Web
+
+#### Install the SDK
+
+```bash
+yarn add @mobile-dev-mcp/react
+```
+
+#### Add the Provider
+
+```tsx
+// main.tsx or index.tsx
+import { MCPProvider, MCPStatusBadge } from '@mobile-dev-mcp/react';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <MCPProvider debug={true}>
+    <App />
+    <MCPStatusBadge />
+  </MCPProvider>
+);
+```
+
+#### Expose State and Register Actions
+
+```tsx
+import { useMCPState, useMCPAction } from '@mobile-dev-mcp/react';
+
+function MyApp() {
+  const [cart, setCart] = useState([]);
+  
+  // Expose state to AI
+  useMCPState('cart', () => cart);
+  
+  // Register actions AI can trigger
+  useMCPAction('addToCart', async (params) => {
+    const product = await fetchProduct(params.productId);
+    setCart(prev => [...prev, product]);
+    return { success: true };
+  });
+  
+  return <div>...</div>;
+}
+```
+
+#### Auto-Instrumentation (Optional)
+
+For Vite projects:
+
+```typescript
+// vite.config.ts
+import react from '@vitejs/plugin-react';
+
+export default {
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          ['@mobile-dev-mcp/babel-plugin', { traceClasses: true }]
+        ]
+      }
+    })
+  ]
+};
+```
+
+For more details, see the [React Web Integration Guide](./web-react-integration.md).
 
 ### iOS (Swift/SwiftUI)
 
