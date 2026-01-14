@@ -46,14 +46,37 @@ describe('Fastlane Tools', () => {
         expect(result).toHaveProperty('path');
       } else {
         expect(result).toHaveProperty('installInstructions');
+        expect(result).toHaveProperty('hint');
       }
+    });
+
+    it('should have install parameter in schema', () => {
+      const checkTool = fastlaneTools.find(t => t.name === 'fastlane_check');
+      expect(checkTool).toBeDefined();
+      expect(checkTool?.inputSchema.properties).toHaveProperty('install');
+      expect(checkTool?.inputSchema.properties).toHaveProperty('method');
+    });
+
+    it('should accept install and method parameters', async () => {
+      // Just verify parameters are accepted without error
+      // Actual installation is tested manually
+      const result = await handleFastlaneTool('fastlane_check', {
+        install: false,  // Don't actually install
+        method: 'auto',
+      }) as { installed: boolean };
+
+      expect(result).toBeDefined();
+      expect(typeof result.installed).toBe('boolean');
     });
   });
 
   describe('fastlane_init', () => {
-    const tempDir = '/tmp/fastlane-tools-test';
+    let tempDir: string;
 
     beforeEach(() => {
+      // Create unique temp directory for each test
+      tempDir = `/tmp/fastlane-tools-test-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      
       // Create temp directory with mock project structure
       fs.mkdirSync(path.join(tempDir, 'ios'), { recursive: true });
       fs.mkdirSync(path.join(tempDir, 'android'), { recursive: true });

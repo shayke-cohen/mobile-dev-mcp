@@ -119,10 +119,20 @@ export const fastlaneTools = [
   },
   {
     name: 'fastlane_check',
-    description: 'Check if fastlane is installed and show version info.',
+    description: 'Check if fastlane is installed. Optionally install it if missing.',
     inputSchema: {
       type: 'object' as const,
-      properties: {},
+      properties: {
+        install: {
+          type: 'boolean',
+          description: 'If true and fastlane is not installed, attempt to install it via Homebrew or gem',
+        },
+        method: {
+          type: 'string',
+          enum: ['brew', 'gem', 'auto'],
+          description: 'Installation method (default: auto - tries brew first, then gem)',
+        },
+      },
     },
   },
 ];
@@ -143,7 +153,7 @@ export async function handleFastlaneTool(
     case 'fastlane_match':
       return fastlaneMatch(params);
     case 'fastlane_check':
-      return fastlaneCheck();
+      return fastlaneCheck(params);
     default:
       throw new Error(`Unknown fastlane tool: ${name}`);
   }
@@ -151,7 +161,11 @@ export async function handleFastlaneTool(
 
 // MARK: - Check Fastlane Installation
 
-async function fastlaneCheck(): Promise<unknown> {
+async function fastlaneCheck(params: Record<string, unknown> = {}): Promise<unknown> {
+  const shouldInstall = params.install as boolean || false;
+  const method = (params.method as string) || 'auto';
+
+  // First, check if already installed
   try {
     const { stdout: version } = await execAsync('fastlane --version');
     const { stdout: which } = await execAsync('which fastlane');
@@ -162,7 +176,12 @@ async function fastlaneCheck(): Promise<unknown> {
       path: which.trim(),
       message: 'Fastlane is installed and ready to use.',
     };
-  } catch (error) {
+  } catch {
+    // Not installed
+  }
+
+  // If not installed and install not requested, return instructions
+  if (!shouldInstall) {
     return {
       installed: false,
       message: 'Fastlane is not installed.',
@@ -171,6 +190,133 @@ async function fastlaneCheck(): Promise<unknown> {
         rubygems: 'gem install fastlane',
         docs: 'https://docs.fastlane.tools/getting-started/ios/setup/',
       },
+      hint: 'Run fastlane_check with install: true to install automatically.',
+    };
+  }
+
+  // Attempt installation
+  return installFastlane(method);
+}
+
+async function installFastlane(method: string): Promise<unknown> {
+  const installLog: string[] = [];
+
+  // Check if Homebrew is available
+  let hasHomebrew = false;
+  try {
+    await execAsync('which brew');
+    hasHomebrew = true;
+  } catch {
+    installLog.push('Homebrew not found');
+  }
+
+  // Check if gem is available
+  let hasGem = false;
+  try {
+    await execAsync('which gem');
+    hasGem = true;
+  } catch {
+    installLog.push('RubyGems not found');
+  }
+
+  // Determine installation method
+  let useMethod = method;
+  if (method === 'auto') {
+    if (hasHomebrew) {
+      useMethod = 'brew';
+    } else if (hasGem) {
+      useMethod = 'gem';
+    } else {
+      return {
+        installed: false,
+        success: false,
+        error: 'Neither Homebrew nor RubyGems found. Please install one of them first.',
+        installLog,
+        manualInstructions: {
+          homebrew: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+          then: 'brew install fastlane',
+        },
+      };
+    }
+  }
+
+  // Validate requested method is available
+  if (useMethod === 'brew' && !hasHomebrew) {
+    return {
+      installed: false,
+      success: false,
+      error: 'Homebrew is not installed. Use method: "gem" or install Homebrew first.',
+    };
+  }
+  if (useMethod === 'gem' && !hasGem) {
+    return {
+      installed: false,
+      success: false,
+      error: 'RubyGems is not installed.',
+    };
+  }
+
+  // Install fastlane
+  installLog.push(`Installing fastlane via ${useMethod}...`);
+
+  try {
+    if (useMethod === 'brew') {
+      const { stdout, stderr } = await execAsync('brew install fastlane', {
+        timeout: 300000, // 5 minutes
+        maxBuffer: 10 * 1024 * 1024,
+      });
+      installLog.push(...stdout.split('\n').filter(l => l.trim()));
+      if (stderr) installLog.push(...stderr.split('\n').filter(l => l.trim()));
+    } else {
+      // gem install - may need to handle permissions
+      const { stdout, stderr } = await execAsync('gem install fastlane --user-install', {
+        timeout: 300000,
+        maxBuffer: 10 * 1024 * 1024,
+      });
+      installLog.push(...stdout.split('\n').filter(l => l.trim()));
+      if (stderr) installLog.push(...stderr.split('\n').filter(l => l.trim()));
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    installLog.push(`Installation error: ${message}`);
+    
+    return {
+      installed: false,
+      success: false,
+      error: `Installation failed: ${message}`,
+      method: useMethod,
+      installLog: installLog.slice(-20),
+      suggestion: useMethod === 'gem' 
+        ? 'Try: sudo gem install fastlane' 
+        : 'Check Homebrew is working: brew doctor',
+    };
+  }
+
+  // Verify installation
+  try {
+    const { stdout: version } = await execAsync('fastlane --version');
+    const { stdout: which } = await execAsync('which fastlane');
+    
+    return {
+      installed: true,
+      success: true,
+      version: version.trim().split('\n').pop()?.trim() || version.trim(),
+      path: which.trim(),
+      method: useMethod,
+      message: `Fastlane installed successfully via ${useMethod}!`,
+      installLog: installLog.slice(-10),
+    };
+  } catch {
+    // Installation succeeded but fastlane not in PATH
+    return {
+      installed: false,
+      success: true,
+      method: useMethod,
+      message: 'Installation completed but fastlane is not in PATH.',
+      installLog: installLog.slice(-10),
+      suggestion: useMethod === 'gem'
+        ? 'Add gem bin directory to PATH: export PATH="$PATH:$(ruby -e \'puts Gem.user_dir\')/bin"'
+        : 'Try opening a new terminal window.',
     };
   }
 }

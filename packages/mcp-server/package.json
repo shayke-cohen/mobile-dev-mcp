@@ -12,7 +12,7 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest",
-    "lint": "eslint src/",
+    "lint": "eslint -c ../../eslint.config.js src/",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

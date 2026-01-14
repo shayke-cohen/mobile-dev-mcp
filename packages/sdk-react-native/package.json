@@ -7,7 +7,7 @@
   "react-native": "src/index.ts",
   "scripts": {
     "build": "echo 'React Native package - no build step'",
-    "lint": "eslint src/",
+    "lint": "eslint -c ../../eslint.config.js src/",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "clean": "rm -rf lib"
