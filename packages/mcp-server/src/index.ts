@@ -13,6 +13,10 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 import { WebSocketServer } from './connection/websocket-server.js';
 import { DeviceManager } from './connection/device-manager.js';
 import { registerAllTools } from './tools/index.js';
@@ -71,6 +75,23 @@ async function main() {
 
     // Register all MCP tools
     registerAllTools(server, deviceManager);
+
+    // Register resource handlers (MCP protocol compliance)
+    server.setRequestHandler(ListResourcesRequestSchema, async () => {
+      // We don't expose any resources currently
+      return { resources: [] };
+    });
+
+    server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+      // No resources to read
+      return {
+        contents: [{
+          uri: request.params.uri,
+          mimeType: 'text/plain',
+          text: `Resource not found: ${request.params.uri}`,
+        }],
+      };
+    });
 
     // Handle server errors
     server.onerror = (error) => {
