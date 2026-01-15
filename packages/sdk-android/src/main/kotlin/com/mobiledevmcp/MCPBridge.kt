@@ -987,7 +987,8 @@ object MCPBridge {
     }
     
     private fun getAppState(params: JSONObject): Map<String, Any?> {
-        val key = params.optString("key", null)
+        // Support both 'path' (from MCP server) and 'key' (legacy)
+        val key = params.optString("path", null) ?: params.optString("key", null)
         
         return if (key != null && key.isNotEmpty()) {
             val getter = stateGetters[key]

@@ -961,7 +961,8 @@ class MCPBridgeClass {
   }
 
   private getAppState(params: Record<string, unknown>): Record<string, unknown> {
-    const key = params.key as string | undefined;
+    // Support both 'path' (from MCP server) and 'key' (legacy)
+    const key = (params.path ?? params.key) as string | undefined;
     const result: Record<string, unknown> = {};
 
     if (key) {
