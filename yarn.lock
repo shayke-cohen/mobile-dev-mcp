@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.24.7", "@babel/code-frame@^7.27.1":
+"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/code-frame/-/code-frame-7.27.1.tgz#200f715e66d52a23b221a9435534a91cc13ad5be"
   integrity sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==
@@ -11,12 +11,12 @@
     js-tokens "^4.0.0"
     picocolors "^1.1.1"
 
-"@babel/compat-data@^7.27.2", "@babel/compat-data@^7.27.7", "@babel/compat-data@^7.28.5":
+"@babel/compat-data@^7.20.5", "@babel/compat-data@^7.27.2", "@babel/compat-data@^7.27.7", "@babel/compat-data@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/compat-data/-/compat-data-7.28.5.tgz#a8a4962e1567121ac0b3b487f52107443b455c7f"
   integrity sha512-6uFXyCayocRbqhZOB+6XcuZbkMNimwfVGFji8CTZnCzOHVGvDqzvitu1re2AU5LROliz7eQPhB8CpAMvnx9EjA==
 
-"@babel/core@^7.11.6", "@babel/core@^7.12.3", "@babel/core@^7.23.0", "@babel/core@^7.24.7", "@babel/core@^7.25.2", "@babel/core@^7.26.0", "@babel/core@^7.28.0":
+"@babel/core@^7.13.16", "@babel/core@^7.20.0", "@babel/core@^7.23.0", "@babel/core@^7.24.0", "@babel/core@^7.25.2", "@babel/core@^7.28.0":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/core/-/core-7.28.5.tgz#4c81b35e51e1b734f510c99b07dfbc7bbbb48f7e"
   integrity sha512-e7jT4DxYvIDLk1ZHmU/m/mB19rex9sv0c2ftBtjSBv+kVM/902eh0fINUzD7UwLLNR+jU585GxUJ8/EBfAM5fw==
@@ -37,7 +37,7 @@
     json5 "^2.2.3"
     semver "^6.3.1"
 
-"@babel/generator@^7.25.0", "@babel/generator@^7.28.5":
+"@babel/generator@^7.20.0", "@babel/generator@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/generator/-/generator-7.28.5.tgz#712722d5e50f44d07bc7ac9fe84438742dd61298"
   integrity sha512-3EwLFhZ38J4VyIP6WNtt2kUdW9dokXA9Cr4IVIFHuCpZ3H8/YFOl5JjZHisrn1fATPBmKKqXzDFvh9fUwHz6CQ==
@@ -55,7 +55,7 @@
   dependencies:
     "@babel/types" "^7.27.3"
 
-"@babel/helper-compilation-targets@^7.27.1", "@babel/helper-compilation-targets@^7.27.2":
+"@babel/helper-compilation-targets@^7.20.7", "@babel/helper-compilation-targets@^7.27.1", "@babel/helper-compilation-targets@^7.27.2":
   version "7.27.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/helper-compilation-targets/-/helper-compilation-targets-7.27.2.tgz#46a0f6efab808d51d29ce96858dd10ce8732733d"
   integrity sha512-2+1thGUUWWjLTYTHZWK1n8Yga0ijBz1XAhUXcKy81rd5g6yh7hGqMp45v7cadSbEHc9G3OTv45SyneRN3ps4DQ==
@@ -66,7 +66,7 @@
     lru-cache "^5.1.1"
     semver "^6.3.1"
 
-"@babel/helper-create-class-features-plugin@^7.27.1", "@babel/helper-create-class-features-plugin@^7.28.3", "@babel/helper-create-class-features-plugin@^7.28.5":
+"@babel/helper-create-class-features-plugin@^7.18.6", "@babel/helper-create-class-features-plugin@^7.27.1", "@babel/helper-create-class-features-plugin@^7.28.3", "@babel/helper-create-class-features-plugin@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.28.5.tgz#472d0c28028850968979ad89f173594a6995da46"
   integrity sha512-q3WC4JfdODypvxArsJQROfupPBq9+lMwjKq7C33GhbFYJsufD0yd/ziwD+hJucLeWsnFPWZjsU2DNFqBPE7jwQ==
@@ -98,6 +98,13 @@
     debug "^4.4.1"
     lodash.debounce "^4.0.8"
     resolve "^1.22.10"
+
+"@babel/helper-environment-visitor@^7.18.9":
+  version "7.24.7"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/helper-environment-visitor/-/helper-environment-visitor-7.24.7.tgz#4b31ba9551d1f90781ba83491dd59cf9b269f7d9"
+  integrity sha512-DoiN84+4Gnd0ncbBOM9AZENV4a5ZiL39HYMyZJGZ/AZEykHYdJw0wW3kdcsh9/Kn+BRXHLkkklZ51ecPKmI1CQ==
+  dependencies:
+    "@babel/types" "^7.24.7"
 
 "@babel/helper-globals@^7.28.0":
   version "7.28.0"
@@ -136,12 +143,12 @@
   dependencies:
     "@babel/types" "^7.27.1"
 
-"@babel/helper-plugin-utils@^7.0.0", "@babel/helper-plugin-utils@^7.10.4", "@babel/helper-plugin-utils@^7.12.13", "@babel/helper-plugin-utils@^7.14.5", "@babel/helper-plugin-utils@^7.18.6", "@babel/helper-plugin-utils@^7.24.0", "@babel/helper-plugin-utils@^7.27.1", "@babel/helper-plugin-utils@^7.8.0":
+"@babel/helper-plugin-utils@^7.0.0", "@babel/helper-plugin-utils@^7.10.4", "@babel/helper-plugin-utils@^7.18.6", "@babel/helper-plugin-utils@^7.20.2", "@babel/helper-plugin-utils@^7.24.0", "@babel/helper-plugin-utils@^7.27.1", "@babel/helper-plugin-utils@^7.8.0":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/helper-plugin-utils/-/helper-plugin-utils-7.27.1.tgz#ddb2f876534ff8013e6c2b299bf4d39b3c51d44c"
   integrity sha512-1gn1Up5YXka3YYAHGKpbideQ5Yjf1tDa9qYcgysz+cNCXukyLl6DjPXhD3VRwSb8c0J9tA4b2+rHEZtc6R0tlw==
 
-"@babel/helper-remap-async-to-generator@^7.27.1":
+"@babel/helper-remap-async-to-generator@^7.18.9", "@babel/helper-remap-async-to-generator@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/helper-remap-async-to-generator/-/helper-remap-async-to-generator-7.27.1.tgz#4601d5c7ce2eb2aea58328d43725523fcd362ce6"
   integrity sha512-7fiA521aVw8lSPeI4ZOD3vRFkoqkJcS+z4hFo82bFSH/2tNd6eJ5qCVMS5OzDmZh/kaHQeBaeyxK6wljcPtveA==
@@ -159,7 +166,7 @@
     "@babel/helper-optimise-call-expression" "^7.27.1"
     "@babel/traverse" "^7.27.1"
 
-"@babel/helper-skip-transparent-expression-wrappers@^7.27.1":
+"@babel/helper-skip-transparent-expression-wrappers@^7.20.0", "@babel/helper-skip-transparent-expression-wrappers@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/helper-skip-transparent-expression-wrappers/-/helper-skip-transparent-expression-wrappers-7.27.1.tgz#62bb91b3abba8c7f1fec0252d9dbea11b3ee7a56"
   integrity sha512-Tub4ZKEXqbPjXgWLl2+3JpQAYBJ8+ikpQ2Ocj/q/r0LwE3UhENh7EUabyHjz2kCEsrRY83ew2DQdHluuiDQFzg==
@@ -199,7 +206,7 @@
     "@babel/template" "^7.27.2"
     "@babel/types" "^7.28.4"
 
-"@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.7", "@babel/parser@^7.24.7", "@babel/parser@^7.25.3", "@babel/parser@^7.27.2", "@babel/parser@^7.28.5":
+"@babel/parser@^7.1.0", "@babel/parser@^7.13.16", "@babel/parser@^7.20.0", "@babel/parser@^7.20.7", "@babel/parser@^7.25.3", "@babel/parser@^7.27.2", "@babel/parser@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/parser/-/parser-7.28.5.tgz#0b0225ee90362f030efd644e8034c99468893b08"
   integrity sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==
@@ -245,12 +252,82 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/traverse" "^7.28.3"
 
-"@babel/plugin-proposal-export-default-from@^7.24.7":
+"@babel/plugin-proposal-async-generator-functions@^7.0.0":
+  version "7.20.7"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-async-generator-functions/-/plugin-proposal-async-generator-functions-7.20.7.tgz#bfb7276d2d573cb67ba379984a2334e262ba5326"
+  integrity sha512-xMbiLsn/8RK7Wq7VeVytytS2L6qE69bXPB10YCmMdDZbKF4okCqY74pI/jJQ/8U0b/F6NrT2+14b8/P9/3AMGA==
+  dependencies:
+    "@babel/helper-environment-visitor" "^7.18.9"
+    "@babel/helper-plugin-utils" "^7.20.2"
+    "@babel/helper-remap-async-to-generator" "^7.18.9"
+    "@babel/plugin-syntax-async-generators" "^7.8.4"
+
+"@babel/plugin-proposal-class-properties@^7.13.0", "@babel/plugin-proposal-class-properties@^7.18.0":
+  version "7.18.6"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-class-properties/-/plugin-proposal-class-properties-7.18.6.tgz#b110f59741895f7ec21a6fff696ec46265c446a3"
+  integrity sha512-cumfXOF0+nzZrrN8Rf0t7M+tF6sZc7vhQwYQck9q1/5w2OExlD+b4v4RpMJFaV1Z7WcDRgO6FqvxqxGlwo+RHQ==
+  dependencies:
+    "@babel/helper-create-class-features-plugin" "^7.18.6"
+    "@babel/helper-plugin-utils" "^7.18.6"
+
+"@babel/plugin-proposal-export-default-from@^7.0.0":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-export-default-from/-/plugin-proposal-export-default-from-7.27.1.tgz#59b050b0e5fdc366162ab01af4fcbac06ea40919"
   integrity sha512-hjlsMBl1aJc5lp8MoCDEZCiYzlgdRAShOjAfRw6X+GlpLpUPU7c3XNLsKFZbQk/1cRzBlJ7CXg3xJAJMrFa1Uw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
+
+"@babel/plugin-proposal-logical-assignment-operators@^7.18.0":
+  version "7.20.7"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-logical-assignment-operators/-/plugin-proposal-logical-assignment-operators-7.20.7.tgz#dfbcaa8f7b4d37b51e8bfb46d94a5aea2bb89d83"
+  integrity sha512-y7C7cZgpMIjWlKE5T7eJwp+tnRYM89HmRvWM5EQuB5BoHEONjmQ8lSNmBUwOyy/GFRsohJED51YBF79hE1djug==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.20.2"
+    "@babel/plugin-syntax-logical-assignment-operators" "^7.10.4"
+
+"@babel/plugin-proposal-nullish-coalescing-operator@^7.13.8", "@babel/plugin-proposal-nullish-coalescing-operator@^7.18.0":
+  version "7.18.6"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-nullish-coalescing-operator/-/plugin-proposal-nullish-coalescing-operator-7.18.6.tgz#fdd940a99a740e577d6c753ab6fbb43fdb9467e1"
+  integrity sha512-wQxQzxYeJqHcfppzBDnm1yAY0jSRkUXR2z8RePZYrKwMKgMlE8+Z6LUno+bd6LvbGh8Gltvy74+9pIYkr+XkKA==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.18.6"
+    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.8.3"
+
+"@babel/plugin-proposal-numeric-separator@^7.0.0":
+  version "7.18.6"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-numeric-separator/-/plugin-proposal-numeric-separator-7.18.6.tgz#899b14fbafe87f053d2c5ff05b36029c62e13c75"
+  integrity sha512-ozlZFogPqoLm8WBr5Z8UckIoE4YQ5KESVcNudyXOR8uqIkliTEgJ3RoketfG6pmzLdeZF0H/wjE9/cCEitBl7Q==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.18.6"
+    "@babel/plugin-syntax-numeric-separator" "^7.10.4"
+
+"@babel/plugin-proposal-object-rest-spread@^7.20.0":
+  version "7.20.7"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.20.7.tgz#aa662940ef425779c75534a5c41e9d936edc390a"
+  integrity sha512-d2S98yCiLxDVmBmE8UjGcfPvNEUbA1U5q5WxaWFUGRzJSVAZqm5W6MbPct0jxnegUZ0niLeNX+IOzEs7wYg9Dg==
+  dependencies:
+    "@babel/compat-data" "^7.20.5"
+    "@babel/helper-compilation-targets" "^7.20.7"
+    "@babel/helper-plugin-utils" "^7.20.2"
+    "@babel/plugin-syntax-object-rest-spread" "^7.8.3"
+    "@babel/plugin-transform-parameters" "^7.20.7"
+
+"@babel/plugin-proposal-optional-catch-binding@^7.0.0":
+  version "7.18.6"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-optional-catch-binding/-/plugin-proposal-optional-catch-binding-7.18.6.tgz#f9400d0e6a3ea93ba9ef70b09e72dd6da638a2cb"
+  integrity sha512-Q40HEhs9DJQyaZfUjjn6vE8Cv4GmMHCYuMGIWUnlxH6400VGxOuwWsPt4FxXxJkC/5eOzgn0z21M9gMT4MOhbw==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.18.6"
+    "@babel/plugin-syntax-optional-catch-binding" "^7.8.3"
+
+"@babel/plugin-proposal-optional-chaining@^7.13.12", "@babel/plugin-proposal-optional-chaining@^7.20.0":
+  version "7.21.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-proposal-optional-chaining/-/plugin-proposal-optional-chaining-7.21.0.tgz#886f5c8978deb7d30f678b2e24346b287234d3ea"
+  integrity sha512-p4zeefM72gpmEe2fkUr/OnOXpWEf8nAgk7ZYVqqfFiyIG7oFfVZcCrU64hWn5xp4tQ9LkV4bTIa5rD0KANpKNA==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.20.2"
+    "@babel/helper-skip-transparent-expression-wrappers" "^7.20.0"
+    "@babel/plugin-syntax-optional-chaining" "^7.8.3"
 
 "@babel/plugin-proposal-private-property-in-object@7.21.0-placeholder-for-preset-env.2":
   version "7.21.0-placeholder-for-preset-env.2"
@@ -264,42 +341,21 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.0"
 
-"@babel/plugin-syntax-bigint@^7.8.3":
-  version "7.8.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-bigint/-/plugin-syntax-bigint-7.8.3.tgz#4c9a6f669f5d0cdf1b90a1671e9a146be5300cea"
-  integrity sha512-wnTnFlG+YxQm3vDxpGE57Pj0srRU4sHE/mDkt1qv2YJJSeUAec2ma4WLUnUPeKjyrfntVwe/N6dCXpU+zL3Npg==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.8.0"
-
-"@babel/plugin-syntax-class-properties@^7.12.13":
-  version "7.12.13"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-class-properties/-/plugin-syntax-class-properties-7.12.13.tgz#b5c987274c4a3a82b89714796931a6b53544ae10"
-  integrity sha512-fm4idjKla0YahUNgFNLCB0qySdsoPiZP3iQE3rky0mBUtMZ23yDJ9SJdg6dXTSDnulOVqiF3Hgr9nbXvXTQZYA==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.12.13"
-
-"@babel/plugin-syntax-class-static-block@^7.14.5":
-  version "7.14.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-class-static-block/-/plugin-syntax-class-static-block-7.14.5.tgz#195df89b146b4b78b3bf897fd7a257c84659d406"
-  integrity sha512-b+YyPmr6ldyNnM6sqYeMWE+bgJcJpO6yS4QD7ymxgH34GBPNDM/THBh8iunyvKIZztiwLH4CJZ0RxTk9emgpjw==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.14.5"
-
-"@babel/plugin-syntax-dynamic-import@^7.8.3":
+"@babel/plugin-syntax-dynamic-import@^7.8.0":
   version "7.8.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-dynamic-import/-/plugin-syntax-dynamic-import-7.8.3.tgz#62bf98b2da3cd21d626154fc96ee5b3cb68eacb3"
   integrity sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.0"
 
-"@babel/plugin-syntax-export-default-from@^7.24.7":
+"@babel/plugin-syntax-export-default-from@^7.0.0":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-export-default-from/-/plugin-syntax-export-default-from-7.27.1.tgz#8efed172e79ab657c7fa4d599224798212fb7e18"
   integrity sha512-eBC/3KSekshx19+N40MzjWqJd7KTEdOoLesAfa4IDFI8eRz5a47i5Oszus6zG/cwIXN63YhgLOMSSNJx49sENg==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-syntax-flow@^7.12.1", "@babel/plugin-syntax-flow@^7.27.1":
+"@babel/plugin-syntax-flow@^7.12.1", "@babel/plugin-syntax-flow@^7.18.0", "@babel/plugin-syntax-flow@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.27.1.tgz#6c83cf0d7d635b716827284b7ecd5aead9237662"
   integrity sha512-p9OkPbZ5G7UT1MofwYFigGebnrzGJacoBSQM0/6bi/PUMVE+qlWDD/OalvQKbwgQzU6dl0xAv6r4X7Jme0RYxA==
@@ -313,26 +369,12 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-syntax-import-attributes@^7.24.7", "@babel/plugin-syntax-import-attributes@^7.27.1":
+"@babel/plugin-syntax-import-attributes@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-import-attributes/-/plugin-syntax-import-attributes-7.27.1.tgz#34c017d54496f9b11b61474e7ea3dfd5563ffe07"
   integrity sha512-oFT0FrKHgF53f4vOsZGi2Hh3I35PfSmVs4IBFLFj4dnafP+hIWDLg3VyKmUHfLoLHlyxY4C7DGtmHuJgn+IGww==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
-
-"@babel/plugin-syntax-import-meta@^7.10.4":
-  version "7.10.4"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-import-meta/-/plugin-syntax-import-meta-7.10.4.tgz#ee601348c370fa334d2207be158777496521fd51"
-  integrity sha512-Yqfm+XDx0+Prh3VSeEQCPU81yC+JWZ2pDPFSS4ZdpfZhp4MkFMaDC1UqseovEKwSUpnIL7+vK+Clp7bfh0iD7g==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.10.4"
-
-"@babel/plugin-syntax-json-strings@^7.8.3":
-  version "7.8.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-json-strings/-/plugin-syntax-json-strings-7.8.3.tgz#01ca21b668cd8218c9e640cb6dd88c5412b2c96a"
-  integrity sha512-lY6kdGpWHvjoe2vk4WrAapEuBR69EMxZl+RoGRhrFGNYVK8mOPAW8VfbT/ZgrFbXlDNiiaxQnAtgVCZ6jv30EA==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.8.0"
 
 "@babel/plugin-syntax-jsx@^7.27.1":
   version "7.27.1"
@@ -348,7 +390,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.10.4"
 
-"@babel/plugin-syntax-nullish-coalescing-operator@^7.8.3":
+"@babel/plugin-syntax-nullish-coalescing-operator@^7.0.0", "@babel/plugin-syntax-nullish-coalescing-operator@^7.8.3":
   version "7.8.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-nullish-coalescing-operator/-/plugin-syntax-nullish-coalescing-operator-7.8.3.tgz#167ed70368886081f74b5c36c65a88c03b66d1a9"
   integrity sha512-aSff4zPII1u2QD7y+F8oDsz19ew4IGEJg9SVW+bqwpwtfFleiQDMdzA/R+UlWDzfnHFCxxleFT0PMIrR36XLNQ==
@@ -376,26 +418,12 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.0"
 
-"@babel/plugin-syntax-optional-chaining@^7.8.3":
+"@babel/plugin-syntax-optional-chaining@^7.0.0", "@babel/plugin-syntax-optional-chaining@^7.8.3":
   version "7.8.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-optional-chaining/-/plugin-syntax-optional-chaining-7.8.3.tgz#4f69c2ab95167e0180cd5336613f8c5788f7d48a"
   integrity sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.0"
-
-"@babel/plugin-syntax-private-property-in-object@^7.14.5":
-  version "7.14.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-private-property-in-object/-/plugin-syntax-private-property-in-object-7.14.5.tgz#0dc6671ec0ea22b6e94a1114f857970cd39de1ad"
-  integrity sha512-0wVnp9dxJ72ZUJDV27ZfbSj6iHLoytYZmh3rFcxNnvsJF3ktkzLDZPy/mA17HGsaQT3/DQsWYX1f1QGWkCoVUg==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.14.5"
-
-"@babel/plugin-syntax-top-level-await@^7.14.5":
-  version "7.14.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-syntax-top-level-await/-/plugin-syntax-top-level-await-7.14.5.tgz#c1cfdadc35a646240001f06138247b741c34d94c"
-  integrity sha512-hx++upLv5U1rgYfwe1xBQUhRmU41NEvpUvrp8jkrSCdvGSnM5/qdRMtylJ6PG5OFkBaHkbTAKTnd3/YyESRHFw==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.14.5"
 
 "@babel/plugin-syntax-typescript@^7.27.1":
   version "7.27.1"
@@ -412,14 +440,14 @@
     "@babel/helper-create-regexp-features-plugin" "^7.18.6"
     "@babel/helper-plugin-utils" "^7.18.6"
 
-"@babel/plugin-transform-arrow-functions@^7.24.7", "@babel/plugin-transform-arrow-functions@^7.27.1":
+"@babel/plugin-transform-arrow-functions@^7.0.0", "@babel/plugin-transform-arrow-functions@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-arrow-functions/-/plugin-transform-arrow-functions-7.27.1.tgz#6e2061067ba3ab0266d834a9f94811196f2aba9a"
   integrity sha512-8Z4TGic6xW70FKThA5HYEKKyBpOOsucTOD1DjU3fZxDg+K3zBJcXMFnt/4yQiZnf5+MiOMSXQ9PaEK/Ilh1DeA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-async-generator-functions@^7.25.4", "@babel/plugin-transform-async-generator-functions@^7.28.0":
+"@babel/plugin-transform-async-generator-functions@^7.28.0":
   version "7.28.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-async-generator-functions/-/plugin-transform-async-generator-functions-7.28.0.tgz#1276e6c7285ab2cd1eccb0bc7356b7a69ff842c2"
   integrity sha512-BEOdvX4+M765icNPZeidyADIvQ1m1gmunXufXxvRESy/jNNyfovIqUyE7MVgGBjWktCoJlzvFA1To2O4ymIO3Q==
@@ -428,7 +456,7 @@
     "@babel/helper-remap-async-to-generator" "^7.27.1"
     "@babel/traverse" "^7.28.0"
 
-"@babel/plugin-transform-async-to-generator@^7.24.7", "@babel/plugin-transform-async-to-generator@^7.27.1":
+"@babel/plugin-transform-async-to-generator@^7.20.0", "@babel/plugin-transform-async-to-generator@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-async-to-generator/-/plugin-transform-async-to-generator-7.27.1.tgz#9a93893b9379b39466c74474f55af03de78c66e7"
   integrity sha512-NREkZsZVJS4xmTr8qzE5y8AfIPqsdQfRuUiLRTEzb7Qii8iFWCyDKaUV2c0rCuh4ljDZ98ALHP/PetiBV2nddA==
@@ -444,14 +472,14 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-block-scoping@^7.25.0", "@babel/plugin-transform-block-scoping@^7.28.5":
+"@babel/plugin-transform-block-scoping@^7.0.0", "@babel/plugin-transform-block-scoping@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-block-scoping/-/plugin-transform-block-scoping-7.28.5.tgz#e0d3af63bd8c80de2e567e690a54e84d85eb16f6"
   integrity sha512-45DmULpySVvmq9Pj3X9B+62Xe+DJGov27QravQJU1LLcapR6/10i+gYVAucGGJpHBp5mYxIMK4nDAT/QDLr47g==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-class-properties@^7.24.7", "@babel/plugin-transform-class-properties@^7.25.4", "@babel/plugin-transform-class-properties@^7.27.1":
+"@babel/plugin-transform-class-properties@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-class-properties/-/plugin-transform-class-properties-7.27.1.tgz#dd40a6a370dfd49d32362ae206ddaf2bb082a925"
   integrity sha512-D0VcalChDMtuRvJIu3U/fwWjf8ZMykz5iZsg77Nuj821vCKI3zCyRLwRdWbsuJ/uRwZhZ002QtCqIkwC/ZkvbA==
@@ -467,7 +495,7 @@
     "@babel/helper-create-class-features-plugin" "^7.28.3"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-classes@^7.25.4", "@babel/plugin-transform-classes@^7.28.4":
+"@babel/plugin-transform-classes@^7.0.0", "@babel/plugin-transform-classes@^7.28.4":
   version "7.28.4"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-classes/-/plugin-transform-classes-7.28.4.tgz#75d66175486788c56728a73424d67cbc7473495c"
   integrity sha512-cFOlhIYPBv/iBoc+KS3M6et2XPtbT2HiCRfBXWtfpc9OAyostldxIf9YAYB6ypURBBbx+Qv6nyrLzASfJe+hBA==
@@ -479,7 +507,7 @@
     "@babel/helper-replace-supers" "^7.27.1"
     "@babel/traverse" "^7.28.4"
 
-"@babel/plugin-transform-computed-properties@^7.24.7", "@babel/plugin-transform-computed-properties@^7.27.1":
+"@babel/plugin-transform-computed-properties@^7.0.0", "@babel/plugin-transform-computed-properties@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-computed-properties/-/plugin-transform-computed-properties-7.27.1.tgz#81662e78bf5e734a97982c2b7f0a793288ef3caa"
   integrity sha512-lj9PGWvMTVksbWiDT2tW68zGS/cyo4AkZ/QTp0sQT0mjPopCmrSkzxeXkznjqBxzDI6TclZhOJbBmbBLjuOZUw==
@@ -487,7 +515,7 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/template" "^7.27.1"
 
-"@babel/plugin-transform-destructuring@^7.24.8", "@babel/plugin-transform-destructuring@^7.28.0", "@babel/plugin-transform-destructuring@^7.28.5":
+"@babel/plugin-transform-destructuring@^7.20.0", "@babel/plugin-transform-destructuring@^7.28.0", "@babel/plugin-transform-destructuring@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-destructuring/-/plugin-transform-destructuring-7.28.5.tgz#b8402764df96179a2070bb7b501a1586cf8ad7a7"
   integrity sha512-Kl9Bc6D0zTUcFUvkNuQh4eGXPKKNDOJQXVyyM4ZAQPMveniJdxi8XMJwLo+xSoW3MIq81bD33lcUe9kZpl0MCw==
@@ -547,7 +575,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-flow-strip-types@^7.25.2", "@babel/plugin-transform-flow-strip-types@^7.27.1":
+"@babel/plugin-transform-flow-strip-types@^7.20.0", "@babel/plugin-transform-flow-strip-types@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.27.1.tgz#5def3e1e7730f008d683144fb79b724f92c5cdf9"
   integrity sha512-G5eDKsu50udECw7DL2AcsysXiQyB7Nfg521t2OAJ4tbfTJ27doHLeF/vlI1NZGlLdbb/v+ibvtL1YBQqYOwJGg==
@@ -555,7 +583,7 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/plugin-syntax-flow" "^7.27.1"
 
-"@babel/plugin-transform-for-of@^7.24.7", "@babel/plugin-transform-for-of@^7.27.1":
+"@babel/plugin-transform-for-of@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-for-of/-/plugin-transform-for-of-7.27.1.tgz#bc24f7080e9ff721b63a70ac7b2564ca15b6c40a"
   integrity sha512-BfbWFFEJFQzLCQ5N8VocnCtA8J1CLkNTe2Ms2wocj75dd6VpiqS5Z5quTYcUoo4Yq+DN0rtikODccuv7RU81sw==
@@ -563,7 +591,7 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/helper-skip-transparent-expression-wrappers" "^7.27.1"
 
-"@babel/plugin-transform-function-name@^7.25.1", "@babel/plugin-transform-function-name@^7.27.1":
+"@babel/plugin-transform-function-name@^7.0.0", "@babel/plugin-transform-function-name@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-function-name/-/plugin-transform-function-name-7.27.1.tgz#4d0bf307720e4dce6d7c30fcb1fd6ca77bdeb3a7"
   integrity sha512-1bQeydJF9Nr1eBCMMbC+hdwmRlsv5XYOMu03YSWFwNs0HsAmtSxxF1fyuYPqemVldVyFmlCU7w8UE14LupUSZQ==
@@ -579,14 +607,14 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-literals@^7.25.2", "@babel/plugin-transform-literals@^7.27.1":
+"@babel/plugin-transform-literals@^7.0.0", "@babel/plugin-transform-literals@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-literals/-/plugin-transform-literals-7.27.1.tgz#baaefa4d10a1d4206f9dcdda50d7d5827bb70b24"
   integrity sha512-0HCFSepIpLTkLcsi86GG3mTUzxV5jpmbv97hTETW3yzrAij8aqlD36toB1D0daVFJM8NK6GvKO0gslVQmm+zZA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-logical-assignment-operators@^7.24.7", "@babel/plugin-transform-logical-assignment-operators@^7.28.5":
+"@babel/plugin-transform-logical-assignment-operators@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-logical-assignment-operators/-/plugin-transform-logical-assignment-operators-7.28.5.tgz#d028fd6db8c081dee4abebc812c2325e24a85b0e"
   integrity sha512-axUuqnUTBuXyHGcJEVVh9pORaN6wC5bYfE7FGzPiaWa3syib9m7g+/IT/4VgCOe2Upef43PHzeAvcrVek6QuuA==
@@ -608,7 +636,7 @@
     "@babel/helper-module-transforms" "^7.27.1"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-modules-commonjs@^7.24.7", "@babel/plugin-transform-modules-commonjs@^7.24.8", "@babel/plugin-transform-modules-commonjs@^7.27.1":
+"@babel/plugin-transform-modules-commonjs@^7.0.0", "@babel/plugin-transform-modules-commonjs@^7.13.8", "@babel/plugin-transform-modules-commonjs@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-modules-commonjs/-/plugin-transform-modules-commonjs-7.27.1.tgz#8e44ed37c2787ecc23bdc367f49977476614e832"
   integrity sha512-OJguuwlTYlN0gBZFRPqwOGNWssZjfIUdS7HMYtN8c1KmwpwHFBwTeFZrg9XZa+DFTitWOW5iTAG7tyCUPsCCyw==
@@ -634,7 +662,7 @@
     "@babel/helper-module-transforms" "^7.27.1"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-named-capturing-groups-regex@^7.24.7", "@babel/plugin-transform-named-capturing-groups-regex@^7.27.1":
+"@babel/plugin-transform-named-capturing-groups-regex@^7.0.0", "@babel/plugin-transform-named-capturing-groups-regex@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-named-capturing-groups-regex/-/plugin-transform-named-capturing-groups-regex-7.27.1.tgz#f32b8f7818d8fc0cc46ee20a8ef75f071af976e1"
   integrity sha512-SstR5JYy8ddZvD6MhV0tM/j16Qds4mIpJTOd1Yu9J9pJjH93bxHECF7pgtc28XvkzTD6Pxcm/0Z73Hvk7kb3Ng==
@@ -649,21 +677,21 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-nullish-coalescing-operator@^7.24.7", "@babel/plugin-transform-nullish-coalescing-operator@^7.27.1":
+"@babel/plugin-transform-nullish-coalescing-operator@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-nullish-coalescing-operator/-/plugin-transform-nullish-coalescing-operator-7.27.1.tgz#4f9d3153bf6782d73dd42785a9d22d03197bc91d"
   integrity sha512-aGZh6xMo6q9vq1JGcw58lZ1Z0+i0xB2x0XaauNIUXd6O1xXc3RwoWEBlsTQrY4KQ9Jf0s5rgD6SiNkaUdJegTA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-numeric-separator@^7.24.7", "@babel/plugin-transform-numeric-separator@^7.27.1":
+"@babel/plugin-transform-numeric-separator@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-numeric-separator/-/plugin-transform-numeric-separator-7.27.1.tgz#614e0b15cc800e5997dadd9bd6ea524ed6c819c6"
   integrity sha512-fdPKAcujuvEChxDBJ5c+0BTaS6revLV7CJL08e4m3de8qJfNIuCc2nc7XJYOjBoTMJeqSmwXJ0ypE14RCjLwaw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-object-rest-spread@^7.24.7", "@babel/plugin-transform-object-rest-spread@^7.28.4":
+"@babel/plugin-transform-object-rest-spread@^7.28.4":
   version "7.28.4"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-object-rest-spread/-/plugin-transform-object-rest-spread-7.28.4.tgz#9ee1ceca80b3e6c4bac9247b2149e36958f7f98d"
   integrity sha512-373KA2HQzKhQCYiRVIRr+3MjpCObqzDlyrM6u4I201wL8Mp2wHf7uB8GhDwis03k2ti8Zr65Zyyqs1xOxUF/Ew==
@@ -682,14 +710,14 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/helper-replace-supers" "^7.27.1"
 
-"@babel/plugin-transform-optional-catch-binding@^7.24.7", "@babel/plugin-transform-optional-catch-binding@^7.27.1":
+"@babel/plugin-transform-optional-catch-binding@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-optional-catch-binding/-/plugin-transform-optional-catch-binding-7.27.1.tgz#84c7341ebde35ccd36b137e9e45866825072a30c"
   integrity sha512-txEAEKzYrHEX4xSZN4kJ+OfKXFVSWKB2ZxM9dpcE3wT7smwkNmXo5ORRlVzMVdJbD+Q8ILTgSD7959uj+3Dm3Q==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-optional-chaining@^7.24.7", "@babel/plugin-transform-optional-chaining@^7.24.8", "@babel/plugin-transform-optional-chaining@^7.27.1", "@babel/plugin-transform-optional-chaining@^7.28.5":
+"@babel/plugin-transform-optional-chaining@^7.27.1", "@babel/plugin-transform-optional-chaining@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-optional-chaining/-/plugin-transform-optional-chaining-7.28.5.tgz#8238c785f9d5c1c515a90bf196efb50d075a4b26"
   integrity sha512-N6fut9IZlPnjPwgiQkXNhb+cT8wQKFlJNqcZkWlcTqkcqx6/kU4ynGmLFoa4LViBSirn05YAwk+sQBbPfxtYzQ==
@@ -697,14 +725,14 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/helper-skip-transparent-expression-wrappers" "^7.27.1"
 
-"@babel/plugin-transform-parameters@^7.24.7", "@babel/plugin-transform-parameters@^7.27.7":
+"@babel/plugin-transform-parameters@^7.0.0", "@babel/plugin-transform-parameters@^7.20.7", "@babel/plugin-transform-parameters@^7.27.7":
   version "7.27.7"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-parameters/-/plugin-transform-parameters-7.27.7.tgz#1fd2febb7c74e7d21cf3b05f7aebc907940af53a"
   integrity sha512-qBkYTYCb76RRxUM6CcZA5KRu8K4SM8ajzVeUgVdMVO9NN9uI/GaVmBg/WKJJGnNokV9SY8FxNOVWGXzqzUidBg==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-private-methods@^7.24.7", "@babel/plugin-transform-private-methods@^7.27.1":
+"@babel/plugin-transform-private-methods@^7.22.5", "@babel/plugin-transform-private-methods@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-private-methods/-/plugin-transform-private-methods-7.27.1.tgz#fdacbab1c5ed81ec70dfdbb8b213d65da148b6af"
   integrity sha512-10FVt+X55AjRAYI9BrdISN9/AQWHqldOeZDUoLyif1Kn05a56xVBXb8ZouL8pZ9jem8QpXaOt8TS7RHUIS+GPA==
@@ -712,7 +740,7 @@
     "@babel/helper-create-class-features-plugin" "^7.27.1"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-private-property-in-object@^7.24.7", "@babel/plugin-transform-private-property-in-object@^7.27.1":
+"@babel/plugin-transform-private-property-in-object@^7.22.11", "@babel/plugin-transform-private-property-in-object@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-private-property-in-object/-/plugin-transform-private-property-in-object-7.27.1.tgz#4dbbef283b5b2f01a21e81e299f76e35f900fb11"
   integrity sha512-5J+IhqTi1XPa0DXF83jYOaARrX+41gOewWbkPyjMNRDqgOCqdffGh8L3f/Ek5utaEBZExjSAzcyjmV9SSAWObQ==
@@ -728,28 +756,28 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-display-name@^7.24.7":
+"@babel/plugin-transform-react-display-name@^7.0.0":
   version "7.28.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.28.0.tgz#6f20a7295fea7df42eb42fed8f896813f5b934de"
   integrity sha512-D6Eujc2zMxKjfa4Zxl4GHMsmhKKZ9VpcqIchJLvwTxad9zWIYulwYItBovpDOoNLISpcZSXoDJ5gaGbQUDqViA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx-self@^7.24.7", "@babel/plugin-transform-react-jsx-self@^7.27.1":
+"@babel/plugin-transform-react-jsx-self@^7.0.0", "@babel/plugin-transform-react-jsx-self@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.27.1.tgz#af678d8506acf52c577cac73ff7fe6615c85fc92"
   integrity sha512-6UzkCs+ejGdZ5mFFC/OCUrv028ab2fp1znZmCZjAOBKiBK2jXD1O+BPSfX8X2qjJ75fZBMSnQn3Rq2mrBJK2mw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx-source@^7.24.7", "@babel/plugin-transform-react-jsx-source@^7.27.1":
+"@babel/plugin-transform-react-jsx-source@^7.0.0", "@babel/plugin-transform-react-jsx-source@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.27.1.tgz#dcfe2c24094bb757bf73960374e7c55e434f19f0"
   integrity sha512-zbwoTsBruTeKB9hSq73ha66iFeJHuaFkUbwvqElnygoNbj/jHRsSeokowZFN3CZ64IvEqcmmkVe89OPXc7ldAw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx@^7.25.2":
+"@babel/plugin-transform-react-jsx@^7.0.0":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.27.1.tgz#1023bc94b78b0a2d68c82b5e96aed573bcfb9db0"
   integrity sha512-2KH4LWGSrJIkVf5tSiBFYuXDAoWRq2MMwgivCf+93dd0GQi8RXLjKA/0EvRnVV5G0hrHczsquXuD01L8s6dmBw==
@@ -760,7 +788,7 @@
     "@babel/plugin-syntax-jsx" "^7.27.1"
     "@babel/types" "^7.27.1"
 
-"@babel/plugin-transform-regenerator@^7.24.7", "@babel/plugin-transform-regenerator@^7.28.4":
+"@babel/plugin-transform-regenerator@^7.28.4":
   version "7.28.4"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-regenerator/-/plugin-transform-regenerator-7.28.4.tgz#9d3fa3bebb48ddd0091ce5729139cd99c67cea51"
   integrity sha512-+ZEdQlBoRg9m2NnzvEeLgtvBMO4tkFBw5SQIUgLICgTrumLoU7lr+Oghi6km2PFj+dbUt2u1oby2w3BDO9YQnA==
@@ -782,7 +810,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-runtime@^7.24.7":
+"@babel/plugin-transform-runtime@^7.0.0":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.28.5.tgz#ae3e21fbefe2831ebac04dfa6b463691696afe17"
   integrity sha512-20NUVgOrinudkIBzQ2bNxP08YpKprUkRTiRSd2/Z5GOdPImJGkoN4Z7IQe1T5AdyKI1i5L6RBmluqdSzvaq9/w==
@@ -794,14 +822,14 @@
     babel-plugin-polyfill-regenerator "^0.6.5"
     semver "^6.3.1"
 
-"@babel/plugin-transform-shorthand-properties@^7.24.7", "@babel/plugin-transform-shorthand-properties@^7.27.1":
+"@babel/plugin-transform-shorthand-properties@^7.0.0", "@babel/plugin-transform-shorthand-properties@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-shorthand-properties/-/plugin-transform-shorthand-properties-7.27.1.tgz#532abdacdec87bfee1e0ef8e2fcdee543fe32b90"
   integrity sha512-N/wH1vcn4oYawbJ13Y/FxcQrWk63jhfNa7jef0ih7PHSIHX2LB7GWE1rkPrOnka9kwMxb6hMl19p7lidA+EHmQ==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-spread@^7.24.7", "@babel/plugin-transform-spread@^7.27.1":
+"@babel/plugin-transform-spread@^7.0.0", "@babel/plugin-transform-spread@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-spread/-/plugin-transform-spread-7.27.1.tgz#1a264d5fc12750918f50e3fe3e24e437178abb08"
   integrity sha512-kpb3HUqaILBJcRFVhFUs6Trdd4mkrzcGXss+6/mxUd273PfbWqSDHRzMT2234gIg2QYfAjvXLSquP1xECSg09Q==
@@ -809,7 +837,7 @@
     "@babel/helper-plugin-utils" "^7.27.1"
     "@babel/helper-skip-transparent-expression-wrappers" "^7.27.1"
 
-"@babel/plugin-transform-sticky-regex@^7.24.7", "@babel/plugin-transform-sticky-regex@^7.27.1":
+"@babel/plugin-transform-sticky-regex@^7.0.0", "@babel/plugin-transform-sticky-regex@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-sticky-regex/-/plugin-transform-sticky-regex-7.27.1.tgz#18984935d9d2296843a491d78a014939f7dcd280"
   integrity sha512-lhInBO5bi/Kowe2/aLdBAawijx+q1pQzicSgnkB6dUPc1+RC8QmJHKf2OjvU+NZWitguJHEaEmbV6VWEouT58g==
@@ -830,7 +858,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-typescript@^7.25.2", "@babel/plugin-transform-typescript@^7.28.5":
+"@babel/plugin-transform-typescript@^7.28.5", "@babel/plugin-transform-typescript@^7.5.0":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.28.5.tgz#441c5f9a4a1315039516c6c612fc66d5f4594e72"
   integrity sha512-x2Qa+v/CuEoX7Dr31iAfr0IhInrVOWZU/2vJMJ00FOR/2nM0BcBEclpaf9sWCDc+v5e9dMrhSH8/atq/kX7+bA==
@@ -856,7 +884,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.27.1"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-unicode-regex@^7.24.7", "@babel/plugin-transform-unicode-regex@^7.27.1":
+"@babel/plugin-transform-unicode-regex@^7.0.0", "@babel/plugin-transform-unicode-regex@^7.27.1":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/plugin-transform-unicode-regex/-/plugin-transform-unicode-regex-7.27.1.tgz#25948f5c395db15f609028e370667ed8bae9af97"
   integrity sha512-xvINq24TRojDuyt6JGtHmkVkrfVV3FPT16uytxImLeBZqW3/H52yN+kM1MGuyPkIQxrzKwPHs5U/MP3qKyzkGw==
@@ -872,7 +900,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.27.1"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/preset-env@^7.23.0", "@babel/preset-env@^7.26.0":
+"@babel/preset-env@^7.23.0", "@babel/preset-env@^7.24.0":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/preset-env/-/preset-env-7.28.5.tgz#82dd159d1563f219a1ce94324b3071eb89e280b0"
   integrity sha512-S36mOoi1Sb6Fz98fBfE+UZSpYw5mJm0NUHtIKrOuNcqeFauy1J6dIvXm2KRVKobOSaGq4t/hBXdN4HGU3wL9Wg==
@@ -948,7 +976,7 @@
     core-js-compat "^3.43.0"
     semver "^6.3.1"
 
-"@babel/preset-flow@^7.24.7":
+"@babel/preset-flow@^7.13.13":
   version "7.27.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/preset-flow/-/preset-flow-7.27.1.tgz#3050ed7c619e8c4bfd0e0eeee87a2fa86a4bb1c6"
   integrity sha512-ez3a2it5Fn6P54W8QkbfIyyIbxlXvcxyWHHvno1Wg0Ej5eiJY5hBb8ExttoIOJJk7V2dZE6prP7iby5q2aQ0Lg==
@@ -966,7 +994,7 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
-"@babel/preset-typescript@^7.23.0", "@babel/preset-typescript@^7.24.7":
+"@babel/preset-typescript@^7.13.0", "@babel/preset-typescript@^7.23.0":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/preset-typescript/-/preset-typescript-7.28.5.tgz#540359efa3028236958466342967522fd8f2a60c"
   integrity sha512-+bQy5WOI2V6LJZpPVxY+yp66XdZ2yifu0Mc1aP5CQKgjn4QM5IN2i5fAZ4xKop47pr8rpVhiAeu+nDQa12C8+g==
@@ -977,7 +1005,7 @@
     "@babel/plugin-transform-modules-commonjs" "^7.27.1"
     "@babel/plugin-transform-typescript" "^7.28.5"
 
-"@babel/register@^7.24.6":
+"@babel/register@^7.13.16":
   version "7.28.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/register/-/register-7.28.3.tgz#abd8a3753480c799bdaf9c9092d6745d16e052c2"
   integrity sha512-CieDOtd8u208eI49bYl4z1J22ySFw87IGwE+IswFEExH7e3rLgKb0WNQeumnacQ1+VoDJLYI5QFA3AJZuyZQfA==
@@ -988,12 +1016,12 @@
     pirates "^4.0.6"
     source-map-support "^0.5.16"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.25.0", "@babel/runtime@^7.26.0":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.24.0", "@babel/runtime@^7.25.0":
   version "7.28.4"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/runtime/-/runtime-7.28.4.tgz#a70226016fabe25c5783b2f22d3e1c9bc5ca3326"
   integrity sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==
 
-"@babel/template@^7.25.0", "@babel/template@^7.27.1", "@babel/template@^7.27.2", "@babel/template@^7.3.3":
+"@babel/template@^7.0.0", "@babel/template@^7.27.1", "@babel/template@^7.27.2":
   version "7.27.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/template/-/template-7.27.2.tgz#fa78ceed3c4e7b63ebf6cb39e5852fca45f6809d"
   integrity sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==
@@ -1002,7 +1030,7 @@
     "@babel/parser" "^7.27.2"
     "@babel/types" "^7.27.1"
 
-"@babel/traverse--for-generate-function-map@npm:@babel/traverse@^7.25.3":
+"@babel/traverse@^7.20.0", "@babel/traverse@^7.25.3", "@babel/traverse@^7.27.1", "@babel/traverse@^7.28.0", "@babel/traverse@^7.28.3", "@babel/traverse@^7.28.4", "@babel/traverse@^7.28.5":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/traverse/-/traverse-7.28.5.tgz#450cab9135d21a7a2ca9d2d35aa05c20e68c360b"
   integrity sha512-TCCj4t55U90khlYkVV/0TfkJkAkUg3jZFA3Neb7unZT8CPok7iiRfaX0F+WnqWqt7OxhOn0uBKXCw4lbL8W0aQ==
@@ -1015,20 +1043,7 @@
     "@babel/types" "^7.28.5"
     debug "^4.3.1"
 
-"@babel/traverse@^7.25.3", "@babel/traverse@^7.27.1", "@babel/traverse@^7.28.0", "@babel/traverse@^7.28.3", "@babel/traverse@^7.28.4", "@babel/traverse@^7.28.5":
-  version "7.28.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/traverse/-/traverse-7.28.5.tgz#450cab9135d21a7a2ca9d2d35aa05c20e68c360b"
-  integrity sha512-TCCj4t55U90khlYkVV/0TfkJkAkUg3jZFA3Neb7unZT8CPok7iiRfaX0F+WnqWqt7OxhOn0uBKXCw4lbL8W0aQ==
-  dependencies:
-    "@babel/code-frame" "^7.27.1"
-    "@babel/generator" "^7.28.5"
-    "@babel/helper-globals" "^7.28.0"
-    "@babel/parser" "^7.28.5"
-    "@babel/template" "^7.27.2"
-    "@babel/types" "^7.28.5"
-    debug "^4.3.1"
-
-"@babel/types@^7.0.0", "@babel/types@^7.20.7", "@babel/types@^7.23.0", "@babel/types@^7.25.2", "@babel/types@^7.27.1", "@babel/types@^7.27.3", "@babel/types@^7.28.2", "@babel/types@^7.28.4", "@babel/types@^7.28.5", "@babel/types@^7.3.3", "@babel/types@^7.4.4":
+"@babel/types@^7.0.0", "@babel/types@^7.20.0", "@babel/types@^7.20.7", "@babel/types@^7.23.0", "@babel/types@^7.24.7", "@babel/types@^7.27.1", "@babel/types@^7.27.3", "@babel/types@^7.28.2", "@babel/types@^7.28.4", "@babel/types@^7.28.5", "@babel/types@^7.4.4":
   version "7.28.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@babel/types/-/types-7.28.5.tgz#10fc405f60897c35f07e85493c932c7b5ca0592b"
   integrity sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==
@@ -1394,22 +1409,6 @@
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@isaacs/ttlcache/-/ttlcache-1.4.1.tgz#21fb23db34e9b6220c6ba023a0118a2dd3461ea2"
   integrity sha512-RQgQ4uQ+pLbqXfOmieB91ejmLwvSgv9nLx6sT6sD83s7umBypgg+OIBOBbEUiJXrfpnp9j0mRhYYdzp9uqq3lA==
 
-"@istanbuljs/load-nyc-config@^1.0.0":
-  version "1.1.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
-  integrity sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==
-  dependencies:
-    camelcase "^5.3.1"
-    find-up "^4.1.0"
-    get-package-type "^0.1.0"
-    js-yaml "^3.13.1"
-    resolve-from "^5.0.0"
-
-"@istanbuljs/schema@^0.1.2":
-  version "0.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@istanbuljs/schema/-/schema-0.1.3.tgz#e45e384e4b8ec16bce2fd903af78450f6bf7ec98"
-  integrity sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==
-
 "@jest/create-cache-key-function@^29.6.3":
   version "29.7.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@jest/create-cache-key-function/-/create-cache-key-function-29.7.0.tgz#793be38148fab78e65f40ae30c36785f4ad859f0"
@@ -1446,27 +1445,6 @@
   dependencies:
     "@sinclair/typebox" "^0.27.8"
 
-"@jest/transform@^29.7.0":
-  version "29.7.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@jest/transform/-/transform-29.7.0.tgz#df2dd9c346c7d7768b8a06639994640c642e284c"
-  integrity sha512-ok/BTPFzFKVMwO5eOHRrvnBVHdRy9IrsrW1GpMaQ9MCnilNLXQKmAX8s1YXDFaai9xJpac2ySzV0YeRRECr2Vw==
-  dependencies:
-    "@babel/core" "^7.11.6"
-    "@jest/types" "^29.6.3"
-    "@jridgewell/trace-mapping" "^0.3.18"
-    babel-plugin-istanbul "^6.1.1"
-    chalk "^4.0.0"
-    convert-source-map "^2.0.0"
-    fast-json-stable-stringify "^2.1.0"
-    graceful-fs "^4.2.9"
-    jest-haste-map "^29.7.0"
-    jest-regex-util "^29.6.3"
-    jest-util "^29.7.0"
-    micromatch "^4.0.4"
-    pirates "^4.0.4"
-    slash "^3.0.0"
-    write-file-atomic "^4.0.2"
-
 "@jest/types@^26.6.2":
   version "26.6.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@jest/types/-/types-26.6.2.tgz#bef5a532030e1d88a2f5a6d933f84e97226ed48e"
@@ -1476,6 +1454,17 @@
     "@types/istanbul-reports" "^3.0.0"
     "@types/node" "*"
     "@types/yargs" "^15.0.0"
+    chalk "^4.0.0"
+
+"@jest/types@^27.5.1":
+  version "27.5.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@jest/types/-/types-27.5.1.tgz#3c79ec4a8ba61c170bf937bcf9e98a9df175ec80"
+  integrity sha512-Cx46iJ9QpwQTjIdq5VJu2QTMMs3QlEjI0x1QbBP5W1+nMzyc2XmimiRR/CbX9TO0cPTeUlxWMOu8mslYsJ8DEw==
+  dependencies:
+    "@types/istanbul-lib-coverage" "^2.0.0"
+    "@types/istanbul-reports" "^3.0.0"
+    "@types/node" "*"
+    "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
 "@jest/types@^29.6.3":
@@ -1524,7 +1513,7 @@
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz#6912b00d2c631c0d15ce1a7ab57cd657f2a8f8ba"
   integrity sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==
 
-"@jridgewell/trace-mapping@^0.3.18", "@jridgewell/trace-mapping@^0.3.24", "@jridgewell/trace-mapping@^0.3.25", "@jridgewell/trace-mapping@^0.3.28":
+"@jridgewell/trace-mapping@^0.3.24", "@jridgewell/trace-mapping@^0.3.25", "@jridgewell/trace-mapping@^0.3.28":
   version "0.3.31"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz#db15d6781c931f3a251a3dac39501c98a6082fd0"
   integrity sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==
@@ -1589,70 +1578,51 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@react-native-community/cli-clean@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-clean/-/cli-clean-15.1.3.tgz#cc177378d9c903737fbc1f22d7aa712a61d562be"
-  integrity sha512-3s9NGapIkONFoCUN2s77NYI987GPSCdr74rTf0TWyGIDf4vTYgKoWKKR+Ml3VTa1BCj51r4cYuHEKE1pjUSc0w==
+"@react-native-community/cli-clean@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-clean/-/cli-clean-13.6.4.tgz#53c07c6f2834a971dc40eab290edcf8ccc5d1e00"
+  integrity sha512-nS1BJ+2Z+aLmqePxB4AYgJ+C/bgQt02xAgSYtCUv+lneRBGhL2tHRrK8/Iolp0y+yQoUtHHf4txYi90zGXLVfw==
   dependencies:
-    "@react-native-community/cli-tools" "15.1.3"
+    "@react-native-community/cli-tools" "13.6.4"
     chalk "^4.1.2"
     execa "^5.0.0"
     fast-glob "^3.3.2"
 
-"@react-native-community/cli-config-android@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-config-android/-/cli-config-android-15.1.3.tgz#c1d91246291c8584ab7bafc63198860d86884f24"
-  integrity sha512-v9okV/WQfMJEWRddI0S6no2v9Lvk54KgFkw1mvMYhJKVqloCNsIWzoqme0u7zIuYSzwsjXUQXVlGiDzbbwdkBw==
+"@react-native-community/cli-config@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-config/-/cli-config-13.6.4.tgz#3004c7bca55cb384b3a99c38c1a48dad24533237"
+  integrity sha512-GGK415WoTx1R9FXtfb/cTnan9JIWwSm+a5UCuFd6+suzS0oIt1Md1vCzjNh6W1CK3b43rZC2e+3ZU7Ljd7YtyQ==
   dependencies:
-    "@react-native-community/cli-tools" "15.1.3"
+    "@react-native-community/cli-tools" "13.6.4"
     chalk "^4.1.2"
-    fast-glob "^3.3.2"
-    fast-xml-parser "^4.4.1"
-
-"@react-native-community/cli-config-apple@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-config-apple/-/cli-config-apple-15.1.3.tgz#fa9aab320d6f8fa3319fef9304e442dd11884d58"
-  integrity sha512-Qv6jaEaycv+7s8wR9l9bdpIeSNFCeVANfGCX1x76SgOmGfZNIa7J3l1HaeF/5ktERMYsw/hm4u3rUn4Ks0YV1g==
-  dependencies:
-    "@react-native-community/cli-tools" "15.1.3"
-    chalk "^4.1.2"
-    execa "^5.0.0"
-    fast-glob "^3.3.2"
-
-"@react-native-community/cli-config@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-config/-/cli-config-15.1.3.tgz#bdc12e63ff72963319a527acb313978b37d106c1"
-  integrity sha512-fJ9MrWp+/SszEVg5Wja8A57Whl5EfjRCHWFNkvFBtfjVUfi2hWvSTW3VBxzJuCHnPIIwpQafwjEgOrIRUI8y6w==
-  dependencies:
-    "@react-native-community/cli-tools" "15.1.3"
-    chalk "^4.1.2"
-    cosmiconfig "^9.0.0"
+    cosmiconfig "^5.1.0"
     deepmerge "^4.3.0"
     fast-glob "^3.3.2"
     joi "^17.2.1"
 
-"@react-native-community/cli-debugger-ui@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-15.1.3.tgz#fc8ac730bf1b61e16b2e3910ef654c79726ee654"
-  integrity sha512-m+fb9iAUNb9WiDdokCBLh0InJvollcgAM3gLjCT8DGTP6bH/jxtZ3DszzyIRqN9cMamItVrvDM0vkIg48xK7rQ==
+"@react-native-community/cli-debugger-ui@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-13.6.4.tgz#3881b9cfe14e66b3ee827a84f19ca9d0283fd764"
+  integrity sha512-9Gs31s6tA1kuEo69ay9qLgM3x2gsN/RI994DCUKnFSW+qSusQJyyrmfllR2mGU3Wl1W09/nYpIg87W9JPf5y4A==
   dependencies:
     serve-static "^1.13.1"
 
-"@react-native-community/cli-doctor@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-doctor/-/cli-doctor-15.1.3.tgz#2a6d103e899773fe738f67d97da0a4f74549eed9"
-  integrity sha512-WC9rawobuITAtJjyZ68E1M0geRt+b9A2CGB354L/tQp+XMKobGGVI4Y0DsattK83Wdg59GPyldE8C0Wevfgm/A==
+"@react-native-community/cli-doctor@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-doctor/-/cli-doctor-13.6.4.tgz#07e5c2f163807e61ce0ba12901903e591177e3d3"
+  integrity sha512-lWOXCISH/cHtLvO0cWTr+IPSzA54FewVOw7MoCMEvWusH+1n7c3hXTAve78mLozGQ7iuUufkHFWwKf3dzOkflQ==
   dependencies:
-    "@react-native-community/cli-config" "15.1.3"
-    "@react-native-community/cli-platform-android" "15.1.3"
-    "@react-native-community/cli-platform-apple" "15.1.3"
-    "@react-native-community/cli-platform-ios" "15.1.3"
-    "@react-native-community/cli-tools" "15.1.3"
+    "@react-native-community/cli-config" "13.6.4"
+    "@react-native-community/cli-platform-android" "13.6.4"
+    "@react-native-community/cli-platform-apple" "13.6.4"
+    "@react-native-community/cli-platform-ios" "13.6.4"
+    "@react-native-community/cli-tools" "13.6.4"
     chalk "^4.1.2"
     command-exists "^1.2.8"
     deepmerge "^4.3.0"
-    envinfo "^7.13.0"
+    envinfo "^7.10.0"
     execa "^5.0.0"
+    hermes-profile-transformer "^0.0.6"
     node-stream-zip "^1.9.1"
     ora "^5.4.1"
     semver "^7.5.2"
@@ -1660,256 +1630,423 @@
     wcwidth "^1.0.1"
     yaml "^2.2.1"
 
-"@react-native-community/cli-platform-android@15.1.3", "@react-native-community/cli-platform-android@^15.0.0":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-platform-android/-/cli-platform-android-15.1.3.tgz#c10c434ea559414b00ca3297a4aabbbba16647c8"
-  integrity sha512-ZwrBK0UK4DRHoQm2v5m8+PlNHBK5gmibBU6rqNFLo4aZJ2Rufalbv3SF+DukgSyoI9/kI8UVrzSNj17e+HhN5A==
+"@react-native-community/cli-hermes@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-hermes/-/cli-hermes-13.6.4.tgz#6d3e9b5c251461e9bb35b04110544db8a4f5968f"
+  integrity sha512-VIAufA/2wTccbMYBT9o+mQs9baOEpTxCiIdWeVdkPWKzIwtKsLpDZJlUqj4r4rI66mwjFyQ60PhwSzEJ2ApFeQ==
   dependencies:
-    "@react-native-community/cli-config-android" "15.1.3"
-    "@react-native-community/cli-tools" "15.1.3"
+    "@react-native-community/cli-platform-android" "13.6.4"
+    "@react-native-community/cli-tools" "13.6.4"
+    chalk "^4.1.2"
+    hermes-profile-transformer "^0.0.6"
+
+"@react-native-community/cli-platform-android@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-platform-android/-/cli-platform-android-13.6.4.tgz#78ab4c840f4f1f5252ad2fcc5a55f7681ec458cb"
+  integrity sha512-WhknYwIobKKCqaGCN3BzZEQHTbaZTDiGvcXzevvN867ldfaGdtbH0DVqNunbPoV1RNzeV9qKoQHFdWBkg83tpg==
+  dependencies:
+    "@react-native-community/cli-tools" "13.6.4"
     chalk "^4.1.2"
     execa "^5.0.0"
+    fast-glob "^3.3.2"
+    fast-xml-parser "^4.2.4"
     logkitty "^0.7.1"
 
-"@react-native-community/cli-platform-apple@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-platform-apple/-/cli-platform-apple-15.1.3.tgz#e8cd6d7edad60ee21e38d9c338332645a05d05e3"
-  integrity sha512-awotqCGVcTdeRmTlE3wlsZgNxZUDGojUhPYOVMKejgdCzNM2bvzF8fqhETH2sc64Hbw/tQJg8pYeD4MZR0bHxw==
+"@react-native-community/cli-platform-apple@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-platform-apple/-/cli-platform-apple-13.6.4.tgz#4912eaf519800a957745192718822b94655c8119"
+  integrity sha512-TLBiotdIz0veLbmvNQIdUv9fkBx7m34ANGYqr5nH7TFxdmey+Z+omoBqG/HGpvyR7d0AY+kZzzV4k+HkYHM/aQ==
   dependencies:
-    "@react-native-community/cli-config-apple" "15.1.3"
-    "@react-native-community/cli-tools" "15.1.3"
+    "@react-native-community/cli-tools" "13.6.4"
     chalk "^4.1.2"
     execa "^5.0.0"
-    fast-xml-parser "^4.4.1"
+    fast-glob "^3.3.2"
+    fast-xml-parser "^4.0.12"
+    ora "^5.4.1"
 
-"@react-native-community/cli-platform-ios@15.1.3", "@react-native-community/cli-platform-ios@^15.0.0":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-platform-ios/-/cli-platform-ios-15.1.3.tgz#57d119796b2eab49565131cdfefcf22211a8fdad"
-  integrity sha512-DxM8GYkqjrlGuuGiGjrcvUmKC2xv9zDzHbsc4+S160Nn0zbF2OH1DhMlnIuUeCmQnAO6QFMqU99O120iEzCAug==
+"@react-native-community/cli-platform-ios@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-platform-ios/-/cli-platform-ios-13.6.4.tgz#96ec915c6df23b2b7b7e0d8cb3db7368e448d620"
+  integrity sha512-8Dlva8RY+MY5nhWAj6V7voG3+JOEzDTJmD0FHqL+4p0srvr9v7IEVcxfw5lKBDIUNd0OMAHNevGA+cyz1J60jg==
   dependencies:
-    "@react-native-community/cli-platform-apple" "15.1.3"
+    "@react-native-community/cli-platform-apple" "13.6.4"
 
-"@react-native-community/cli-server-api@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-server-api/-/cli-server-api-15.1.3.tgz#a0da5d36680802f699f6ddea4873048fb57dfa19"
-  integrity sha512-kXZ0evedluLt6flWQiI3JqwnW8rSBspOoQ7JVTQYiG5lDHAeL3Om9PjAyiQBg1EZRMjiWZDV7nDxhR+m+6NX5Q==
+"@react-native-community/cli-server-api@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-server-api/-/cli-server-api-13.6.4.tgz#6bcec7ae387fc3aeb3e78f62561a91962e6fadf7"
+  integrity sha512-D2qSuYCFwrrUJUM0SDc9l3lEhU02yjf+9Peri/xhspzAhALnsf6Z/H7BCjddMV42g9/eY33LqiGyN5chr83a+g==
   dependencies:
-    "@react-native-community/cli-debugger-ui" "15.1.3"
-    "@react-native-community/cli-tools" "15.1.3"
+    "@react-native-community/cli-debugger-ui" "13.6.4"
+    "@react-native-community/cli-tools" "13.6.4"
     compression "^1.7.1"
     connect "^3.6.5"
     errorhandler "^1.5.1"
     nocache "^3.0.1"
     pretty-format "^26.6.2"
     serve-static "^1.13.1"
-    ws "^6.2.3"
+    ws "^7.5.1"
 
-"@react-native-community/cli-tools@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-tools/-/cli-tools-15.1.3.tgz#354863cefd8e39e674c072c6b18a1ac4d4497d30"
-  integrity sha512-2RzoUKR+Y03ijBeeSoCSQihyN6dxy3fbHjraO4MheZZUzt/Yd1VMEDd0R5aa6rtiRDoknbHt45RL2GMa8MSaEA==
+"@react-native-community/cli-tools@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-tools/-/cli-tools-13.6.4.tgz#ab396604b6dcf215790807fe89656e779b11f0ec"
+  integrity sha512-N4oHLLbeTdg8opqJozjClmuTfazo1Mt+oxU7mr7m45VCsFgBqTF70Uwad289TM/3l44PP679NRMAHVYqpIRYtQ==
   dependencies:
     appdirsjs "^1.2.4"
     chalk "^4.1.2"
     execa "^5.0.0"
     find-up "^5.0.0"
     mime "^2.4.1"
+    node-fetch "^2.6.0"
     open "^6.2.0"
     ora "^5.4.1"
-    prompts "^2.4.2"
     semver "^7.5.2"
     shell-quote "^1.7.3"
     sudo-prompt "^9.0.0"
 
-"@react-native-community/cli-types@15.1.3":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-types/-/cli-types-15.1.3.tgz#1e6d6cd24e2eba974031fc7553f214b653b1f1b4"
-  integrity sha512-0ZaM8LMsa7z7swBN+ObL2ysc6aA3AdS698Q6uEukym6RyX1uLbiofUdlvFSMpWSEL3D8f9OTymmL4RkCH8k6dw==
+"@react-native-community/cli-types@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli-types/-/cli-types-13.6.4.tgz#e499a3691ee597aa4b93196ff182a4782fae7afb"
+  integrity sha512-NxGCNs4eYtVC8x0wj0jJ/MZLRy8C+B9l8lY8kShuAcvWTv5JXRqmXjg8uK1aA+xikPh0maq4cc/zLw1roroY/A==
   dependencies:
     joi "^17.2.1"
 
-"@react-native-community/cli@^15.0.0":
-  version "15.1.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli/-/cli-15.1.3.tgz#35c113d19282b8ac22bfa55ac0045fa8d3c04834"
-  integrity sha512-+ih/WYUkJsEV2CMAnOHvVoSIz/Ahg5UJk+sqSIOmY79mWAglQzfLP71o7b0neJCnJWLmWiO6G6/S+kmULefD5g==
+"@react-native-community/cli@13.6.4":
+  version "13.6.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native-community/cli/-/cli-13.6.4.tgz#dabe2749470a34533e18aada51d97c94b3568307"
+  integrity sha512-V7rt2N5JY7M4dJFgdNfR164r3hZdR/Z7V54dv85TFQHRbdwF4QrkG+GeagAU54qrkK/OU8OH3AF2+mKuiNWpGA==
   dependencies:
-    "@react-native-community/cli-clean" "15.1.3"
-    "@react-native-community/cli-config" "15.1.3"
-    "@react-native-community/cli-debugger-ui" "15.1.3"
-    "@react-native-community/cli-doctor" "15.1.3"
-    "@react-native-community/cli-server-api" "15.1.3"
-    "@react-native-community/cli-tools" "15.1.3"
-    "@react-native-community/cli-types" "15.1.3"
+    "@react-native-community/cli-clean" "13.6.4"
+    "@react-native-community/cli-config" "13.6.4"
+    "@react-native-community/cli-debugger-ui" "13.6.4"
+    "@react-native-community/cli-doctor" "13.6.4"
+    "@react-native-community/cli-hermes" "13.6.4"
+    "@react-native-community/cli-server-api" "13.6.4"
+    "@react-native-community/cli-tools" "13.6.4"
+    "@react-native-community/cli-types" "13.6.4"
     chalk "^4.1.2"
     commander "^9.4.1"
     deepmerge "^4.3.0"
     execa "^5.0.0"
-    find-up "^5.0.0"
+    find-up "^4.1.0"
     fs-extra "^8.1.0"
     graceful-fs "^4.1.3"
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native/assets-registry@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/assets-registry/-/assets-registry-0.77.3.tgz#ce4d15ca68140f2046e7375452821e6ca7a59da3"
-  integrity sha512-kLocY1mlQjCdrX0y4eYQblub9NDdX+rkNii3F2rumri532ILjMAvkdpehf2PwQDj0X6PZYF1XFjszPw5uzq0Aw==
+"@react-native/assets-registry@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/assets-registry/-/assets-registry-0.74.81.tgz#76b17f8f79b366ec4f18a0f4e99b7cd466aa5aa7"
+  integrity sha512-ms+D6pJ6l30epm53pwnAislW79LEUHJxWfe1Cu0LWyTTBlg1OFoqXfB3eIbpe4WyH3nrlkQAh0yyk4huT2mCvw==
 
-"@react-native/babel-plugin-codegen@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-plugin-codegen/-/babel-plugin-codegen-0.77.3.tgz#ba96b7e8287a766c68d979cd531e42c592ff751a"
-  integrity sha512-UbjQY8vFCVD4Aw4uSRWslKa26l1uOZzYhhKzWWOrV36f2NnP9Siid2rPkLa+MIJk16G2UzDRtUrMhGuejxp9cQ==
+"@react-native/babel-plugin-codegen@*":
+  version "0.83.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-plugin-codegen/-/babel-plugin-codegen-0.83.1.tgz#56418c0eeab55800a8fa35333598e71495b9053f"
+  integrity sha512-VPj8O3pG1ESjZho9WVKxqiuryrotAECPHGF5mx46zLUYNTWR5u9OMUXYk7LeLy+JLWdGEZ2Gn3KoXeFZbuqE+g==
   dependencies:
     "@babel/traverse" "^7.25.3"
-    "@react-native/codegen" "0.77.3"
+    "@react-native/codegen" "0.83.1"
 
-"@react-native/babel-preset@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-preset/-/babel-preset-0.77.3.tgz#a147e59f160c89bebac06f7c9db2e0d779d9d462"
-  integrity sha512-Cy1RoL5/nh2S/suWgfTuhUwkERoDN/Q2O6dZd3lcNcBrjd5Y++sBJGyBnHd9pqlSmOy8RLLBJZ9dOylycBOqzQ==
+"@react-native/babel-plugin-codegen@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-plugin-codegen/-/babel-plugin-codegen-0.74.81.tgz#80484fb9029038694a92193ae2653529e44aab64"
+  integrity sha512-Bj6g5/xkLMBAdC6665TbD3uCKCQSmLQpGv3gyqya/ydZpv3dDmDXfkGmO4fqTwEMunzu09Sk55st2ipmuXAaAg==
   dependencies:
-    "@babel/core" "^7.25.2"
-    "@babel/plugin-proposal-export-default-from" "^7.24.7"
-    "@babel/plugin-syntax-dynamic-import" "^7.8.3"
-    "@babel/plugin-syntax-export-default-from" "^7.24.7"
-    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.8.3"
-    "@babel/plugin-syntax-optional-chaining" "^7.8.3"
-    "@babel/plugin-transform-arrow-functions" "^7.24.7"
-    "@babel/plugin-transform-async-generator-functions" "^7.25.4"
-    "@babel/plugin-transform-async-to-generator" "^7.24.7"
-    "@babel/plugin-transform-block-scoping" "^7.25.0"
-    "@babel/plugin-transform-class-properties" "^7.25.4"
-    "@babel/plugin-transform-classes" "^7.25.4"
-    "@babel/plugin-transform-computed-properties" "^7.24.7"
-    "@babel/plugin-transform-destructuring" "^7.24.8"
-    "@babel/plugin-transform-flow-strip-types" "^7.25.2"
-    "@babel/plugin-transform-for-of" "^7.24.7"
-    "@babel/plugin-transform-function-name" "^7.25.1"
-    "@babel/plugin-transform-literals" "^7.25.2"
-    "@babel/plugin-transform-logical-assignment-operators" "^7.24.7"
-    "@babel/plugin-transform-modules-commonjs" "^7.24.8"
-    "@babel/plugin-transform-named-capturing-groups-regex" "^7.24.7"
-    "@babel/plugin-transform-nullish-coalescing-operator" "^7.24.7"
-    "@babel/plugin-transform-numeric-separator" "^7.24.7"
-    "@babel/plugin-transform-object-rest-spread" "^7.24.7"
-    "@babel/plugin-transform-optional-catch-binding" "^7.24.7"
-    "@babel/plugin-transform-optional-chaining" "^7.24.8"
-    "@babel/plugin-transform-parameters" "^7.24.7"
-    "@babel/plugin-transform-private-methods" "^7.24.7"
-    "@babel/plugin-transform-private-property-in-object" "^7.24.7"
-    "@babel/plugin-transform-react-display-name" "^7.24.7"
-    "@babel/plugin-transform-react-jsx" "^7.25.2"
-    "@babel/plugin-transform-react-jsx-self" "^7.24.7"
-    "@babel/plugin-transform-react-jsx-source" "^7.24.7"
-    "@babel/plugin-transform-regenerator" "^7.24.7"
-    "@babel/plugin-transform-runtime" "^7.24.7"
-    "@babel/plugin-transform-shorthand-properties" "^7.24.7"
-    "@babel/plugin-transform-spread" "^7.24.7"
-    "@babel/plugin-transform-sticky-regex" "^7.24.7"
-    "@babel/plugin-transform-typescript" "^7.25.2"
-    "@babel/plugin-transform-unicode-regex" "^7.24.7"
-    "@babel/template" "^7.25.0"
-    "@react-native/babel-plugin-codegen" "0.77.3"
-    babel-plugin-syntax-hermes-parser "0.25.1"
+    "@react-native/codegen" "0.74.81"
+
+"@react-native/babel-plugin-codegen@0.74.89":
+  version "0.74.89"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-plugin-codegen/-/babel-plugin-codegen-0.74.89.tgz#e2d197c32a2a369834631fc7ed9b0ec5090a19cb"
+  integrity sha512-E1SF2eHf2AZ0JPZZC54v6xlL2ZonMoUk0wvo3NtllvMDGn6LqlO5i4rphz3QOtX5OZa6/PhvadqLd0otmKXgIg==
+  dependencies:
+    "@react-native/codegen" "0.74.89"
+
+"@react-native/babel-preset@0.74.0":
+  version "0.74.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-preset/-/babel-preset-0.74.0.tgz#1d933f7737549a6c54f8c808c3ccb452be5f7cbb"
+  integrity sha512-k+1aaYQeLn+GBmGA5Qs3NKI8uzhLvRRMML+pB/+43ZL6DvCklbuJ5KO5oqRRpF3KZ2t/VKUqqSichpXfFrXGjg==
+  dependencies:
+    "@babel/core" "^7.20.0"
+    "@babel/plugin-proposal-async-generator-functions" "^7.0.0"
+    "@babel/plugin-proposal-class-properties" "^7.18.0"
+    "@babel/plugin-proposal-export-default-from" "^7.0.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator" "^7.18.0"
+    "@babel/plugin-proposal-numeric-separator" "^7.0.0"
+    "@babel/plugin-proposal-object-rest-spread" "^7.20.0"
+    "@babel/plugin-proposal-optional-catch-binding" "^7.0.0"
+    "@babel/plugin-proposal-optional-chaining" "^7.20.0"
+    "@babel/plugin-syntax-dynamic-import" "^7.8.0"
+    "@babel/plugin-syntax-export-default-from" "^7.0.0"
+    "@babel/plugin-syntax-flow" "^7.18.0"
+    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.0.0"
+    "@babel/plugin-syntax-optional-chaining" "^7.0.0"
+    "@babel/plugin-transform-arrow-functions" "^7.0.0"
+    "@babel/plugin-transform-async-to-generator" "^7.20.0"
+    "@babel/plugin-transform-block-scoping" "^7.0.0"
+    "@babel/plugin-transform-classes" "^7.0.0"
+    "@babel/plugin-transform-computed-properties" "^7.0.0"
+    "@babel/plugin-transform-destructuring" "^7.20.0"
+    "@babel/plugin-transform-flow-strip-types" "^7.20.0"
+    "@babel/plugin-transform-function-name" "^7.0.0"
+    "@babel/plugin-transform-literals" "^7.0.0"
+    "@babel/plugin-transform-modules-commonjs" "^7.0.0"
+    "@babel/plugin-transform-named-capturing-groups-regex" "^7.0.0"
+    "@babel/plugin-transform-parameters" "^7.0.0"
+    "@babel/plugin-transform-private-methods" "^7.22.5"
+    "@babel/plugin-transform-private-property-in-object" "^7.22.11"
+    "@babel/plugin-transform-react-display-name" "^7.0.0"
+    "@babel/plugin-transform-react-jsx" "^7.0.0"
+    "@babel/plugin-transform-react-jsx-self" "^7.0.0"
+    "@babel/plugin-transform-react-jsx-source" "^7.0.0"
+    "@babel/plugin-transform-runtime" "^7.0.0"
+    "@babel/plugin-transform-shorthand-properties" "^7.0.0"
+    "@babel/plugin-transform-spread" "^7.0.0"
+    "@babel/plugin-transform-sticky-regex" "^7.0.0"
+    "@babel/plugin-transform-typescript" "^7.5.0"
+    "@babel/plugin-transform-unicode-regex" "^7.0.0"
+    "@babel/template" "^7.0.0"
+    "@react-native/babel-plugin-codegen" "*"
     babel-plugin-transform-flow-enums "^0.0.2"
     react-refresh "^0.14.0"
 
-"@react-native/codegen@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/codegen/-/codegen-0.77.3.tgz#34e601eaa2a56bc3bd26617341f8f03d1e4d2452"
-  integrity sha512-Q6ZJCE7h6Z3v3DiEZUnqzHbgwF3ZILN+ACTx6qu/x2X1cL96AatKwdX92e0+7J9RFg6gdoFYJgRrW8Q6VnWZsQ==
+"@react-native/babel-preset@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-preset/-/babel-preset-0.74.81.tgz#80d0b96eef35d671f97eaf223c4d770170d7f23f"
+  integrity sha512-H80B3Y3lBBVC4x9tceTEQq/04lx01gW6ajWCcVbd7sHvGEAxfMFEZUmVZr0451Cafn02wVnDJ8psto1F+0w5lw==
   dependencies:
-    "@babel/parser" "^7.25.3"
+    "@babel/core" "^7.20.0"
+    "@babel/plugin-proposal-async-generator-functions" "^7.0.0"
+    "@babel/plugin-proposal-class-properties" "^7.18.0"
+    "@babel/plugin-proposal-export-default-from" "^7.0.0"
+    "@babel/plugin-proposal-logical-assignment-operators" "^7.18.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator" "^7.18.0"
+    "@babel/plugin-proposal-numeric-separator" "^7.0.0"
+    "@babel/plugin-proposal-object-rest-spread" "^7.20.0"
+    "@babel/plugin-proposal-optional-catch-binding" "^7.0.0"
+    "@babel/plugin-proposal-optional-chaining" "^7.20.0"
+    "@babel/plugin-syntax-dynamic-import" "^7.8.0"
+    "@babel/plugin-syntax-export-default-from" "^7.0.0"
+    "@babel/plugin-syntax-flow" "^7.18.0"
+    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.0.0"
+    "@babel/plugin-syntax-optional-chaining" "^7.0.0"
+    "@babel/plugin-transform-arrow-functions" "^7.0.0"
+    "@babel/plugin-transform-async-to-generator" "^7.20.0"
+    "@babel/plugin-transform-block-scoping" "^7.0.0"
+    "@babel/plugin-transform-classes" "^7.0.0"
+    "@babel/plugin-transform-computed-properties" "^7.0.0"
+    "@babel/plugin-transform-destructuring" "^7.20.0"
+    "@babel/plugin-transform-flow-strip-types" "^7.20.0"
+    "@babel/plugin-transform-function-name" "^7.0.0"
+    "@babel/plugin-transform-literals" "^7.0.0"
+    "@babel/plugin-transform-modules-commonjs" "^7.0.0"
+    "@babel/plugin-transform-named-capturing-groups-regex" "^7.0.0"
+    "@babel/plugin-transform-parameters" "^7.0.0"
+    "@babel/plugin-transform-private-methods" "^7.22.5"
+    "@babel/plugin-transform-private-property-in-object" "^7.22.11"
+    "@babel/plugin-transform-react-display-name" "^7.0.0"
+    "@babel/plugin-transform-react-jsx" "^7.0.0"
+    "@babel/plugin-transform-react-jsx-self" "^7.0.0"
+    "@babel/plugin-transform-react-jsx-source" "^7.0.0"
+    "@babel/plugin-transform-runtime" "^7.0.0"
+    "@babel/plugin-transform-shorthand-properties" "^7.0.0"
+    "@babel/plugin-transform-spread" "^7.0.0"
+    "@babel/plugin-transform-sticky-regex" "^7.0.0"
+    "@babel/plugin-transform-typescript" "^7.5.0"
+    "@babel/plugin-transform-unicode-regex" "^7.0.0"
+    "@babel/template" "^7.0.0"
+    "@react-native/babel-plugin-codegen" "0.74.81"
+    babel-plugin-transform-flow-enums "^0.0.2"
+    react-refresh "^0.14.0"
+
+"@react-native/babel-preset@0.74.89":
+  version "0.74.89"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/babel-preset/-/babel-preset-0.74.89.tgz#a47e59edf5c10c993c60f0945c4f30b65576fafa"
+  integrity sha512-JVI3sjnQxOjqVhERX19XYEc2HPmf0nFFmhF3CAvnxo+11GrP/eOqa1q+mAE0sXueVy+/rVjwohOxKWgwoQqtIA==
+  dependencies:
+    "@babel/core" "^7.20.0"
+    "@babel/plugin-proposal-async-generator-functions" "^7.0.0"
+    "@babel/plugin-proposal-class-properties" "^7.18.0"
+    "@babel/plugin-proposal-export-default-from" "^7.0.0"
+    "@babel/plugin-proposal-logical-assignment-operators" "^7.18.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator" "^7.18.0"
+    "@babel/plugin-proposal-numeric-separator" "^7.0.0"
+    "@babel/plugin-proposal-object-rest-spread" "^7.20.0"
+    "@babel/plugin-proposal-optional-catch-binding" "^7.0.0"
+    "@babel/plugin-proposal-optional-chaining" "^7.20.0"
+    "@babel/plugin-syntax-dynamic-import" "^7.8.0"
+    "@babel/plugin-syntax-export-default-from" "^7.0.0"
+    "@babel/plugin-syntax-flow" "^7.18.0"
+    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.0.0"
+    "@babel/plugin-syntax-optional-chaining" "^7.0.0"
+    "@babel/plugin-transform-arrow-functions" "^7.0.0"
+    "@babel/plugin-transform-async-to-generator" "^7.20.0"
+    "@babel/plugin-transform-block-scoping" "^7.0.0"
+    "@babel/plugin-transform-classes" "^7.0.0"
+    "@babel/plugin-transform-computed-properties" "^7.0.0"
+    "@babel/plugin-transform-destructuring" "^7.20.0"
+    "@babel/plugin-transform-flow-strip-types" "^7.20.0"
+    "@babel/plugin-transform-function-name" "^7.0.0"
+    "@babel/plugin-transform-literals" "^7.0.0"
+    "@babel/plugin-transform-modules-commonjs" "^7.0.0"
+    "@babel/plugin-transform-named-capturing-groups-regex" "^7.0.0"
+    "@babel/plugin-transform-parameters" "^7.0.0"
+    "@babel/plugin-transform-private-methods" "^7.22.5"
+    "@babel/plugin-transform-private-property-in-object" "^7.22.11"
+    "@babel/plugin-transform-react-display-name" "^7.0.0"
+    "@babel/plugin-transform-react-jsx" "^7.0.0"
+    "@babel/plugin-transform-react-jsx-self" "^7.0.0"
+    "@babel/plugin-transform-react-jsx-source" "^7.0.0"
+    "@babel/plugin-transform-runtime" "^7.0.0"
+    "@babel/plugin-transform-shorthand-properties" "^7.0.0"
+    "@babel/plugin-transform-spread" "^7.0.0"
+    "@babel/plugin-transform-sticky-regex" "^7.0.0"
+    "@babel/plugin-transform-typescript" "^7.5.0"
+    "@babel/plugin-transform-unicode-regex" "^7.0.0"
+    "@babel/template" "^7.0.0"
+    "@react-native/babel-plugin-codegen" "0.74.89"
+    babel-plugin-transform-flow-enums "^0.0.2"
+    react-refresh "^0.14.0"
+
+"@react-native/codegen@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/codegen/-/codegen-0.74.81.tgz#1025ffd41f2b4710fd700c9e8e85210b9651a7c4"
+  integrity sha512-hhXo4ccv2lYWaJrZDsdbRTZ5SzSOdyZ0MY6YXwf3xEFLuSunbUMu17Rz5LXemKXlpVx4KEgJ/TDc2pPVaRPZgA==
+  dependencies:
+    "@babel/parser" "^7.20.0"
     glob "^7.1.1"
-    hermes-parser "0.25.1"
+    hermes-parser "0.19.1"
     invariant "^2.2.4"
-    jscodeshift "^17.0.0"
+    jscodeshift "^0.14.0"
+    mkdirp "^0.5.1"
+    nullthrows "^1.1.1"
+
+"@react-native/codegen@0.74.89":
+  version "0.74.89"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/codegen/-/codegen-0.74.89.tgz#f77f0bee875cfc98fc70859773f78b1055cc5419"
+  integrity sha512-xbcpnvsAjHrnYWnuoLdr5782dlR4LfkaWPityka/gWmdRDrE69ByAC9m0/vijMXAcMoHv6DSMh5x7gm6gW/3mA==
+  dependencies:
+    "@babel/parser" "^7.20.0"
+    glob "^7.1.1"
+    hermes-parser "0.19.1"
+    invariant "^2.2.4"
+    jscodeshift "^0.14.0"
+    mkdirp "^0.5.1"
     nullthrows "^1.1.1"
     yargs "^17.6.2"
 
-"@react-native/community-cli-plugin@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/community-cli-plugin/-/community-cli-plugin-0.77.3.tgz#816201a051443c31db69dbdaa9621870ba3a2442"
-  integrity sha512-8OKvow2jHojl1d3PW/84uTBPMnmxRyPtfhBL0sQxrWP5Kgooe5XALoWsoBIFk+aIFu/fV7Pv0AAd0cdLC0NtOg==
+"@react-native/codegen@0.83.1":
+  version "0.83.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/codegen/-/codegen-0.83.1.tgz#cd502b801b23b0cf2da079c0e482ccb145c944d3"
+  integrity sha512-FpRxenonwH+c2a5X5DZMKUD7sCudHxB3eSQPgV9R+uxd28QWslyAWrpnJM/Az96AEksHnymDzEmzq2HLX5nb+g==
   dependencies:
-    "@react-native/dev-middleware" "0.77.3"
-    "@react-native/metro-babel-transformer" "0.77.3"
-    chalk "^4.0.0"
-    debug "^2.2.0"
+    "@babel/core" "^7.25.2"
+    "@babel/parser" "^7.25.3"
+    glob "^7.1.1"
+    hermes-parser "0.32.0"
     invariant "^2.2.4"
-    metro "^0.81.5"
-    metro-config "^0.81.5"
-    metro-core "^0.81.5"
+    nullthrows "^1.1.1"
+    yargs "^17.6.2"
+
+"@react-native/community-cli-plugin@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/community-cli-plugin/-/community-cli-plugin-0.74.81.tgz#4177207374942c52a86ad52c8c915f46729305ab"
+  integrity sha512-ezPOwPxbDgrBZLJJMcXryXJXjv3VWt+Mt4jRZiEtvy6pAoi2owSH0b178T5cEZaWsxQN0BbyJ7F/xJsNiF4z0Q==
+  dependencies:
+    "@react-native-community/cli-server-api" "13.6.4"
+    "@react-native-community/cli-tools" "13.6.4"
+    "@react-native/dev-middleware" "0.74.81"
+    "@react-native/metro-babel-transformer" "0.74.81"
+    chalk "^4.0.0"
+    execa "^5.1.1"
+    metro "^0.80.3"
+    metro-config "^0.80.3"
+    metro-core "^0.80.3"
+    node-fetch "^2.2.0"
+    querystring "^0.2.1"
     readline "^1.3.0"
-    semver "^7.1.3"
 
-"@react-native/debugger-frontend@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/debugger-frontend/-/debugger-frontend-0.77.3.tgz#38efdcb673e8cebd2d3c41278128d198c68b8503"
-  integrity sha512-FTERmc43r/3IpTvUZTr9gVVTgOIrg1hrkN57POr/CiL8RbcY/nv6vfNM7/CXG5WF8ckHiLeWTcRHzJUl1+rFkw==
+"@react-native/debugger-frontend@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/debugger-frontend/-/debugger-frontend-0.74.81.tgz#17cefe2b3ff485071bd30d819995867fd145da27"
+  integrity sha512-HCYF1/88AfixG75558HkNh9wcvGweRaSZGBA71KoZj03umXM8XJy0/ZpacGOml2Fwiqpil72gi6uU+rypcc/vw==
 
-"@react-native/dev-middleware@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/dev-middleware/-/dev-middleware-0.77.3.tgz#9b78a9e92b59413d8835b62463cfba148fc38d45"
-  integrity sha512-tCylGMjibJAEl2r2nWX5L5CvK6XFLGbjhe7Su7OcxRGrynHin87rAmcaTeoTtbtsREFlFM0f4qxcmwCxmbZHJw==
+"@react-native/dev-middleware@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/dev-middleware/-/dev-middleware-0.74.81.tgz#120ab62982a48cba90c7724d099ddaa50184c200"
+  integrity sha512-x2IpvUJN1LJE0WmPsSfQIbQaa9xwH+2VDFOUrzuO9cbQap8rNfZpcvVNbrZgrlKbgS4LXbbsj6VSL8b6SnMKMA==
   dependencies:
     "@isaacs/ttlcache" "^1.4.1"
-    "@react-native/debugger-frontend" "0.77.3"
+    "@react-native/debugger-frontend" "0.74.81"
+    "@rnx-kit/chromium-edge-launcher" "^1.0.0"
     chrome-launcher "^0.15.2"
-    chromium-edge-launcher "^0.2.0"
     connect "^3.6.5"
     debug "^2.2.0"
-    invariant "^2.2.4"
+    node-fetch "^2.2.0"
     nullthrows "^1.1.1"
     open "^7.0.3"
     selfsigned "^2.4.1"
-    serve-static "^1.16.2"
-    ws "^6.2.3"
+    serve-static "^1.13.1"
+    temp-dir "^2.0.0"
+    ws "^6.2.2"
 
-"@react-native/gradle-plugin@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/gradle-plugin/-/gradle-plugin-0.77.3.tgz#ee96c818c54803187483b905515a3e20347d5553"
-  integrity sha512-GRVNBDowaFub9j+WBLGI09bDbCq+f7ugaNRr6lmZnLx/xdmiKUj9YKyARt4zn8m65MRK2JGlJk0OqmQOvswpzQ==
+"@react-native/gradle-plugin@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/gradle-plugin/-/gradle-plugin-0.74.81.tgz#aac01999b1005bba3213f504deee7efaadb62c1e"
+  integrity sha512-7YQ4TLnqfe2kplWWzBWO6k0rPSrWEbuEiRXSJNZQCtCk+t2YX985G62p/9jWm3sGLN4UTcpDXaFNTTPBvlycoQ==
 
-"@react-native/js-polyfills@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/js-polyfills/-/js-polyfills-0.77.3.tgz#231d6bcbdddf7f6900f03f64adc3afcde7449c69"
-  integrity sha512-XqxnQRyKD11u5ZYG5LPnElThWYJf3HMosqqkJGB4nwx6nc6WKxj1sR9snptibExDMGioZ2OyvPWCF8tX+qggrw==
+"@react-native/js-polyfills@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/js-polyfills/-/js-polyfills-0.74.81.tgz#64780497be4ecbff1b27076294e3ebd7df1ba485"
+  integrity sha512-o4MiR+/kkHoeoQ/zPwt81LnTm6pqdg0wOhU7S7vIZUqzJ7YUpnpaAvF+/z7HzUOPudnavoCN0wvcZPe/AMEyCA==
 
-"@react-native/metro-babel-transformer@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.77.3.tgz#dd467666be99ce43fd117df5336de15742c1d638"
-  integrity sha512-eBX5ibF1ovuZGwo08UOhnnkZDnhl8DdrCulJ8V/LCnpC6CihhQyxtolO+BmzXjUFyGiH7ImoxX7+mpXI74NYGg==
+"@react-native/js-polyfills@^0.74.0":
+  version "0.74.89"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/js-polyfills/-/js-polyfills-0.74.89.tgz#85a14dcf0969d72d61511f34bf80a863107f9f9a"
+  integrity sha512-MT609lh6SnZYWZVIFTTtL37nu5UOK4Y9CpXw9K6DoUndhkejYY/dBsJ159WNuIFv2xCOtJDYiNPNFOmnRQwYvw==
+
+"@react-native/metro-babel-transformer@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.74.81.tgz#f724eab91e6de82f8d098e6de57f25bb7501d2d6"
+  integrity sha512-PVcMjj23poAK6Uemflz4MIJdEpONpjqF7JASNqqQkY6wfDdaIiZSNk8EBCWKb0t7nKqhMvtTq11DMzYJ0JFITg==
   dependencies:
-    "@babel/core" "^7.25.2"
-    "@react-native/babel-preset" "0.77.3"
-    hermes-parser "0.25.1"
+    "@babel/core" "^7.20.0"
+    "@react-native/babel-preset" "0.74.81"
+    hermes-parser "0.19.1"
     nullthrows "^1.1.1"
 
-"@react-native/metro-config@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/metro-config/-/metro-config-0.77.3.tgz#5aae83a22916f5eb26ef6014870ec0c067ad8d4e"
-  integrity sha512-KqjMH4mBpssGP3zEfrsr05o3CYBr573PP8YOHwOS3yOEGY8PFPzXWxGYmZ9b98sCjUvruZ6CbybLWt5bZ0wVnQ==
+"@react-native/metro-babel-transformer@^0.74.0":
+  version "0.74.89"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.74.89.tgz#4b149436bbfb6677d7b19d422225b3ca3d64bc78"
+  integrity sha512-rGKSkXLwsYRFCfBku0ZVODqMVAI6mm2yFdYUhKu5U0qIL9bffn4Ow8lHxzdyXMiEROE0jsnN31BOP19cbVI/HA==
   dependencies:
-    "@react-native/js-polyfills" "0.77.3"
-    "@react-native/metro-babel-transformer" "0.77.3"
-    metro-config "^0.81.5"
-    metro-runtime "^0.81.5"
+    "@babel/core" "^7.20.0"
+    "@react-native/babel-preset" "0.74.89"
+    hermes-parser "0.19.1"
+    nullthrows "^1.1.1"
 
-"@react-native/normalize-colors@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/normalize-colors/-/normalize-colors-0.77.3.tgz#76309cfe6ac423bd89b80cf8da2f6c07943e99e8"
-  integrity sha512-9gHhvK0EKskgIN4JiwzQdxiKhLCgH2LpCp+v38ZxWQpXTMbTDDE4AJRqYgWp2v9WUFQB/S5+XqBDZDgn/MGq9A==
+"@react-native/metro-config@0.74.0":
+  version "0.74.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/metro-config/-/metro-config-0.74.0.tgz#80451318ce05fe72e22d5111d88fbc5c55426a0a"
+  integrity sha512-ZdCr9mGncDXAAS8sEoUoen7oGQPIubRwwQUsM8eT+0nWj1felbLd+o5W9u3ChnM9DMVOVTBFEimq8Dbtkm04Mg==
+  dependencies:
+    "@react-native/js-polyfills" "^0.74.0"
+    "@react-native/metro-babel-transformer" "^0.74.0"
+    metro-config "0.79.1"
+    metro-runtime "0.79.1"
 
-"@react-native/typescript-config@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/typescript-config/-/typescript-config-0.77.3.tgz#76ecb410edccb2adc7af0da843120f383e5b90c0"
-  integrity sha512-lSiHcIiSxbyaFVXey3qQWVPr2pfuCWNzxGdfjVbFz1fdwZGt6M1PgX1VUODYB0NCbyRPYILa8n7qQDFmpmmxVQ==
+"@react-native/normalize-colors@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/normalize-colors/-/normalize-colors-0.74.81.tgz#0b7c440b6e126f79036cbe74a88791aba72b9fcf"
+  integrity sha512-g3YvkLO7UsSWiDfYAU+gLhRHtEpUyz732lZB+N8IlLXc5MnfXHC8GKneDGY3Mh52I3gBrs20o37D5viQX9E1CA==
 
-"@react-native/virtualized-lists@0.77.3":
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/virtualized-lists/-/virtualized-lists-0.77.3.tgz#b5696b9456282ed3c2b00fd0edb0d8dcb444d05c"
-  integrity sha512-3B0TPbLp7ZMWTlsOf+MzcuKuqF2HZzqh94+tPvw1thF5PxPaO2yZjVxfjrQ9EtdhQisG4siwiXVHB9DD6VkU4A==
+"@react-native/typescript-config@0.74.0":
+  version "0.74.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/typescript-config/-/typescript-config-0.74.0.tgz#cb2cb58e4e424593c4ff5859e50d24dd54b14a63"
+  integrity sha512-Nt7AkbuLXIfoWmUrlTp06UTUj6LrMhwJhf/ReEHVpiaVJRjuqfjmwelvW/6dGSJjPFtYvziC+iaLLeyv2oBV7w==
+
+"@react-native/virtualized-lists@0.74.81":
+  version "0.74.81"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@react-native/virtualized-lists/-/virtualized-lists-0.74.81.tgz#8e43d4c72ec561754491eae731f40877f03d05fb"
+  integrity sha512-5jF9S10Ug2Wl+L/0+O8WmbC726sMMX8jk/1JrvDDK+0DRLMobfjLc1L26fONlVBF7lE5ctqvKZ9TlKdhPTNOZg==
   dependencies:
     invariant "^2.2.4"
     nullthrows "^1.1.1"
@@ -1972,6 +2109,18 @@
   version "1.23.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@remix-run/router/-/router-1.23.1.tgz#0ce8857b024e24fc427585316383ad9d295b3a7f"
   integrity sha512-vDbaOzF7yT2Qs4vO6XV1MHcJv+3dgR1sT+l3B8xxOVhUC336prMvqrvsLL/9Dnw2xr6Qhz4J0dmS0llNAbnUmQ==
+
+"@rnx-kit/chromium-edge-launcher@^1.0.0":
+  version "1.0.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@rnx-kit/chromium-edge-launcher/-/chromium-edge-launcher-1.0.0.tgz#c0df8ea00a902c7a417cd9655aab06de398b939c"
+  integrity sha512-lzD84av1ZQhYUS+jsGqJiCMaJO2dn9u+RTT9n9q6D3SaKVwWqv+7AoRKqBu19bkwyE+iFRl1ymr40QS90jVFYg==
+  dependencies:
+    "@types/node" "^18.0.0"
+    escape-string-regexp "^4.0.0"
+    is-wsl "^2.2.0"
+    lighthouse-logger "^1.0.0"
+    mkdirp "^1.0.4"
+    rimraf "^3.0.2"
 
 "@rolldown/pluginutils@1.0.0-beta.27":
   version "1.0.0-beta.27"
@@ -2167,7 +2316,7 @@
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/aria-query/-/aria-query-5.0.4.tgz#1a31c3d378850d2778dabb6374d036dcba4ba708"
   integrity sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==
 
-"@types/babel__core@^7.1.14", "@types/babel__core@^7.20.0", "@types/babel__core@^7.20.5":
+"@types/babel__core@^7.20.0", "@types/babel__core@^7.20.5":
   version "7.20.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/babel__core/-/babel__core-7.20.5.tgz#3df15f27ba85319caa07ba08d0721889bb39c017"
   integrity sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==
@@ -2193,7 +2342,7 @@
     "@babel/parser" "^7.1.0"
     "@babel/types" "^7.0.0"
 
-"@types/babel__traverse@*", "@types/babel__traverse@^7.0.6":
+"@types/babel__traverse@*":
   version "7.28.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/babel__traverse/-/babel__traverse-7.28.0.tgz#07d713d6cce0d265c9849db0cbe62d3f61f36f74"
   integrity sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==
@@ -2204,13 +2353,6 @@
   version "1.0.8"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/estree/-/estree-1.0.8.tgz#958b91c991b1867ced318bedea0e215ee050726e"
   integrity sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==
-
-"@types/graceful-fs@^4.1.3":
-  version "4.1.9"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/graceful-fs/-/graceful-fs-4.1.9.tgz#2a06bc0f68a20ab37b3e36aa238be6abdf49e8b4"
-  integrity sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==
-  dependencies:
-    "@types/node" "*"
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.6"
@@ -2249,6 +2391,13 @@
   integrity sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==
   dependencies:
     undici-types "~7.16.0"
+
+"@types/node@^18.0.0":
+  version "18.19.130"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/node/-/node-18.19.130.tgz#da4c6324793a79defb7a62cba3947ec5add00d59"
+  integrity sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==
+  dependencies:
+    undici-types "~5.26.4"
 
 "@types/node@^22.10.0":
   version "22.19.3"
@@ -2301,6 +2450,13 @@
   version "15.0.20"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/yargs/-/yargs-15.0.20.tgz#6d00a124c9f757427d4ca3cbc87daea778053c68"
   integrity sha512-KIkX+/GgfFitlASYCGoSF+T4XRXhOubJLhkLVtSfsRTe9jWMmuM2g28zQ41BtPTG7TRBb2xHW+LCNVE9QR/vsg==
+  dependencies:
+    "@types/yargs-parser" "*"
+
+"@types/yargs@^16.0.0":
+  version "16.0.11"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/@types/yargs/-/yargs-16.0.11.tgz#de958fb62e77fc383fa6cd8066eabdd13da88f04"
+  integrity sha512-sbtvk8wDN+JvEdabmZExoW/HNr1cB7D/j4LT08rMiuikfA7m/JNJg7ATQcgzs34zHnoScDkY0ZRSl29Fkmk36g==
   dependencies:
     "@types/yargs-parser" "*"
 
@@ -2714,10 +2870,10 @@ assertion-error@^2.0.1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/assertion-error/-/assertion-error-2.0.1.tgz#f641a196b335690b1070bf00b6e7593fec190bf7"
   integrity sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==
 
-ast-types@^0.16.1:
-  version "0.16.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ast-types/-/ast-types-0.16.1.tgz#7a9da1617c9081bc121faafe91711b4c8bb81da2"
-  integrity sha512-6t10qk83GOG8p0vKmaCr8eiilZwO171AvbROMtvvNiwrTly62t+7XkA8RdIIVbpMhCASAsxgAzdRSwh6nw/5Dg==
+ast-types@0.15.2:
+  version "0.15.2"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ast-types/-/ast-types-0.15.2.tgz#39ae4809393c4b16df751ee563411423e85fb49d"
+  integrity sha512-c27loCv9QkZinsa5ProX751khO9DJl/AcB5c2KNtA6NRvHKS0PgLfcftz72KVq504vB0Gku5s2kUZzDBvQWvHg==
   dependencies:
     tslib "^2.0.1"
 
@@ -2743,39 +2899,10 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-babel-jest@^29.7.0:
-  version "29.7.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-jest/-/babel-jest-29.7.0.tgz#f4369919225b684c56085998ac63dbd05be020d5"
-  integrity sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==
-  dependencies:
-    "@jest/transform" "^29.7.0"
-    "@types/babel__core" "^7.1.14"
-    babel-plugin-istanbul "^6.1.1"
-    babel-preset-jest "^29.6.3"
-    chalk "^4.0.0"
-    graceful-fs "^4.2.9"
-    slash "^3.0.0"
-
-babel-plugin-istanbul@^6.1.1:
-  version "6.1.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-plugin-istanbul/-/babel-plugin-istanbul-6.1.1.tgz#fa88ec59232fd9b4e36dbbc540a8ec9a9b47da73"
-  integrity sha512-Y1IQok9821cC9onCx5otgFfRm7Lm+I+wwxOx738M/WLPZ9Q42m4IG5W0FNX8WLL2gYMZo3JkuXIH2DOpWM+qwA==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.0.0"
-    "@istanbuljs/load-nyc-config" "^1.0.0"
-    "@istanbuljs/schema" "^0.1.2"
-    istanbul-lib-instrument "^5.0.4"
-    test-exclude "^6.0.0"
-
-babel-plugin-jest-hoist@^29.6.3:
-  version "29.6.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-29.6.3.tgz#aadbe943464182a8922c3c927c3067ff40d24626"
-  integrity sha512-ESAc/RJvGTFEzRwOTT4+lNDk/GNHMkKbNzsvT0qKRfDyyYTskxB5rnU2njIDYVxXCBHHEI1c0YwHob3WaYujOg==
-  dependencies:
-    "@babel/template" "^7.3.3"
-    "@babel/types" "^7.3.3"
-    "@types/babel__core" "^7.1.14"
-    "@types/babel__traverse" "^7.0.6"
+babel-core@^7.0.0-bridge.0:
+  version "7.0.0-bridge.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-core/-/babel-core-7.0.0-bridge.0.tgz#95a492ddd90f9b4e9a4a1da14eb335b87b634ece"
+  integrity sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==
 
 babel-plugin-polyfill-corejs2@^0.4.14:
   version "0.4.14"
@@ -2801,48 +2928,12 @@ babel-plugin-polyfill-regenerator@^0.6.5:
   dependencies:
     "@babel/helper-define-polyfill-provider" "^0.6.5"
 
-babel-plugin-syntax-hermes-parser@0.25.1:
-  version "0.25.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-plugin-syntax-hermes-parser/-/babel-plugin-syntax-hermes-parser-0.25.1.tgz#58b539df973427fcfbb5176a3aec7e5dee793cb0"
-  integrity sha512-IVNpGzboFLfXZUAwkLFcI/bnqVbwky0jP3eBno4HKtqvQJAHBLdgxiG6lQ4to0+Q/YCN3PO0od5NZwIKyY4REQ==
-  dependencies:
-    hermes-parser "0.25.1"
-
 babel-plugin-transform-flow-enums@^0.0.2:
   version "0.0.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-plugin-transform-flow-enums/-/babel-plugin-transform-flow-enums-0.0.2.tgz#d1d0cc9bdc799c850ca110d0ddc9f21b9ec3ef25"
   integrity sha512-g4aaCrDDOsWjbm0PUUeVnkcVd6AKJsVc/MbnPhEotEpkeJQP6b8nzewohQi7+QS8UyPehOhGWn0nOwjvWpmMvQ==
   dependencies:
     "@babel/plugin-syntax-flow" "^7.12.1"
-
-babel-preset-current-node-syntax@^1.0.0:
-  version "1.2.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-preset-current-node-syntax/-/babel-preset-current-node-syntax-1.2.0.tgz#20730d6cdc7dda5d89401cab10ac6a32067acde6"
-  integrity sha512-E/VlAEzRrsLEb2+dv8yp3bo4scof3l9nR4lrld+Iy5NyVqgVYUJnDAmunkhPMisRI32Qc4iRiz425d8vM++2fg==
-  dependencies:
-    "@babel/plugin-syntax-async-generators" "^7.8.4"
-    "@babel/plugin-syntax-bigint" "^7.8.3"
-    "@babel/plugin-syntax-class-properties" "^7.12.13"
-    "@babel/plugin-syntax-class-static-block" "^7.14.5"
-    "@babel/plugin-syntax-import-attributes" "^7.24.7"
-    "@babel/plugin-syntax-import-meta" "^7.10.4"
-    "@babel/plugin-syntax-json-strings" "^7.8.3"
-    "@babel/plugin-syntax-logical-assignment-operators" "^7.10.4"
-    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.8.3"
-    "@babel/plugin-syntax-numeric-separator" "^7.10.4"
-    "@babel/plugin-syntax-object-rest-spread" "^7.8.3"
-    "@babel/plugin-syntax-optional-catch-binding" "^7.8.3"
-    "@babel/plugin-syntax-optional-chaining" "^7.8.3"
-    "@babel/plugin-syntax-private-property-in-object" "^7.14.5"
-    "@babel/plugin-syntax-top-level-await" "^7.14.5"
-
-babel-preset-jest@^29.6.3:
-  version "29.6.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/babel-preset-jest/-/babel-preset-jest-29.6.3.tgz#fa05fa510e7d493896d7b0dd2033601c840f171c"
-  integrity sha512-0B3bhxR6snWXJZtR/RliHTDPRgn1sNHOR0yVtq/IiQFyuOVjFS+wuio/R4gSNkyYmKmJB4wGZv2NZanmKmTnNA==
-  dependencies:
-    babel-plugin-jest-hoist "^29.6.3"
-    babel-preset-current-node-syntax "^1.0.0"
 
 balanced-match@^1.0.0:
   version "1.0.2"
@@ -3003,7 +3094,7 @@ callsites@^3.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
   integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
 
-camelcase@^5.0.0, camelcase@^5.3.1:
+camelcase@^5.0.0:
   version "5.3.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
@@ -3078,18 +3169,6 @@ chrome-launcher@^0.15.2:
     escape-string-regexp "^4.0.0"
     is-wsl "^2.2.0"
     lighthouse-logger "^1.0.0"
-
-chromium-edge-launcher@^0.2.0:
-  version "0.2.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/chromium-edge-launcher/-/chromium-edge-launcher-0.2.0.tgz#0c378f28c99aefc360705fa155de0113997f62fc"
-  integrity sha512-JfJjUnq25y9yg4FABRRVPmBGWPZZi+AQXT4mxupb67766/0UlhG8PAZCz6xzEMXTbW3CsSoE8PcCWA49n35mKg==
-  dependencies:
-    "@types/node" "*"
-    escape-string-regexp "^4.0.0"
-    is-wsl "^2.2.0"
-    lighthouse-logger "^1.0.0"
-    mkdirp "^1.0.4"
-    rimraf "^3.0.2"
 
 ci-info@^2.0.0:
   version "2.0.0"
@@ -3185,11 +3264,6 @@ command-exists@^1.2.8:
   version "1.2.9"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/command-exists/-/command-exists-1.2.9.tgz#c50725af3808c8ab0260fd60b01fbfa25b954f69"
   integrity sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==
-
-commander@^12.0.0:
-  version "12.1.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/commander/-/commander-12.1.0.tgz#01423b36f501259fdaac4d0e4d60c96c991585d3"
-  integrity sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==
 
 commander@^2.20.0:
   version "2.20.3"
@@ -3288,6 +3362,11 @@ core-js-compat@^3.43.0:
   dependencies:
     browserslist "^4.28.0"
 
+core-util-is@~1.0.0:
+  version "1.0.3"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
+  integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
+
 cors@^2.8.5:
   version "2.8.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/cors/-/cors-2.8.5.tgz#eac11da51592dd86b9f06f6e7ac293b3df875d29"
@@ -3296,7 +3375,7 @@ cors@^2.8.5:
     object-assign "^4"
     vary "^1"
 
-cosmiconfig@^5.0.5:
+cosmiconfig@^5.0.5, cosmiconfig@^5.1.0:
   version "5.2.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/cosmiconfig/-/cosmiconfig-5.2.1.tgz#040f726809c591e77a17c0a3626ca45b4f168b1a"
   integrity sha512-H65gsXo1SKjf8zmrJ67eJk8aIRKV5ff2D4uKZIBZShbhGSpEmsQOPW/SKMKYhSTrqR7ufy6RP69rPogdaPh/kA==
@@ -3305,16 +3384,6 @@ cosmiconfig@^5.0.5:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
-
-cosmiconfig@^9.0.0:
-  version "9.0.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/cosmiconfig/-/cosmiconfig-9.0.0.tgz#34c3fc58287b915f3ae905ab6dc3de258b55ad9d"
-  integrity sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==
-  dependencies:
-    env-paths "^2.2.1"
-    import-fresh "^3.3.0"
-    js-yaml "^4.1.0"
-    parse-json "^5.2.0"
 
 cross-spawn@^7.0.3, cross-spawn@^7.0.5, cross-spawn@^7.0.6:
   version "7.0.6"
@@ -3456,6 +3525,11 @@ delayed-stream@~1.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
 
+denodeify@^1.2.1:
+  version "1.2.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/denodeify/-/denodeify-1.2.1.tgz#3a36287f5034e699e7577901052c2e6c94251631"
+  integrity sha512-KNTihKNmQENUZeKu5fzfpzRqR5S2VMp4gl9RFHiWzj9DfvYQPMJ6XHKNaQxaGCXwPk6y9yme3aUoaiAe+KX+vg==
+
 depd@2.0.0, depd@^2.0.0, depd@~2.0.0:
   version "2.0.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/depd/-/depd-2.0.0.tgz#b696163cc757560d09cf22cc8fad1571b79e76df"
@@ -3522,12 +3596,7 @@ entities@^6.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/entities/-/entities-6.0.1.tgz#c28c34a43379ca7f61d074130b2f5f7020a30694"
   integrity sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==
 
-env-paths@^2.2.1:
-  version "2.2.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
-  integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
-
-envinfo@^7.13.0:
+envinfo@^7.10.0:
   version "7.21.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/envinfo/-/envinfo-7.21.0.tgz#04a251be79f92548541f37d13c8b6f22940c3bae"
   integrity sha512-Lw7I8Zp5YKHFCXL7+Dz95g4CcbMEpgvqZNNq3AmlT5XAV6CgAAk6gyAMqn2zjw08K9BHfcNuKrMiCPLByGafow==
@@ -3807,7 +3876,7 @@ eventsource@^3.0.2:
   dependencies:
     eventsource-parser "^3.0.1"
 
-execa@^5.0.0:
+execa@^5.0.0, execa@^5.1.1:
   version "5.1.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/execa/-/execa-5.1.1.tgz#f80ad9cbf4298f7bd1d4c9555c21e93741c411dd"
   integrity sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==
@@ -3902,7 +3971,7 @@ fast-glob@^3.3.2:
     merge2 "^1.3.0"
     micromatch "^4.0.8"
 
-fast-json-stable-stringify@^2.0.0, fast-json-stable-stringify@^2.1.0:
+fast-json-stable-stringify@^2.0.0:
   version "2.1.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/fast-json-stable-stringify/-/fast-json-stable-stringify-2.1.0.tgz#874bf69c6f404c2b5d99c481341399fd55892633"
   integrity sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==
@@ -3917,7 +3986,7 @@ fast-uri@^3.0.1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/fast-uri/-/fast-uri-3.1.0.tgz#66eecff6c764c0df9b762e62ca7edcfb53b4edfa"
   integrity sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==
 
-fast-xml-parser@^4.4.1:
+fast-xml-parser@^4.0.12, fast-xml-parser@^4.2.4:
   version "4.5.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/fast-xml-parser/-/fast-xml-parser-4.5.3.tgz#c54d6b35aa0f23dc1ea60b6c884340c006dc6efb"
   integrity sha512-RKihhV+SHsIUGXObeVy9AXiBbFwkVk7Syp8XgwN5U3JV416+Gwp/GO9i0JYKmikykgz/UHRrrV4ROuZEo/T0ig==
@@ -4149,11 +4218,6 @@ get-intrinsic@^1.1.3, get-intrinsic@^1.2.2, get-intrinsic@^1.2.4, get-intrinsic@
     hasown "^2.0.2"
     math-intrinsics "^1.1.0"
 
-get-package-type@^0.1.0:
-  version "0.1.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/get-package-type/-/get-package-type-0.1.0.tgz#8de2d803cff44df3bc6c456e6668b36c3926e11a"
-  integrity sha512-pjzuKtY64GYfWizNAJ0fr9VqttZkNiK2iS430LtIHzjBEr6bX8Am2zm4sW4Ro5wjWW5cAlRL1qAMTcXbjNAO2Q==
-
 get-proto@^1.0.1:
   version "1.0.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/get-proto/-/get-proto-1.0.1.tgz#150b3f2743869ef3e851ec0c49d15b1d14d00ee1"
@@ -4193,7 +4257,7 @@ glob-parent@^6.0.2:
   dependencies:
     is-glob "^4.0.3"
 
-glob@^7.1.1, glob@^7.1.3, glob@^7.1.4:
+glob@^7.1.1, glob@^7.1.3:
   version "7.2.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/glob/-/glob-7.2.3.tgz#b8df0fb802bbfa8e89bd1d938b4e16578ed44f2b"
   integrity sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==
@@ -4215,7 +4279,7 @@ gopd@^1.0.1, gopd@^1.2.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/gopd/-/gopd-1.2.0.tgz#89f56b8217bdbc8802bd299df6d7f1081d7e51a1"
   integrity sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==
 
-graceful-fs@^4.1.3, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4, graceful-fs@^4.2.9:
+graceful-fs@^4.1.11, graceful-fs@^4.1.3, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4, graceful-fs@^4.2.9:
   version "4.2.11"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
@@ -4256,17 +4320,60 @@ hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
-hermes-estree@0.25.1:
-  version "0.25.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-estree/-/hermes-estree-0.25.1.tgz#6aeec17d1983b4eabf69721f3aa3eb705b17f480"
-  integrity sha512-0wUoCcLp+5Ev5pDW2OriHC2MJCbwLwuRx+gAqMTOkGKJJiBCLjtrvy4PWUGn6MIVefecRpzoOZ/UV6iGdOr+Cw==
+hermes-estree@0.15.0:
+  version "0.15.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-estree/-/hermes-estree-0.15.0.tgz#e32f6210ab18c7b705bdcb375f7700f2db15d6ba"
+  integrity sha512-lLYvAd+6BnOqWdnNbP/Q8xfl8LOGw4wVjfrNd9Gt8eoFzhNBRVD95n4l2ksfMVOoxuVyegs85g83KS9QOsxbVQ==
 
-hermes-parser@0.25.1:
-  version "0.25.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-parser/-/hermes-parser-0.25.1.tgz#5be0e487b2090886c62bd8a11724cd766d5f54d1"
-  integrity sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==
+hermes-estree@0.19.1:
+  version "0.19.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-estree/-/hermes-estree-0.19.1.tgz#d5924f5fac2bf0532547ae9f506d6db8f3c96392"
+  integrity sha512-daLGV3Q2MKk8w4evNMKwS8zBE/rcpA800nu1Q5kM08IKijoSnPe9Uo1iIxzPKRkn95IxxsgBMPeYHt3VG4ej2g==
+
+hermes-estree@0.23.1:
+  version "0.23.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-estree/-/hermes-estree-0.23.1.tgz#d0bac369a030188120ee7024926aabe5a9f84fdb"
+  integrity sha512-eT5MU3f5aVhTqsfIReZ6n41X5sYn4IdQL0nvz6yO+MMlPxw49aSARHLg/MSehQftyjnrE8X6bYregzSumqc6cg==
+
+hermes-estree@0.32.0:
+  version "0.32.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-estree/-/hermes-estree-0.32.0.tgz#bb7da6613ab8e67e334a1854ea1e209f487d307b"
+  integrity sha512-KWn3BqnlDOl97Xe1Yviur6NbgIZ+IP+UVSpshlZWkq+EtoHg6/cwiDj/osP9PCEgFE15KBm1O55JRwbMEm5ejQ==
+
+hermes-parser@0.15.0:
+  version "0.15.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-parser/-/hermes-parser-0.15.0.tgz#f611a297c2a2dbbfbce8af8543242254f604c382"
+  integrity sha512-Q1uks5rjZlE9RjMMjSUCkGrEIPI5pKJILeCtK1VmTj7U4pf3wVPoo+cxfu+s4cBAPy2JzikIIdCZgBoR6x7U1Q==
   dependencies:
-    hermes-estree "0.25.1"
+    hermes-estree "0.15.0"
+
+hermes-parser@0.19.1:
+  version "0.19.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-parser/-/hermes-parser-0.19.1.tgz#1044348097165b7c93dc198a80b04ed5130d6b1a"
+  integrity sha512-Vp+bXzxYJWrpEuJ/vXxUsLnt0+y4q9zyi4zUlkLqD8FKv4LjIfOvP69R/9Lty3dCyKh0E2BU7Eypqr63/rKT/A==
+  dependencies:
+    hermes-estree "0.19.1"
+
+hermes-parser@0.23.1:
+  version "0.23.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-parser/-/hermes-parser-0.23.1.tgz#e5de648e664f3b3d84d01b48fc7ab164f4b68205"
+  integrity sha512-oxl5h2DkFW83hT4DAUJorpah8ou4yvmweUzLJmmr6YV2cezduCdlil1AvU/a/xSsAFo4WUcNA4GoV5Bvq6JffA==
+  dependencies:
+    hermes-estree "0.23.1"
+
+hermes-parser@0.32.0:
+  version "0.32.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-parser/-/hermes-parser-0.32.0.tgz#7916984ef6fdce62e7415d354cf35392061cd303"
+  integrity sha512-g4nBOWFpuiTqjR3LZdRxKUkij9iyveWeuks7INEsMX741f3r9xxrOe8TeQfUxtda0eXmiIFiMQzoeSQEno33Hw==
+  dependencies:
+    hermes-estree "0.32.0"
+
+hermes-profile-transformer@^0.0.6:
+  version "0.0.6"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/hermes-profile-transformer/-/hermes-profile-transformer-0.0.6.tgz#bd0f5ecceda80dd0ddaae443469ab26fb38fc27b"
+  integrity sha512-cnN7bQUm65UWOy6cbGcCcZ3rpwW8Q/j4OP5aWRhEry4Z2t2aR1cjrbp0BS+KiBN0smvP1caBgAuxutvyvJILzQ==
+  dependencies:
+    source-map "^0.7.3"
 
 html-encoding-sniffer@^3.0.0:
   version "3.0.0"
@@ -4362,7 +4469,7 @@ import-fresh@^2.0.0:
     caller-path "^2.0.0"
     resolve-from "^3.0.0"
 
-import-fresh@^3.2.1, import-fresh@^3.3.0:
+import-fresh@^3.2.1:
   version "3.3.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/import-fresh/-/import-fresh-3.3.1.tgz#9cecb56503c0ada1f2741dbbd6546e4b13b57ccf"
   integrity sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==
@@ -4627,6 +4734,11 @@ isarray@^2.0.5:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/isarray/-/isarray-2.0.5.tgz#8af1e4c1221244cc62459faf38940d4e644a5723"
   integrity sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==
 
+isarray@~1.0.0:
+  version "1.0.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
+  integrity sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==
+
 isexe@^2.0.0:
   version "2.0.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
@@ -4636,22 +4748,6 @@ isobject@^3.0.1:
   version "3.0.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==
-
-istanbul-lib-coverage@^3.2.0:
-  version "3.2.2"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/istanbul-lib-coverage/-/istanbul-lib-coverage-3.2.2.tgz#2d166c4b0644d43a39f04bf6c2edd1e585f31756"
-  integrity sha512-O8dpsF+r0WV/8MNRKfnmrtCWhuKjxrq2w+jpzBL5UZKTi2LeVWnWOmWRxFlesJONmc+wLAGvKQZEOanko0LFTg==
-
-istanbul-lib-instrument@^5.0.4:
-  version "5.2.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/istanbul-lib-instrument/-/istanbul-lib-instrument-5.2.1.tgz#d10c8885c2125574e1c231cacadf955675e1ce3d"
-  integrity sha512-pzqtp31nLv/XFOzXGuvhCb8qhjmTVo5vjVk19XE4CRlSWz0KoeJ3bw9XsA7nOp9YBf4qHjwBxkDzKcME/J29Yg==
-  dependencies:
-    "@babel/core" "^7.12.3"
-    "@babel/parser" "^7.14.7"
-    "@istanbuljs/schema" "^0.1.2"
-    istanbul-lib-coverage "^3.2.0"
-    semver "^6.3.0"
 
 jest-environment-node@^29.6.3:
   version "29.7.0"
@@ -4669,25 +4765,6 @@ jest-get-type@^29.6.3:
   version "29.6.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-get-type/-/jest-get-type-29.6.3.tgz#36f499fdcea197c1045a127319c0481723908fd1"
   integrity sha512-zrteXnqYxfQh7l5FHyL38jL39di8H8rHoecLH3JNxH3BwOrBsNeabdap5e0I23lD4HHI8W5VFBZqG4Eaq5LNcw==
-
-jest-haste-map@^29.7.0:
-  version "29.7.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-haste-map/-/jest-haste-map-29.7.0.tgz#3c2396524482f5a0506376e6c858c3bbcc17b104"
-  integrity sha512-fP8u2pyfqx0K1rGn1R9pyE0/KTn+G7PxktWidOBTqFPLYX0b9ksaMFkhK5vrS3DVun09pckLdlx90QthlW7AmA==
-  dependencies:
-    "@jest/types" "^29.6.3"
-    "@types/graceful-fs" "^4.1.3"
-    "@types/node" "*"
-    anymatch "^3.0.3"
-    fb-watchman "^2.0.0"
-    graceful-fs "^4.2.9"
-    jest-regex-util "^29.6.3"
-    jest-util "^29.7.0"
-    jest-worker "^29.7.0"
-    micromatch "^4.0.4"
-    walker "^1.0.8"
-  optionalDependencies:
-    fsevents "^2.3.2"
 
 jest-message-util@^29.7.0:
   version "29.7.0"
@@ -4713,10 +4790,17 @@ jest-mock@^29.7.0:
     "@types/node" "*"
     jest-util "^29.7.0"
 
-jest-regex-util@^29.6.3:
-  version "29.6.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-regex-util/-/jest-regex-util-29.6.3.tgz#4a556d9c776af68e1c5f48194f4d0327d24e8a52"
-  integrity sha512-KJJBsRCyyLNWCNBOvZyRDnAIfUiRJ8v+hOBQYGn8gDyF3UegwiP4gwRR3/SDa42g1YbVycTidUF3rKjyLFDWbg==
+jest-util@^27.2.0:
+  version "27.5.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-util/-/jest-util-27.5.1.tgz#3ba9771e8e31a0b85da48fe0b0891fb86c01c2f9"
+  integrity sha512-Kv2o/8jNvX1MQ0KGtw480E/w4fBCDOnH6+6DmeKi6LZUIlKA5kwY0YNdlzaWTiVgxqAqik11QyxDOKk543aKXw==
+  dependencies:
+    "@jest/types" "^27.5.1"
+    "@types/node" "*"
+    chalk "^4.0.0"
+    ci-info "^3.2.0"
+    graceful-fs "^4.2.9"
+    picomatch "^2.2.3"
 
 jest-util@^29.7.0:
   version "29.7.0"
@@ -4730,7 +4814,7 @@ jest-util@^29.7.0:
     graceful-fs "^4.2.9"
     picomatch "^2.2.3"
 
-jest-validate@^29.7.0:
+jest-validate@^29.6.3:
   version "29.7.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-validate/-/jest-validate-29.7.0.tgz#7bf705511c64da591d46b15fce41400d52147d9c"
   integrity sha512-ZB7wHqaRGVw/9hST/OuFUReG7M8vKeq0/J2egIGLdvjHCmYqGARhzXmtgi+gVeZ5uXFF219aOc3Ls2yLg27tkw==
@@ -4742,7 +4826,16 @@ jest-validate@^29.7.0:
     leven "^3.1.0"
     pretty-format "^29.7.0"
 
-jest-worker@^29.7.0:
+jest-worker@^27.2.0:
+  version "27.5.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-worker/-/jest-worker-27.5.1.tgz#8d146f0900e8973b106b6f73cc1e9a8cb86f8db0"
+  integrity sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==
+  dependencies:
+    "@types/node" "*"
+    merge-stream "^2.0.0"
+    supports-color "^8.0.0"
+
+jest-worker@^29.6.3:
   version "29.7.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jest-worker/-/jest-worker-29.7.0.tgz#acad073acbbaeb7262bd5389e1bcf43e10058d4a"
   integrity sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw==
@@ -4791,7 +4884,7 @@ js-yaml@^3.13.1:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-js-yaml@^4.1.0, js-yaml@^4.1.1:
+js-yaml@^4.1.1:
   version "4.1.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/js-yaml/-/js-yaml-4.1.1.tgz#854c292467705b699476e1a2decc0c8a3458806b"
   integrity sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==
@@ -4808,29 +4901,30 @@ jsc-safe-url@^0.2.2:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jsc-safe-url/-/jsc-safe-url-0.2.4.tgz#141c14fbb43791e88d5dc64e85a374575a83477a"
   integrity sha512-0wM3YBWtYePOjfyXQH5MWQ8H7sdk5EXSwZvmSLKk2RboVQ2Bu239jycHDz5J/8Blf3K0Qnoy2b6xD+z10MFB+Q==
 
-jscodeshift@^17.0.0:
-  version "17.3.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jscodeshift/-/jscodeshift-17.3.0.tgz#b9ea1d8d1c9255103bfc4cb42ddb46e18cb2415c"
-  integrity sha512-LjFrGOIORqXBU+jwfC9nbkjmQfFldtMIoS6d9z2LG/lkmyNXsJAySPT+2SWXJEoE68/bCWcxKpXH37npftgmow==
+jscodeshift@^0.14.0:
+  version "0.14.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/jscodeshift/-/jscodeshift-0.14.0.tgz#7542e6715d6d2e8bde0b4e883f0ccea358b46881"
+  integrity sha512-7eCC1knD7bLUPuSCwXsMZUH51O8jIcoVyKtI6P0XM0IVzlGjckPy3FIwQlorzbN0Sg79oK+RlohN32Mqf/lrYA==
   dependencies:
-    "@babel/core" "^7.24.7"
-    "@babel/parser" "^7.24.7"
-    "@babel/plugin-transform-class-properties" "^7.24.7"
-    "@babel/plugin-transform-modules-commonjs" "^7.24.7"
-    "@babel/plugin-transform-nullish-coalescing-operator" "^7.24.7"
-    "@babel/plugin-transform-optional-chaining" "^7.24.7"
-    "@babel/plugin-transform-private-methods" "^7.24.7"
-    "@babel/preset-flow" "^7.24.7"
-    "@babel/preset-typescript" "^7.24.7"
-    "@babel/register" "^7.24.6"
+    "@babel/core" "^7.13.16"
+    "@babel/parser" "^7.13.16"
+    "@babel/plugin-proposal-class-properties" "^7.13.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator" "^7.13.8"
+    "@babel/plugin-proposal-optional-chaining" "^7.13.12"
+    "@babel/plugin-transform-modules-commonjs" "^7.13.8"
+    "@babel/preset-flow" "^7.13.13"
+    "@babel/preset-typescript" "^7.13.0"
+    "@babel/register" "^7.13.16"
+    babel-core "^7.0.0-bridge.0"
+    chalk "^4.1.2"
     flow-parser "0.*"
     graceful-fs "^4.2.4"
-    micromatch "^4.0.7"
+    micromatch "^4.0.4"
     neo-async "^2.5.0"
-    picocolors "^1.0.1"
-    recast "^0.23.11"
-    tmp "^0.2.3"
-    write-file-atomic "^5.0.1"
+    node-dir "^0.1.17"
+    recast "^0.21.0"
+    temp "^0.8.4"
+    write-file-atomic "^2.3.0"
 
 jsdom@^22.1.0:
   version "22.1.0"
@@ -4875,11 +4969,6 @@ json-parse-better-errors@^1.0.1:
   version "1.0.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
   integrity sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==
-
-json-parse-even-better-errors@^2.3.0:
-  version "2.3.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
-  integrity sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==
 
 json-schema-traverse@^0.4.1:
   version "0.4.1"
@@ -5123,199 +5212,391 @@ merge2@^1.3.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-metro-babel-transformer@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-babel-transformer/-/metro-babel-transformer-0.81.5.tgz#e4705b2b74bd0adf7b06e984ceba6fbda5b7803a"
-  integrity sha512-oKCQuajU5srm+ZdDcFg86pG/U8hkSjBlkyFjz380SZ4TTIiI5F+OQB830i53D8hmqmcosa4wR/pnKv8y4Q3dLw==
+metro-babel-transformer@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-babel-transformer/-/metro-babel-transformer-0.79.1.tgz#bb2392227d3db49ffc39b98d8aebe5f7cef46302"
+  integrity sha512-WvE/At9r0LoNoxGgGhULV4H5ieuLs8AHfVUtTpHaOpgE326BwHNiUYaWuCpaM/BTTlajQltK/U1t+MqbbvFG9A==
   dependencies:
-    "@babel/core" "^7.25.2"
-    flow-enums-runtime "^0.0.6"
-    hermes-parser "0.25.1"
+    "@babel/core" "^7.20.0"
+    hermes-parser "0.15.0"
     nullthrows "^1.1.1"
 
-metro-cache-key@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-cache-key/-/metro-cache-key-0.81.5.tgz#febf6f252973c64b2eb0a34bc985a7a76f54ee98"
-  integrity sha512-lGWnGVm1UwO8faRZ+LXQUesZSmP1LOg14OVR+KNPBip8kbMECbQJ8c10nGesw28uQT7AE0lwQThZPXlxDyCLKQ==
+metro-babel-transformer@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-babel-transformer/-/metro-babel-transformer-0.80.12.tgz#ad02ade921dd4ced27b26b18ff31eb60608e3f56"
+  integrity sha512-YZziRs0MgA3pzCkkvOoQRXjIoVjvrpi/yRlJnObyIvMP6lFdtyG4nUGIwGY9VXnBvxmXD6mPY2e+NSw6JAyiRg==
+  dependencies:
+    "@babel/core" "^7.20.0"
+    flow-enums-runtime "^0.0.6"
+    hermes-parser "0.23.1"
+    nullthrows "^1.1.1"
+
+metro-cache-key@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-cache-key/-/metro-cache-key-0.79.1.tgz#80e6f2cd45a3ae04abb6874c75684e91f8c3668e"
+  integrity sha512-/u48AuINgakqYEymRrD6MzKCSYU/JEXrqGX4x6gVHVa99TKPeg5SBi3MIjpZz/tWGpcQHCKItfjLD48YhEJr3Q==
+
+metro-cache-key@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-cache-key/-/metro-cache-key-0.80.12.tgz#52f5de698b85866503ace45d0ad76f75aaec92a4"
+  integrity sha512-o4BspKnugg/pE45ei0LGHVuBJXwRgruW7oSFAeSZvBKA/sGr0UhOGY3uycOgWInnS3v5yTTfiBA9lHlNRhsvGA==
   dependencies:
     flow-enums-runtime "^0.0.6"
 
-metro-cache@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-cache/-/metro-cache-0.81.5.tgz#6b9abb0a24eff1d5b3898420e5c3615613adef06"
-  integrity sha512-wOsXuEgmZMZ5DMPoz1pEDerjJ11AuMy9JifH4yNW7NmWS0ghCRqvDxk13LsElzLshey8C+my/tmXauXZ3OqZgg==
+metro-cache@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-cache/-/metro-cache-0.79.1.tgz#197286fb0d3ee6827d91893b50237070c063c157"
+  integrity sha512-uRlo1cYewW9t6KuRED0G/iCnlqPc5Hq+I2VELBiJr4lBYwCz8P1KwcdzgSUpAzcZBcarq6rI9JqVPvV4t6P3YQ==
+  dependencies:
+    metro-core "0.79.1"
+    rimraf "^3.0.2"
+
+metro-cache@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-cache/-/metro-cache-0.80.12.tgz#bd81af02c4f17b5aeab19bb030566b14147cee8b"
+  integrity sha512-p5kNHh2KJ0pbQI/H7ZBPCEwkyNcSz7OUkslzsiIWBMPQGFJ/xArMwkV7I+GJcWh+b4m6zbLxE5fk6fqbVK1xGA==
   dependencies:
     exponential-backoff "^3.1.1"
     flow-enums-runtime "^0.0.6"
-    metro-core "0.81.5"
+    metro-core "0.80.12"
 
-metro-config@0.81.5, metro-config@^0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-config/-/metro-config-0.81.5.tgz#2e7c25cb8aa50103fcbe15de4c1948100cb3be96"
-  integrity sha512-oDRAzUvj6RNRxratFdcVAqtAsg+T3qcKrGdqGZFUdwzlFJdHGR9Z413sW583uD2ynsuOjA2QB6US8FdwiBdNKg==
+metro-config@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-config/-/metro-config-0.79.1.tgz#34609c582202bc7a2b6712c77352758ffe6a6eed"
+  integrity sha512-gleXbytiPTsO88DDUuaprKQLfaOVfoj6L7yw1u6MRXmQdebK3TmWUajqnLdWDQ/D0+JBWfrkFhLjnWXHsA8Cgw==
+  dependencies:
+    connect "^3.6.5"
+    cosmiconfig "^5.0.5"
+    jest-validate "^29.6.3"
+    metro "0.79.1"
+    metro-cache "0.79.1"
+    metro-core "0.79.1"
+    metro-runtime "0.79.1"
+
+metro-config@0.80.12, metro-config@^0.80.3:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-config/-/metro-config-0.80.12.tgz#1543009f37f7ad26352ffc493fc6305d38bdf1c0"
+  integrity sha512-4rwOWwrhm62LjB12ytiuR5NgK1ZBNr24/He8mqCsC+HXZ+ATbrewLNztzbAZHtFsrxP4D4GLTGgh96pCpYLSAQ==
   dependencies:
     connect "^3.6.5"
     cosmiconfig "^5.0.5"
     flow-enums-runtime "^0.0.6"
-    jest-validate "^29.7.0"
-    metro "0.81.5"
-    metro-cache "0.81.5"
-    metro-core "0.81.5"
-    metro-runtime "0.81.5"
+    jest-validate "^29.6.3"
+    metro "0.80.12"
+    metro-cache "0.80.12"
+    metro-core "0.80.12"
+    metro-runtime "0.80.12"
 
-metro-core@0.81.5, metro-core@^0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-core/-/metro-core-0.81.5.tgz#cf22e8e5eca63184fd43a6cce85aafa5320f1979"
-  integrity sha512-+2R0c8ByfV2N7CH5wpdIajCWa8escUFd8TukfoXyBq/vb6yTCsznoA25FhNXJ+MC/cz1L447Zj3vdUfCXIZBwg==
+metro-core@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-core/-/metro-core-0.79.1.tgz#1beed31d6358291d95e42ddb048ed41674f7dea9"
+  integrity sha512-tPlpLLOKT5D5HSFQBrvgU2gupecCA0YcnQQVOByuLjY5JMXUBU7HISHv5gpbJTUt9KlPQ8OhZV/x6ivyXaVSQg==
+  dependencies:
+    lodash.throttle "^4.1.1"
+    metro-resolver "0.79.1"
+
+metro-core@0.80.12, metro-core@^0.80.3:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-core/-/metro-core-0.80.12.tgz#5ae337923ab19ff524077efa1aeacdf4480cfa28"
+  integrity sha512-QqdJ/yAK+IpPs2HU/h5v2pKEdANBagSsc6DRSjnwSyJsCoHlmyJKCaCJ7KhWGx+N4OHxh37hoA8fc2CuZbx0Fw==
   dependencies:
     flow-enums-runtime "^0.0.6"
     lodash.throttle "^4.1.1"
-    metro-resolver "0.81.5"
+    metro-resolver "0.80.12"
 
-metro-file-map@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-file-map/-/metro-file-map-0.81.5.tgz#b74ef018e5195de636ec04c0eea2040dd26ff7eb"
-  integrity sha512-mW1PKyiO3qZvjeeVjj1brhkmIotObA3/9jdbY1fQQYvEWM6Ml7bN/oJCRDGn2+bJRlG+J8pwyJ+DgdrM4BsKyg==
+metro-file-map@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-file-map/-/metro-file-map-0.79.1.tgz#c8aa95d1eac0e3fd7a2e54e4d55c6b9a300cfd95"
+  integrity sha512-PpPhfkj1Bj448f+5vZaaImJWFSsf6XveYGdRsfwvskcYlMsFBl4OX1WyGTJCCCzrtIOH5y1V3OADI/HS563sCA==
   dependencies:
+    anymatch "^3.0.3"
+    debug "^2.2.0"
+    fb-watchman "^2.0.0"
+    graceful-fs "^4.2.4"
+    invariant "^2.2.4"
+    jest-util "^27.2.0"
+    jest-worker "^27.2.0"
+    micromatch "^4.0.4"
+    node-abort-controller "^3.1.1"
+    nullthrows "^1.1.1"
+    walker "^1.0.7"
+  optionalDependencies:
+    fsevents "^2.3.2"
+
+metro-file-map@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-file-map/-/metro-file-map-0.80.12.tgz#b03240166a68aa16c5a168c26e190d9da547eefb"
+  integrity sha512-sYdemWSlk66bWzW2wp79kcPMzwuG32x1ZF3otI0QZTmrnTaaTiGyhE66P1z6KR4n2Eu5QXiABa6EWbAQv0r8bw==
+  dependencies:
+    anymatch "^3.0.3"
     debug "^2.2.0"
     fb-watchman "^2.0.0"
     flow-enums-runtime "^0.0.6"
     graceful-fs "^4.2.4"
     invariant "^2.2.4"
-    jest-worker "^29.7.0"
+    jest-worker "^29.6.3"
     micromatch "^4.0.4"
+    node-abort-controller "^3.1.1"
     nullthrows "^1.1.1"
     walker "^1.0.7"
+  optionalDependencies:
+    fsevents "^2.3.2"
 
-metro-minify-terser@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-minify-terser/-/metro-minify-terser-0.81.5.tgz#b24c76925131db6e370ca9a6ea39c44376d44985"
-  integrity sha512-/mn4AxjANnsSS3/Bb+zA1G5yIS5xygbbz/OuPaJYs0CPcZCaWt66D+65j4Ft/nJkffUxcwE9mk4ubpkl3rjgtw==
+metro-minify-terser@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-minify-terser/-/metro-minify-terser-0.79.1.tgz#006479abd5eea43525937a3d211af2f4b0c3133f"
+  integrity sha512-69zOvPazJFKE6tHlOF8PQcvXUfoXgeHreVaggjuqnCREMWBjEkTH9jOn8M3oB0JgKmEUBb4bzFr7Oz1kC7Jc3g==
+  dependencies:
+    terser "^5.15.0"
+
+metro-minify-terser@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-minify-terser/-/metro-minify-terser-0.80.12.tgz#9951030e3bc52d7f3ac8664ce5862401c673e3c6"
+  integrity sha512-muWzUw3y5k+9083ZoX9VaJLWEV2Jcgi+Oan0Mmb/fBNMPqP9xVDuy4pOMn/HOiGndgfh/MK7s4bsjkyLJKMnXQ==
   dependencies:
     flow-enums-runtime "^0.0.6"
     terser "^5.15.0"
 
-metro-resolver@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-resolver/-/metro-resolver-0.81.5.tgz#8dacac645fbd43fa531532eca44bf33ab1977329"
-  integrity sha512-6BX8Nq3g3go3FxcyXkVbWe7IgctjDTk6D9flq+P201DfHHQ28J+DWFpVelFcrNTn4tIfbP/Bw7u/0g2BGmeXfQ==
+metro-resolver@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-resolver/-/metro-resolver-0.79.1.tgz#80e6e27305eb446188009f54374b642f28f49b65"
+  integrity sha512-hiea5co7c5rhrdD5xYohBq2Sw20Ytzie71raIW9SsXKBKzsS0zAbrwNFW5z71lDUnp719vhobnDXJ+yE7Kq9Gg==
+
+metro-resolver@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-resolver/-/metro-resolver-0.80.12.tgz#e3815914c21315b04db200032c3243a4cc22dfb6"
+  integrity sha512-PR24gYRZnYHM3xT9pg6BdbrGbM/Cu1TcyIFBVlAk7qDAuHkUNQ1nMzWumWs+kwSvtd9eZGzHoucGJpTUEeLZAw==
   dependencies:
     flow-enums-runtime "^0.0.6"
 
-metro-runtime@0.81.5, metro-runtime@^0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-runtime/-/metro-runtime-0.81.5.tgz#0fe4ae028c9d30f8a035d5d2155fc5302dbc9f09"
-  integrity sha512-M/Gf71ictUKP9+77dV/y8XlAWg7xl76uhU7ggYFUwEdOHHWPG6gLBr1iiK0BmTjPFH8yRo/xyqMli4s3oGorPQ==
+metro-runtime@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-runtime/-/metro-runtime-0.79.1.tgz#5598062de56a265b88cdfa735834809552829cf3"
+  integrity sha512-RRBFPjaex8/Q6M+4V0oOYrd4mDG0iNkRMSdT5iojUe9pF24pRmqwG2gm3NBBgh4UAzYPI0NsJ6AB8JTmchfCAg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    react-refresh "^0.4.0"
+
+metro-runtime@0.80.12, metro-runtime@^0.80.3:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-runtime/-/metro-runtime-0.80.12.tgz#a68af3a2a013f5372d3b8cee234fdd467455550b"
+  integrity sha512-LIx7+92p5rpI0i6iB4S4GBvvLxStNt6fF0oPMaUd1Weku7jZdfkCZzmrtDD9CSQ6EPb0T9NUZoyXIxlBa3wOCw==
   dependencies:
     "@babel/runtime" "^7.25.0"
     flow-enums-runtime "^0.0.6"
 
-metro-source-map@0.81.5, metro-source-map@^0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-source-map/-/metro-source-map-0.81.5.tgz#54415de745851a2e60b44e4aafe548c9c42dcf19"
-  integrity sha512-Jz+CjvCKLNbJZYJTBeN3Kq9kIJf6b61MoLBdaOQZJ5Ajhw6Pf95Nn21XwA8BwfUYgajsi6IXsp/dTZsYJbN00Q==
+metro-source-map@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-source-map/-/metro-source-map-0.79.1.tgz#6698910de296957207190f6376ef0d54f3b9b4cd"
+  integrity sha512-Rlgld4cfWUFs5NdAErSzWfX9C4eYLPXTBBmhTHaiQEgRb0ydrfhOcofT0gYTHzp6t9lW30IO5wxlzl6gU/nOjA==
   dependencies:
-    "@babel/traverse" "^7.25.3"
-    "@babel/traverse--for-generate-function-map" "npm:@babel/traverse@^7.25.3"
-    "@babel/types" "^7.25.2"
-    flow-enums-runtime "^0.0.6"
+    "@babel/traverse" "^7.20.0"
+    "@babel/types" "^7.20.0"
     invariant "^2.2.4"
-    metro-symbolicate "0.81.5"
+    metro-symbolicate "0.79.1"
     nullthrows "^1.1.1"
-    ob1 "0.81.5"
+    ob1 "0.79.1"
     source-map "^0.5.6"
     vlq "^1.0.0"
 
-metro-symbolicate@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-symbolicate/-/metro-symbolicate-0.81.5.tgz#393cf0244011a39ab2242a7b94672949511bbd6c"
-  integrity sha512-X3HV3n3D6FuTE11UWFICqHbFMdTavfO48nXsSpnNGFkUZBexffu0Xd+fYKp+DJLNaQr3S+lAs8q9CgtDTlRRuA==
+metro-source-map@0.80.12, metro-source-map@^0.80.3:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-source-map/-/metro-source-map-0.80.12.tgz#36a2768c880f8c459d6d758e2d0975e36479f49c"
+  integrity sha512-o+AXmE7hpvM8r8MKsx7TI21/eerYYy2DCDkWfoBkv+jNkl61khvDHlQn0cXZa6lrcNZiZkl9oHSMcwLLIrFmpw==
   dependencies:
+    "@babel/traverse" "^7.20.0"
+    "@babel/types" "^7.20.0"
     flow-enums-runtime "^0.0.6"
     invariant "^2.2.4"
-    metro-source-map "0.81.5"
+    metro-symbolicate "0.80.12"
     nullthrows "^1.1.1"
+    ob1 "0.80.12"
     source-map "^0.5.6"
     vlq "^1.0.0"
 
-metro-transform-plugins@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-transform-plugins/-/metro-transform-plugins-0.81.5.tgz#1111c7effa632f36a042e6c4f63a79d9b80aa717"
-  integrity sha512-MmHhVx/1dJC94FN7m3oHgv5uOjKH8EX8pBeu1pnPMxbJrx6ZuIejO0k84zTSaQTZ8RxX1wqwzWBpXAWPjEX8mA==
+metro-symbolicate@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-symbolicate/-/metro-symbolicate-0.79.1.tgz#29b8f59ac32e2381ec6e44023931b1118b04e4b4"
+  integrity sha512-cB7Yxh5SKs24EsTaONpaEPoFC6H1ya0BeAR1Ety1qeeV/gFmC8YvkwFj9S8sy6whwIf4dM9xLF2iv7Ug78C4JA==
   dependencies:
-    "@babel/core" "^7.25.2"
-    "@babel/generator" "^7.25.0"
-    "@babel/template" "^7.25.0"
-    "@babel/traverse" "^7.25.3"
+    invariant "^2.2.4"
+    metro-source-map "0.79.1"
+    nullthrows "^1.1.1"
+    source-map "^0.5.6"
+    through2 "^2.0.1"
+    vlq "^1.0.0"
+
+metro-symbolicate@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-symbolicate/-/metro-symbolicate-0.80.12.tgz#3a6aa783c6e494e2879342d88d5379fab69d1ed2"
+  integrity sha512-/dIpNdHksXkGHZXARZpL7doUzHqSNxgQ8+kQGxwpJuHnDhGkENxB5PS2QBaTDdEcmyTMjS53CN1rl9n1gR6fmw==
+  dependencies:
+    flow-enums-runtime "^0.0.6"
+    invariant "^2.2.4"
+    metro-source-map "0.80.12"
+    nullthrows "^1.1.1"
+    source-map "^0.5.6"
+    through2 "^2.0.1"
+    vlq "^1.0.0"
+
+metro-transform-plugins@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-transform-plugins/-/metro-transform-plugins-0.79.1.tgz#103c6b5562954b6dab6b9c0b73b13742d17fcb87"
+  integrity sha512-kGDpBJGpijC/OVrpngCiyvzrT6sfSPqFOiyEzU02j+8UCmxKCofbdv62nT97dzseR+iWkzFPcCbq8Nc7/CFwwA==
+  dependencies:
+    "@babel/core" "^7.20.0"
+    "@babel/generator" "^7.20.0"
+    "@babel/template" "^7.0.0"
+    "@babel/traverse" "^7.20.0"
+    nullthrows "^1.1.1"
+
+metro-transform-plugins@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-transform-plugins/-/metro-transform-plugins-0.80.12.tgz#4a3853630ad0f36cc2bffd53bae659ee171a389c"
+  integrity sha512-WQWp00AcZvXuQdbjQbx1LzFR31IInlkCDYJNRs6gtEtAyhwpMMlL2KcHmdY+wjDO9RPcliZ+Xl1riOuBecVlPA==
+  dependencies:
+    "@babel/core" "^7.20.0"
+    "@babel/generator" "^7.20.0"
+    "@babel/template" "^7.0.0"
+    "@babel/traverse" "^7.20.0"
     flow-enums-runtime "^0.0.6"
     nullthrows "^1.1.1"
 
-metro-transform-worker@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-transform-worker/-/metro-transform-worker-0.81.5.tgz#095da62f4411b3076287e6a874739dcfa9a6c5a8"
-  integrity sha512-lUFyWVHa7lZFRSLJEv+m4jH8WrR5gU7VIjUlg4XmxQfV8ngY4V10ARKynLhMYPeQGl7Qvf+Ayg0eCZ272YZ4Mg==
+metro-transform-worker@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-transform-worker/-/metro-transform-worker-0.79.1.tgz#1e48f68b532fbae15d6d82270519b9fc6e311598"
+  integrity sha512-WA15xo7EvJgutlhRKldgPTtwOWur4xDO5uQc5e/vZuhGtahcV0b4v2lXp+t3z5gs9DBqajsczce1A+3pY9wcQQ==
   dependencies:
-    "@babel/core" "^7.25.2"
-    "@babel/generator" "^7.25.0"
-    "@babel/parser" "^7.25.3"
-    "@babel/types" "^7.25.2"
-    flow-enums-runtime "^0.0.6"
-    metro "0.81.5"
-    metro-babel-transformer "0.81.5"
-    metro-cache "0.81.5"
-    metro-cache-key "0.81.5"
-    metro-minify-terser "0.81.5"
-    metro-source-map "0.81.5"
-    metro-transform-plugins "0.81.5"
+    "@babel/core" "^7.20.0"
+    "@babel/generator" "^7.20.0"
+    "@babel/parser" "^7.20.0"
+    "@babel/types" "^7.20.0"
+    metro "0.79.1"
+    metro-babel-transformer "0.79.1"
+    metro-cache "0.79.1"
+    metro-cache-key "0.79.1"
+    metro-source-map "0.79.1"
+    metro-transform-plugins "0.79.1"
     nullthrows "^1.1.1"
 
-metro@0.81.5, metro@^0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro/-/metro-0.81.5.tgz#965159d72439a99ccc7bed7a480ee81128fd4b0e"
-  integrity sha512-YpFF0DDDpDVygeca2mAn7K0+us+XKmiGk4rIYMz/CRdjFoCGqAei/IQSpV0UrGfQbToSugpMQeQJveaWSH88Hg==
+metro-transform-worker@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro-transform-worker/-/metro-transform-worker-0.80.12.tgz#80be8a185b7deb93402b682f58a1dd6724317ad1"
+  integrity sha512-KAPFN1y3eVqEbKLx1I8WOarHPqDMUa8WelWxaJCNKO/yHCP26zELeqTJvhsQup+8uwB6EYi/sp0b6TGoh6lOEA==
   dependencies:
-    "@babel/code-frame" "^7.24.7"
-    "@babel/core" "^7.25.2"
-    "@babel/generator" "^7.25.0"
-    "@babel/parser" "^7.25.3"
-    "@babel/template" "^7.25.0"
-    "@babel/traverse" "^7.25.3"
-    "@babel/types" "^7.25.2"
+    "@babel/core" "^7.20.0"
+    "@babel/generator" "^7.20.0"
+    "@babel/parser" "^7.20.0"
+    "@babel/types" "^7.20.0"
+    flow-enums-runtime "^0.0.6"
+    metro "0.80.12"
+    metro-babel-transformer "0.80.12"
+    metro-cache "0.80.12"
+    metro-cache-key "0.80.12"
+    metro-minify-terser "0.80.12"
+    metro-source-map "0.80.12"
+    metro-transform-plugins "0.80.12"
+    nullthrows "^1.1.1"
+
+metro@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro/-/metro-0.79.1.tgz#e6e2db1d2aca30d88e419d97835572660aba2064"
+  integrity sha512-PDzLQn4fpV4cs6brPi3zSu3zOA3kG+x6algazYGz1FzrOIsIT+L0Hd294+V4xN73EjLrSD5vD5hNsWlBxRk/PA==
+  dependencies:
+    "@babel/code-frame" "^7.0.0"
+    "@babel/core" "^7.20.0"
+    "@babel/generator" "^7.20.0"
+    "@babel/parser" "^7.20.0"
+    "@babel/template" "^7.0.0"
+    "@babel/traverse" "^7.20.0"
+    "@babel/types" "^7.20.0"
     accepts "^1.3.7"
     chalk "^4.0.0"
     ci-info "^2.0.0"
     connect "^3.6.5"
     debug "^2.2.0"
+    denodeify "^1.2.1"
+    error-stack-parser "^2.0.6"
+    graceful-fs "^4.2.4"
+    hermes-parser "0.15.0"
+    image-size "^1.0.2"
+    invariant "^2.2.4"
+    jest-worker "^27.2.0"
+    jsc-safe-url "^0.2.2"
+    lodash.throttle "^4.1.1"
+    metro-babel-transformer "0.79.1"
+    metro-cache "0.79.1"
+    metro-cache-key "0.79.1"
+    metro-config "0.79.1"
+    metro-core "0.79.1"
+    metro-file-map "0.79.1"
+    metro-minify-terser "0.79.1"
+    metro-resolver "0.79.1"
+    metro-runtime "0.79.1"
+    metro-source-map "0.79.1"
+    metro-symbolicate "0.79.1"
+    metro-transform-plugins "0.79.1"
+    metro-transform-worker "0.79.1"
+    mime-types "^2.1.27"
+    node-fetch "^2.2.0"
+    nullthrows "^1.1.1"
+    rimraf "^3.0.2"
+    serialize-error "^2.1.0"
+    source-map "^0.5.6"
+    strip-ansi "^6.0.0"
+    throat "^5.0.0"
+    ws "^7.5.1"
+    yargs "^17.6.2"
+
+metro@0.80.12, metro@^0.80.3:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/metro/-/metro-0.80.12.tgz#29a61fb83581a71e50c4d8d5d8458270edfe34cc"
+  integrity sha512-1UsH5FzJd9quUsD1qY+zUG4JY3jo3YEMxbMYH9jT6NK3j4iORhlwTK8fYTfAUBhDKjgLfKjAh7aoazNE23oIRA==
+  dependencies:
+    "@babel/code-frame" "^7.0.0"
+    "@babel/core" "^7.20.0"
+    "@babel/generator" "^7.20.0"
+    "@babel/parser" "^7.20.0"
+    "@babel/template" "^7.0.0"
+    "@babel/traverse" "^7.20.0"
+    "@babel/types" "^7.20.0"
+    accepts "^1.3.7"
+    chalk "^4.0.0"
+    ci-info "^2.0.0"
+    connect "^3.6.5"
+    debug "^2.2.0"
+    denodeify "^1.2.1"
     error-stack-parser "^2.0.6"
     flow-enums-runtime "^0.0.6"
     graceful-fs "^4.2.4"
-    hermes-parser "0.25.1"
+    hermes-parser "0.23.1"
     image-size "^1.0.2"
     invariant "^2.2.4"
-    jest-worker "^29.7.0"
+    jest-worker "^29.6.3"
     jsc-safe-url "^0.2.2"
     lodash.throttle "^4.1.1"
-    metro-babel-transformer "0.81.5"
-    metro-cache "0.81.5"
-    metro-cache-key "0.81.5"
-    metro-config "0.81.5"
-    metro-core "0.81.5"
-    metro-file-map "0.81.5"
-    metro-resolver "0.81.5"
-    metro-runtime "0.81.5"
-    metro-source-map "0.81.5"
-    metro-symbolicate "0.81.5"
-    metro-transform-plugins "0.81.5"
-    metro-transform-worker "0.81.5"
+    metro-babel-transformer "0.80.12"
+    metro-cache "0.80.12"
+    metro-cache-key "0.80.12"
+    metro-config "0.80.12"
+    metro-core "0.80.12"
+    metro-file-map "0.80.12"
+    metro-resolver "0.80.12"
+    metro-runtime "0.80.12"
+    metro-source-map "0.80.12"
+    metro-symbolicate "0.80.12"
+    metro-transform-plugins "0.80.12"
+    metro-transform-worker "0.80.12"
     mime-types "^2.1.27"
     nullthrows "^1.1.1"
     serialize-error "^2.1.0"
     source-map "^0.5.6"
+    strip-ansi "^6.0.0"
     throat "^5.0.0"
     ws "^7.5.10"
     yargs "^17.6.2"
 
-micromatch@^4.0.4, micromatch@^4.0.7, micromatch@^4.0.8:
+micromatch@^4.0.4, micromatch@^4.0.8:
   version "4.0.8"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/micromatch/-/micromatch-4.0.8.tgz#d66fa18f3a47076789320b9b1af32bd86d9fa202"
   integrity sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==
@@ -5367,7 +5648,7 @@ mimic-fn@^4.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/mimic-fn/-/mimic-fn-4.0.0.tgz#60a90550d5cb0b239cca65d893b1a53b29871ecc"
   integrity sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==
 
-minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
+minimatch@^3.0.2, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/minimatch/-/minimatch-3.1.2.tgz#19cd194bfd3e428f049a70817c038d89ab4be35b"
   integrity sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==
@@ -5380,6 +5661,18 @@ minimatch@^9.0.4:
   integrity sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==
   dependencies:
     brace-expansion "^2.0.1"
+
+minimist@^1.2.6:
+  version "1.2.8"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
+  integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
+
+mkdirp@^0.5.1:
+  version "0.5.6"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/mkdirp/-/mkdirp-0.5.6.tgz#7def03d2432dcae4ba1d611445c48396062255f6"
+  integrity sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==
+  dependencies:
+    minimist "^1.2.6"
 
 mkdirp@^1.0.4:
   version "1.0.4"
@@ -5450,6 +5743,25 @@ nocache@^3.0.1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/nocache/-/nocache-3.0.4.tgz#5b37a56ec6e09fc7d401dceaed2eab40c8bfdf79"
   integrity sha512-WDD0bdg9mbq6F4mRxEYcPWwfA1vxd0mrvKOyxI7Xj/atfRHVeutzuWByG//jfm4uPzp0y4Kj051EORCBSQMycw==
 
+node-abort-controller@^3.1.1:
+  version "3.1.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/node-abort-controller/-/node-abort-controller-3.1.1.tgz#a94377e964a9a37ac3976d848cb5c765833b8548"
+  integrity sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==
+
+node-dir@^0.1.17:
+  version "0.1.17"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/node-dir/-/node-dir-0.1.17.tgz#5f5665d93351335caabef8f1c554516cf5f1e4e5"
+  integrity sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==
+  dependencies:
+    minimatch "^3.0.2"
+
+node-fetch@^2.2.0, node-fetch@^2.6.0:
+  version "2.7.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
+  integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
+  dependencies:
+    whatwg-url "^5.0.0"
+
 node-forge@^1:
   version "1.3.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/node-forge/-/node-forge-1.3.3.tgz#0ad80f6333b3a0045e827ac20b7f735f93716751"
@@ -5499,14 +5811,19 @@ nwsapi@^2.2.4:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/nwsapi/-/nwsapi-2.2.23.tgz#59712c3a88e6de2bb0b6ccc1070397267019cf6c"
   integrity sha512-7wfH4sLbt4M0gCDzGE6vzQBo0bfTKjU7Sfpqy/7gs1qBfYz2vEJH6vXcBKpO3+6Yu1telwd0t9HpyOoLEQQbIQ==
 
-ob1@0.81.5:
-  version "0.81.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ob1/-/ob1-0.81.5.tgz#1e14153d75b124f967f308b138239bba17ff5a77"
-  integrity sha512-iNpbeXPLmaiT9I5g16gFFFjsF3sGxLpYG2EGP3dfFB4z+l9X60mp/yRzStHhMtuNt8qmf7Ww80nOPQHngHhnIQ==
+ob1@0.79.1:
+  version "0.79.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ob1/-/ob1-0.79.1.tgz#11d43712ff2c089d576b13b05b0caeed28389c6b"
+  integrity sha512-Z05NdP9uwS6UWoqNQDqx/VuVBD7rhMBqCB52js9HRct5IsU/lcSC/9Rv4J977wcOrSmaYTXQa2HRkUg4QAIS3g==
+
+ob1@0.80.12:
+  version "0.80.12"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ob1/-/ob1-0.80.12.tgz#0451944ba6e5be225cc9751d8cd0d7309d2d1537"
+  integrity sha512-VMArClVT6LkhUGpnuEoBuyjG9rzUyEzg4PDkav6wK1cLhOK02gPCYFxoiB4mqVnrMhDpIzJcrGNAMVi9P+hXrw==
   dependencies:
     flow-enums-runtime "^0.0.6"
 
-object-assign@^4, object-assign@^4.0.1:
+object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==
@@ -5685,16 +6002,6 @@ parse-json@^4.0.0:
     error-ex "^1.3.1"
     json-parse-better-errors "^1.0.1"
 
-parse-json@^5.2.0:
-  version "5.2.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/parse-json/-/parse-json-5.2.0.tgz#c76fc66dee54231c962b22bcc8a72cf2f99753cd"
-  integrity sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==
-  dependencies:
-    "@babel/code-frame" "^7.0.0"
-    error-ex "^1.3.1"
-    json-parse-even-better-errors "^2.3.0"
-    lines-and-columns "^1.1.6"
-
 parse5@^7.1.2:
   version "7.3.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/parse5/-/parse5-7.3.0.tgz#d7e224fa72399c7a175099f45fc2ad024b05ec05"
@@ -5762,7 +6069,7 @@ pathval@^2.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/pathval/-/pathval-2.0.1.tgz#8855c5a2899af072d6ac05d11e46045ad0dc605d"
   integrity sha512-//nshmD55c46FuFw26xV/xFAaB5HF9Xdap7HJBBnrKdAd6/GxDBaNA1870O79+9ueg61cZLSVc+OaFlfmObYVQ==
 
-picocolors@^1.0.0, picocolors@^1.0.1, picocolors@^1.1.1:
+picocolors@^1.0.0, picocolors@^1.1.1:
   version "1.1.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/picocolors/-/picocolors-1.1.1.tgz#3d321af3eab939b083c8f929a1d12cda81c26b6b"
   integrity sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==
@@ -5782,7 +6089,7 @@ pify@^4.0.1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pirates@^4.0.1, pirates@^4.0.4, pirates@^4.0.6:
+pirates@^4.0.1, pirates@^4.0.6:
   version "4.0.7"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/pirates/-/pirates-4.0.7.tgz#643b4a18c4257c8a65104b73f3049ce9a0a15e22"
   integrity sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==
@@ -5853,7 +6160,7 @@ prettier@^3.4.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/prettier/-/prettier-3.7.4.tgz#d2f8335d4b1cec47e1c8098645411b0c9dff9c0f"
   integrity sha512-v6UNi1+3hSlVvv8fSaoUbggEM5VErKmmpGA7Pl3HF8V6uKY7rvClBOJlH6yNwQtfTueNkGVpOv/mtWL9L4bgRA==
 
-pretty-format@^26.6.2:
+pretty-format@^26.5.2, pretty-format@^26.6.2:
   version "26.6.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/pretty-format/-/pretty-format-26.6.2.tgz#e35c2705f14cb7fe2fe94fa078345b444120fc93"
   integrity sha512-7AeGuCYNGmycyQbCqd/3PWH4eOoX/OiCa0uphp57NVTeAGdJGaAliecxwBDHYQCIvrW7aDBZCYeNTP/WX69mkg==
@@ -5880,6 +6187,11 @@ pretty-format@^29.7.0:
     "@jest/schemas" "^29.6.3"
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
+
+process-nextick-args@~2.0.0:
+  version "2.0.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
+  integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
 promise@^8.3.0:
   version "8.3.0"
@@ -5933,6 +6245,11 @@ query-string@^7.1.3:
     split-on-first "^1.0.0"
     strict-uri-encode "^2.0.0"
 
+querystring@^0.2.1:
+  version "0.2.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/querystring/-/querystring-0.2.1.tgz#40d77615bb09d16902a85c3e38aa8b5ed761c2dd"
+  integrity sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg==
+
 querystringify@^2.1.1:
   version "2.2.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
@@ -5965,10 +6282,10 @@ raw-body@^3.0.0, raw-body@^3.0.1:
     iconv-lite "~0.7.0"
     unpipe "~1.0.0"
 
-react-devtools-core@^6.0.1:
-  version "6.1.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-devtools-core/-/react-devtools-core-6.1.5.tgz#c5eca79209dab853a03b2158c034c5166975feee"
-  integrity sha512-ePrwPfxAnB+7hgnEr8vpKxL9cmnp7F322t8oqcPshbIQQhDKgFDW4tjhF2wjVbdXF9O/nyuy3sQWd9JGpiLPvA==
+react-devtools-core@^5.0.0:
+  version "5.3.2"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-devtools-core/-/react-devtools-core-5.3.2.tgz#d5df92f8ef2a587986d094ef2c47d84cf4ae46ec"
+  integrity sha512-crr9HkVrDiJ0A4zot89oS0Cgv0Oa4OG1Em4jit3P3ZxZSKPMYyMjfwMqgcJna9o625g8oN87rBm8SWWrSTBZxg==
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
@@ -5986,6 +6303,11 @@ react-freeze@^1.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-freeze/-/react-freeze-1.0.4.tgz#cbbea2762b0368b05cbe407ddc9d518c57c6f3ad"
   integrity sha512-r4F0Sec0BLxWicc7HEyo2x3/2icUTrRmDjaaRyzzn+7aDyFZliszMDOgLVwSnQnYENOlL1o569Ze2HZefk8clA==
 
+"react-is@^16.12.0 || ^17.0.0 || ^18.0.0", react-is@^18.0.0:
+  version "18.3.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-is/-/react-is-18.3.1.tgz#e83557dc12eae63a99e003a46388b1dcbb44db7e"
+  integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
+
 react-is@^16.13.0:
   version "16.13.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -5996,65 +6318,60 @@ react-is@^17.0.1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-is@^18.0.0:
-  version "18.3.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-is/-/react-is-18.3.1.tgz#e83557dc12eae63a99e003a46388b1dcbb44db7e"
-  integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
-
-react-native-safe-area-context@^4.14.0:
+react-native-safe-area-context@^4.10.0:
   version "4.14.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-native-safe-area-context/-/react-native-safe-area-context-4.14.1.tgz#980c3c9db02a2314fa8ceb07f614728802320367"
   integrity sha512-+tUhT5WBl8nh5+P+chYhAjR470iCByf9z5EYdCEbPaAK3Yfzw+o8VRPnUgmPAKlSccOgQBxx3NOl/Wzckn9ujg==
 
-react-native-screens@^4.0.0:
-  version "4.19.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-native-screens/-/react-native-screens-4.19.0.tgz#d00f2ec070d7426204eaf34ef6c64396a6871e1d"
-  integrity sha512-qSDAO3AL5bti0Ri7KZRSVmWlhDr8MV86N5GruiKVQfEL7Zx2nUi3Dl62lqHUAD/LnDvOPuDDsMHCfIpYSv3hPQ==
+react-native-screens@^3.31.0:
+  version "3.37.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-native-screens/-/react-native-screens-3.37.0.tgz#836ef8f8012d288bc6130857c4fca2ea1ba24bfc"
+  integrity sha512-vEi4qZqWYoGuVGuHTv1K2XA90rgSydksmR5+tb5uhL93whl6Bch6EEXzC+8eEfj4SimiCgXBPY7r/xTXJxvnUg==
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native@0.77.3:
-  version "0.77.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-native/-/react-native-0.77.3.tgz#a459f6e80eb4652e7ef70dda177dc9dda1ae86e6"
-  integrity sha512-fIYZ9+zX+iGcb/xGZA6oN3Uq9x46PdqVYtlyG+WmOIFQPVXgryaS9FJLdTvoTpsEA2JXGSGgNOdm640IdAW3cA==
+react-native@0.74.0:
+  version "0.74.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-native/-/react-native-0.74.0.tgz#9f0901139424152216e1ae1b32773787a0158d41"
+  integrity sha512-Vpp9WPmkCm4TUH5YDxwQhqktGVon/yLpjbTgjgLqup3GglOgWagYCX3MlmK1iksIcqtyMJHMEWa+UEzJ3G9T8w==
   dependencies:
     "@jest/create-cache-key-function" "^29.6.3"
-    "@react-native/assets-registry" "0.77.3"
-    "@react-native/codegen" "0.77.3"
-    "@react-native/community-cli-plugin" "0.77.3"
-    "@react-native/gradle-plugin" "0.77.3"
-    "@react-native/js-polyfills" "0.77.3"
-    "@react-native/normalize-colors" "0.77.3"
-    "@react-native/virtualized-lists" "0.77.3"
+    "@react-native-community/cli" "13.6.4"
+    "@react-native-community/cli-platform-android" "13.6.4"
+    "@react-native-community/cli-platform-ios" "13.6.4"
+    "@react-native/assets-registry" "0.74.81"
+    "@react-native/codegen" "0.74.81"
+    "@react-native/community-cli-plugin" "0.74.81"
+    "@react-native/gradle-plugin" "0.74.81"
+    "@react-native/js-polyfills" "0.74.81"
+    "@react-native/normalize-colors" "0.74.81"
+    "@react-native/virtualized-lists" "0.74.81"
     abort-controller "^3.0.0"
     anser "^1.4.9"
     ansi-regex "^5.0.0"
-    babel-jest "^29.7.0"
-    babel-plugin-syntax-hermes-parser "0.25.1"
     base64-js "^1.5.1"
     chalk "^4.0.0"
-    commander "^12.0.0"
     event-target-shim "^5.0.1"
     flow-enums-runtime "^0.0.6"
-    glob "^7.1.1"
     invariant "^2.2.4"
     jest-environment-node "^29.6.3"
     jsc-android "^250231.0.0"
     memoize-one "^5.0.0"
-    metro-runtime "^0.81.5"
-    metro-source-map "^0.81.5"
+    metro-runtime "^0.80.3"
+    metro-source-map "^0.80.3"
+    mkdirp "^0.5.1"
     nullthrows "^1.1.1"
-    pretty-format "^29.7.0"
+    pretty-format "^26.5.2"
     promise "^8.3.0"
-    react-devtools-core "^6.0.1"
+    react-devtools-core "^5.0.0"
     react-refresh "^0.14.0"
+    react-shallow-renderer "^16.15.0"
     regenerator-runtime "^0.13.2"
     scheduler "0.24.0-canary-efb381bbf-20230505"
-    semver "^7.1.3"
     stacktrace-parser "^0.1.10"
     whatwg-fetch "^3.0.0"
-    ws "^6.2.3"
+    ws "^6.2.2"
     yargs "^17.6.2"
 
 react-redux@^9.1.0:
@@ -6075,6 +6392,11 @@ react-refresh@^0.17.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-refresh/-/react-refresh-0.17.0.tgz#b7e579c3657f23d04eccbe4ad2e58a8ed51e7e53"
   integrity sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==
 
+react-refresh@^0.4.0:
+  version "0.4.3"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-refresh/-/react-refresh-0.4.3.tgz#966f1750c191672e76e16c2efa569150cc73ab53"
+  integrity sha512-Hwln1VNuGl/6bVwnd0Xdn1e84gT/8T9aYNL+HAKDArLCS7LWjwr7StE30IEYbIkx0Vi3vs+coQxe+SQDbGbbpA==
+
 react-router-dom@^6.20.0:
   version "6.30.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-router-dom/-/react-router-dom-6.30.2.tgz#ee8c161bce4890d34484b552f8510f9af0e22b01"
@@ -6089,6 +6411,21 @@ react-router@6.30.2:
   integrity sha512-H2Bm38Zu1bm8KUE5NVWRMzuIyAV8p/JrOaBJAwVmp37AXG72+CZJlEBw6pdn9i5TBgLMhNDgijS4ZlblpHyWTA==
   dependencies:
     "@remix-run/router" "1.23.1"
+
+react-shallow-renderer@^16.15.0:
+  version "16.15.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react-shallow-renderer/-/react-shallow-renderer-16.15.0.tgz#48fb2cf9b23d23cde96708fe5273a7d3446f4457"
+  integrity sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==
+  dependencies:
+    object-assign "^4.1.1"
+    react-is "^16.12.0 || ^17.0.0 || ^18.0.0"
+
+react@18.2.0:
+  version "18.2.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
+  integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
+  dependencies:
+    loose-envify "^1.1.0"
 
 react@^18.2.0:
   version "18.3.1"
@@ -6106,6 +6443,19 @@ readable-stream@^3.4.0:
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
 
+readable-stream@~2.3.6:
+  version "2.3.8"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/readable-stream/-/readable-stream-2.3.8.tgz#91125e8042bba1b9887f49345f6277027ce8be9b"
+  integrity sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==
+  dependencies:
+    core-util-is "~1.0.0"
+    inherits "~2.0.3"
+    isarray "~1.0.0"
+    process-nextick-args "~2.0.0"
+    safe-buffer "~5.1.1"
+    string_decoder "~1.1.1"
+    util-deprecate "~1.0.1"
+
 readdirp@^4.0.1:
   version "4.1.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/readdirp/-/readdirp-4.1.2.tgz#eb85801435fbf2a7ee58f19e0921b068fc69948d"
@@ -6116,15 +6466,14 @@ readline@^1.3.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/readline/-/readline-1.3.0.tgz#c580d77ef2cfc8752b132498060dc9793a7ac01c"
   integrity sha512-k2d6ACCkiNYz222Fs/iNze30rRJ1iIicW7JuX/7/cozvih6YCkFZH+J6mAFDVgv0dRBaAyr4jDqC95R2y4IADg==
 
-recast@^0.23.11:
-  version "0.23.11"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/recast/-/recast-0.23.11.tgz#8885570bb28cf773ba1dc600da7f502f7883f73f"
-  integrity sha512-YTUo+Flmw4ZXiWfQKGcwwc11KnoRAYgzAE2E7mXKCjSviTKShtxBsN6YUUBB2gtaBzKzeKunxhUwNHQuRryhWA==
+recast@^0.21.0:
+  version "0.21.5"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/recast/-/recast-0.21.5.tgz#e8cd22bb51bcd6130e54f87955d33a2b2e57b495"
+  integrity sha512-hjMmLaUXAm1hIuTqOdeYObMslq/q+Xff6QE3Y2P+uoHAg2nmVlLBps2hzh1UJDdMtDTMXOFewK6ky51JQIeECg==
   dependencies:
-    ast-types "^0.16.1"
+    ast-types "0.15.2"
     esprima "~4.0.0"
     source-map "~0.6.1"
-    tiny-invariant "^1.3.3"
     tslib "^2.0.1"
 
 redux-thunk@^3.1.0:
@@ -6264,6 +6613,13 @@ rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
+rimraf@~2.6.2:
+  version "2.6.3"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/rimraf/-/rimraf-2.6.3.tgz#b2d104fe0d8fb27cf9e0a1cda8262dd3833c6cab"
+  integrity sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==
+  dependencies:
+    glob "^7.1.3"
+
 rollup@^4.20.0, rollup@^4.34.8:
   version "4.54.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/rollup/-/rollup-4.54.0.tgz#930f4dfc41ff94d720006f9f62503612a6c319b8"
@@ -6323,6 +6679,11 @@ safe-buffer@5.2.1, safe-buffer@~5.2.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
+safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+  version "5.1.2"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
+  integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
+
 safe-regex-test@^1.1.0:
   version "1.1.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/safe-regex-test/-/safe-regex-test-1.1.0.tgz#7f87dfb67a3150782eaaf18583ff5d1711ac10c1"
@@ -6371,12 +6732,12 @@ semver@^5.6.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/semver/-/semver-5.7.2.tgz#48d55db737c3287cd4835e17fa13feace1c41ef8"
   integrity sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==
 
-semver@^6.3.0, semver@^6.3.1:
+semver@^6.3.1:
   version "6.3.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.1.3, semver@^7.5.2, semver@^7.6.0:
+semver@^7.5.2, semver@^7.6.0:
   version "7.7.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/semver/-/semver-7.7.3.tgz#4b5f4143d007633a8dc671cd0a6ef9147b8bb946"
   integrity sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
@@ -6422,7 +6783,7 @@ serialize-error@^2.1.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/serialize-error/-/serialize-error-2.1.0.tgz#50b679d5635cdf84667bdc8e59af4e5b81d5f60a"
   integrity sha512-ghgmKt5o4Tly5yEG/UJp8qTd0AN7Xalw4XBtDEKP655B699qMEtra1WlXeE6WIvdEG481JvRxULKsInq/iNysw==
 
-serve-static@^1.13.1, serve-static@^1.16.2:
+serve-static@^1.13.1:
   version "1.16.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/serve-static/-/serve-static-1.16.3.tgz#a97b74d955778583f3862a4f0b841eb4d5d78cf9"
   integrity sha512-x0RTqQel6g5SY7Lg6ZreMmsOzncHFU7nhnRWkKgWuMTu5NN0DR5oruckMqRvacAN9d5w6ARnRBXl9xhDCgfMeA==
@@ -6543,12 +6904,12 @@ siginfo@^2.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/siginfo/-/siginfo-2.0.0.tgz#32e76c70b79724e3bb567cb9d543eb858ccfaf30"
   integrity sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==
 
-signal-exit@^3.0.2, signal-exit@^3.0.3, signal-exit@^3.0.7:
+signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.7"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
 
-signal-exit@^4.0.1, signal-exit@^4.1.0:
+signal-exit@^4.1.0:
   version "4.1.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/signal-exit/-/signal-exit-4.1.0.tgz#952188c1cbd546070e2dd20d0f41c0ae0530cb04"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
@@ -6595,7 +6956,7 @@ source-map@^0.6.0, source-map@~0.6.1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
-source-map@^0.7.6:
+source-map@^0.7.3, source-map@^0.7.6:
   version "0.7.6"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/source-map/-/source-map-0.7.6.tgz#a3658ab87e5b6429c8a1f3ba0083d4c61ca3ef02"
   integrity sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==
@@ -6677,6 +7038,13 @@ string_decoder@^1.1.1:
   integrity sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==
   dependencies:
     safe-buffer "~5.2.0"
+
+string_decoder@~1.1.1:
+  version "1.1.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/string_decoder/-/string_decoder-1.1.1.tgz#9cf1611ba62685d7030ae9e4ba34149c3af03fc8"
+  integrity sha512-n/ShnvDi6FHbbVfviro+WojiFzv+s8MPMHBczVePfUpDJLwoLT0ht1l4YwBCbi8pJAveEEdnkHyPyTP/mzRfwg==
+  dependencies:
+    safe-buffer "~5.1.0"
 
 strip-ansi@^5.0.0, strip-ansi@^5.2.0:
   version "5.2.0"
@@ -6761,6 +7129,18 @@ symbol-tree@^3.2.4:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
+temp-dir@^2.0.0:
+  version "2.0.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/temp-dir/-/temp-dir-2.0.0.tgz#bde92b05bdfeb1516e804c9c00ad45177f31321e"
+  integrity sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==
+
+temp@^0.8.4:
+  version "0.8.4"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/temp/-/temp-0.8.4.tgz#8c97a33a4770072e0a05f919396c7665a7dd59f2"
+  integrity sha512-s0ZZzd0BzYv5tLSptZooSjK8oj6C+c19p7Vqta9+6NPOf7r+fxq0cJe6/oN4LTC79sy5NY8ucOJNgwsKCSbfqg==
+  dependencies:
+    rimraf "~2.6.2"
+
 terser@^5.15.0:
   version "5.44.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/terser/-/terser-5.44.1.tgz#e391e92175c299b8c284ad6ded609e37303b0a9c"
@@ -6770,15 +7150,6 @@ terser@^5.15.0:
     acorn "^8.15.0"
     commander "^2.20.0"
     source-map-support "~0.5.20"
-
-test-exclude@^6.0.0:
-  version "6.0.0"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/test-exclude/-/test-exclude-6.0.0.tgz#04a8698661d805ea6fa293b6cb9e63ac044ef15e"
-  integrity sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==
-  dependencies:
-    "@istanbuljs/schema" "^0.1.2"
-    glob "^7.1.4"
-    minimatch "^3.0.4"
 
 thenify-all@^1.0.0:
   version "1.6.0"
@@ -6799,10 +7170,13 @@ throat@^5.0.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/throat/-/throat-5.0.0.tgz#c5199235803aad18754a667d659b5e72ce16764b"
   integrity sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==
 
-tiny-invariant@^1.3.3:
-  version "1.3.3"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/tiny-invariant/-/tiny-invariant-1.3.3.tgz#46680b7a873a0d5d10005995eb90a70d74d60127"
-  integrity sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==
+through2@^2.0.1:
+  version "2.0.5"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
+  integrity sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==
+  dependencies:
+    readable-stream "~2.3.6"
+    xtend "~4.0.1"
 
 tinybench@^2.5.1, tinybench@^2.9.0:
   version "2.9.0"
@@ -6847,11 +7221,6 @@ tinyspy@^3.0.2:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/tinyspy/-/tinyspy-3.0.2.tgz#86dd3cf3d737b15adcf17d7887c84a75201df20a"
   integrity sha512-n1cw8k1k0x4pgA2+9XrOkFydTerNcJ1zWCO5Nn9scWHTD+5tp8dghT2x1uduQePZTZgd3Tupf+x9BxJjeJi77Q==
 
-tmp@^0.2.3:
-  version "0.2.5"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/tmp/-/tmp-0.2.5.tgz#b06bcd23f0f3c8357b426891726d16015abfd8f8"
-  integrity sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==
-
 tmpl@1.0.5:
   version "1.0.5"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
@@ -6885,6 +7254,11 @@ tr46@^4.1.1:
   integrity sha512-2lv/66T7e5yNyhAAC4NaKe5nVavzuGJQVVtRYLyQ2OI8tsJ61PMLlelehb0wi2Hx6+hT/OJUWZcw8MjlSRnxvw==
   dependencies:
     punycode "^2.3.0"
+
+tr46@~0.0.3:
+  version "0.0.3"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
+  integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
 
 tree-kill@^1.2.2:
   version "1.2.2"
@@ -7022,7 +7396,7 @@ typescript-eslint@^8.51.0:
     "@typescript-eslint/typescript-estree" "8.51.0"
     "@typescript-eslint/utils" "8.51.0"
 
-typescript@^5.7.0:
+typescript@^5.4.0, typescript@^5.7.0:
   version "5.9.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/typescript/-/typescript-5.9.3.tgz#5b4f59e15310ab17a216f5d6cf53ee476ede670f"
   integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==
@@ -7031,6 +7405,11 @@ ufo@^1.6.1:
   version "1.6.1"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ufo/-/ufo-1.6.1.tgz#ac2db1d54614d1b22c1d603e3aef44a85d8f146b"
   integrity sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==
+
+undici-types@~5.26.4:
+  version "5.26.5"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
+  integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 undici-types@~6.21.0:
   version "6.21.0"
@@ -7113,7 +7492,7 @@ use-sync-external-store@^1.4.0:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
   integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==
 
-util-deprecate@^1.0.1:
+util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
@@ -7225,7 +7604,7 @@ w3c-xmlserializer@^4.0.0:
   dependencies:
     xml-name-validator "^4.0.0"
 
-walker@^1.0.7, walker@^1.0.8:
+walker@^1.0.7:
   version "1.0.8"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/walker/-/walker-1.0.8.tgz#bd498db477afe573dc04185f011d3ab8a8d7653f"
   integrity sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==
@@ -7243,6 +7622,11 @@ wcwidth@^1.0.1:
   integrity sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==
   dependencies:
     defaults "^1.0.3"
+
+webidl-conversions@^3.0.0:
+  version "3.0.1"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
+  integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
 
 webidl-conversions@^7.0.0:
   version "7.0.0"
@@ -7273,6 +7657,14 @@ whatwg-url@^12.0.0, whatwg-url@^12.0.1:
   dependencies:
     tr46 "^4.1.1"
     webidl-conversions "^7.0.0"
+
+whatwg-url@^5.0.0:
+  version "5.0.0"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
+  integrity sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==
+  dependencies:
+    tr46 "~0.0.3"
+    webidl-conversions "^3.0.0"
 
 which-boxed-primitive@^1.0.2:
   version "1.1.1"
@@ -7356,30 +7748,23 @@ wrappy@1:
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-write-file-atomic@^4.0.2:
-  version "4.0.2"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/write-file-atomic/-/write-file-atomic-4.0.2.tgz#a9df01ae5b77858a027fd2e80768ee433555fcfd"
-  integrity sha512-7KxauUdBmSdWnmpaGFg+ppNjKF8uNLry8LyzjauQDOVONfFLNKrKvQOxZ/VuTIcS/gge/YNahf5RIIQWTSarlg==
+write-file-atomic@^2.3.0:
+  version "2.4.3"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/write-file-atomic/-/write-file-atomic-2.4.3.tgz#1fd2e9ae1df3e75b8d8c367443c692d4ca81f481"
+  integrity sha512-GaETH5wwsX+GcnzhPgKcKjJ6M2Cq3/iZp1WyY/X1CSqrW+jVNM9Y7D8EC2sM4ZG/V8wZlSniJnCKWPmBYAucRQ==
   dependencies:
+    graceful-fs "^4.1.11"
     imurmurhash "^0.1.4"
-    signal-exit "^3.0.7"
+    signal-exit "^3.0.2"
 
-write-file-atomic@^5.0.1:
-  version "5.0.1"
-  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/write-file-atomic/-/write-file-atomic-5.0.1.tgz#68df4717c55c6fa4281a7860b4c2ba0a6d2b11e7"
-  integrity sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw==
-  dependencies:
-    imurmurhash "^0.1.4"
-    signal-exit "^4.0.1"
-
-ws@^6.2.3:
+ws@^6.2.2:
   version "6.2.3"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ws/-/ws-6.2.3.tgz#ccc96e4add5fd6fedbc491903075c85c5a11d9ee"
   integrity sha512-jmTjYU0j60B+vHey6TfR3Z7RD61z/hmxBS3VMSGIrroOWXQEneK1zNuotOUrGyBHQj0yrpsLHPWtigEFd13ndA==
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7, ws@^7.5.10:
+ws@^7, ws@^7.5.1, ws@^7.5.10:
   version "7.5.10"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
   integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
@@ -7398,6 +7783,11 @@ xmlchars@^2.2.0:
   version "2.2.0"
   resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
+
+xtend@~4.0.1:
+  version "4.0.2"
+  resolved "https://npm.dev.wixpress.com/api/npm/npm-repos/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
+  integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
 y18n@^4.0.0:
   version "4.0.3"
