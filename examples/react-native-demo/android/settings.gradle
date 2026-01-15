@@ -1,6 +1,7 @@
 rootProject.name = 'MCPDemoApp'
 
-// Support both local node_modules and hoisted (yarn workspaces) node_modules
+// Support both local node_modules (nohoist) and hoisted (yarn workspaces) node_modules
+// Check local first, then fall back to monorepo root
 def cliPlatformAndroidPath = file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
 if (!cliPlatformAndroidPath.exists()) {
     cliPlatformAndroidPath = file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
@@ -9,6 +10,7 @@ apply from: cliPlatformAndroidPath; applyNativeModulesSettingsGradle(settings)
 
 include ':app'
 
+// Check local first (for nohoist), then fall back to monorepo root
 def gradlePluginPath = file('../node_modules/@react-native/gradle-plugin')
 if (!gradlePluginPath.exists()) {
     gradlePluginPath = file('../../../node_modules/@react-native/gradle-plugin')

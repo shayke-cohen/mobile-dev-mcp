@@ -11,11 +11,21 @@ react {
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
     root = file("../../")
     
-    // Support both local node_modules and hoisted (yarn workspaces) node_modules
-    // For yarn workspaces, packages are in the monorepo root
-    reactNativeDir = file("../../../../node_modules/react-native")
-    codegenDir = file("../../../../node_modules/@react-native/codegen")
-    cliFile = file("../../../../node_modules/react-native/cli.js")
+    // Support both local node_modules (nohoist) and hoisted (yarn workspaces) node_modules
+    def localNodeModules = file("../../node_modules")
+    def rootNodeModules = file("../../../../node_modules")
+    
+    // Use local node_modules if react-native exists there (nohoist), otherwise use root
+    def rnDir = new File(localNodeModules, "react-native")
+    if (rnDir.exists()) {
+        reactNativeDir = file("../../node_modules/react-native")
+        codegenDir = file("../../node_modules/@react-native/codegen")
+        cliFile = file("../../node_modules/react-native/cli.js")
+    } else {
+        reactNativeDir = file("../../../../node_modules/react-native")
+        codegenDir = file("../../../../node_modules/@react-native/codegen")
+        cliFile = file("../../../../node_modules/react-native/cli.js")
+    }
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
