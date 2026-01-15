@@ -42,5 +42,9 @@
   "files": [
     "dist",
     "README.md"
-  ]
+  ],
+  "author": "Mobile Dev MCP Contributors",
+  "publishConfig": {
+    "access": "public"
+  }
 }

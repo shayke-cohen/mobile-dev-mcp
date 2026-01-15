@@ -72,3 +72,7 @@ Thumbs.db
 # Swift build
 packages/sdk-ios/.build/
 packages/sdk-ios/Package.resolved
+
+# Cursor internal files
+.cursorrules
+.cursor/

@@ -52,11 +52,14 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anthropics/mobile-dev-mcp.git",
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp.git",
     "directory": "packages/sdk-react"
   },
   "bugs": {
-    "url": "https://github.com/anthropics/mobile-dev-mcp/issues"
+    "url": "https://github.com/mobile-dev-mcp/mobile-dev-mcp/issues"
   },
-  "homepage": "https://github.com/anthropics/mobile-dev-mcp#readme"
+  "homepage": "https://github.com/mobile-dev-mcp/mobile-dev-mcp/tree/main/packages/sdk-react#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
