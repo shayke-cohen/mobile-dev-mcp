@@ -13,12 +13,15 @@
       "examples/*"
     ],
     "nohoist": [
-      "**/react-native",
-      "**/react-native/**",
-      "**/@react-native/**",
-      "**/@react-native-community/**",
-      "**/metro",
-      "**/metro/**"
+      "react-native-mcp-demo/react",
+      "react-native-mcp-demo/react-native",
+      "react-native-mcp-demo/react-native/**",
+      "react-native-mcp-demo/@react-native/**",
+      "react-native-mcp-demo/@react-native-community/**",
+      "react-native-mcp-demo/metro",
+      "react-native-mcp-demo/metro/**",
+      "react-web-mcp-demo/react",
+      "react-web-mcp-demo/react-dom"
     ]
   },
   "scripts": {
