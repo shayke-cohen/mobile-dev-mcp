@@ -492,7 +492,7 @@ async function listIOSSimulators(state?: string): Promise<unknown[]> {
     }
 
     return devices;
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -1155,26 +1155,10 @@ async function getDeviceLogs(params: Record<string, unknown>): Promise<unknown> 
 async function listRunningApps(params: Record<string, unknown>): Promise<unknown> {
   const filter = params.filter as string | undefined;
   
-  // Use AppleScript to get running applications
-  const script = `
-    set appList to {}
-    tell application "System Events"
-      repeat with proc in (every process whose background only is false)
-        set appInfo to {name:name of proc, bundle_id:bundle identifier of proc, pid:unix id of proc}
-        set end of appList to appInfo
-      end repeat
-    end tell
-    return appList
-  `;
-  
   try {
-    const { stdout } = await execAsync(`osascript -e '${script}'`);
-    
-    // Parse AppleScript output
+    // Use ps command to get running apps
     const apps: Array<{ name: string; bundleId: string; pid: number }> = [];
-    
-    // Alternative: use ps command for more reliable output
-    const { stdout: psOutput } = await execAsync('ps aux | grep -E "\.app/Contents/MacOS" | grep -v grep');
+    const { stdout: psOutput } = await execAsync('ps aux | grep -E "\\.app/Contents/MacOS" | grep -v grep');
     const lines = psOutput.trim().split('\n').filter(Boolean);
     
     for (const line of lines) {
@@ -1195,7 +1179,7 @@ async function listRunningApps(params: Record<string, unknown>): Promise<unknown
       count: apps.length,
       platform: 'macos',
     };
-  } catch (error) {
+  } catch {
     // Fallback to simpler approach
     const { stdout } = await execAsync('ls /Applications | grep -E "\\.app$" | sed "s/.app$//"');
     const installedApps = stdout.trim().split('\n').filter(Boolean);
