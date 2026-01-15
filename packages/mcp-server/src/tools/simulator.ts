@@ -94,21 +94,25 @@ export const simulatorTools = [
   },
   {
     name: 'launch_app',
-    description: 'Launch an app on simulator/emulator',
+    description: 'Launch an app on simulator/emulator or macOS',
     inputSchema: {
       type: 'object' as const,
       properties: {
         platform: {
           type: 'string',
-          enum: ['ios', 'android'],
+          enum: ['ios', 'android', 'macos'],
         },
         deviceId: {
           type: 'string',
-          description: 'Target device ID (optional)',
+          description: 'Target device ID (iOS/Android) or app name (macOS)',
         },
         bundleId: {
           type: 'string',
-          description: 'App bundle ID (iOS) or package name (Android)',
+          description: 'App bundle ID (iOS/macOS) or package name (Android)',
+        },
+        appName: {
+          type: 'string',
+          description: 'macOS only: App name to launch (e.g., "Safari", "MCPDemoApp")',
         },
         arguments: {
           type: 'array',
@@ -116,7 +120,7 @@ export const simulatorTools = [
           description: 'Launch arguments',
         },
       },
-      required: ['platform', 'bundleId'],
+      required: ['platform'],
     },
   },
   {
@@ -127,7 +131,7 @@ export const simulatorTools = [
       properties: {
         platform: {
           type: 'string',
-          enum: ['ios', 'android'],
+          enum: ['ios', 'android', 'macos'],
         },
         deviceId: {
           type: 'string',
@@ -136,8 +140,12 @@ export const simulatorTools = [
           type: 'string',
           description: 'App bundle ID or package name',
         },
+        appName: {
+          type: 'string',
+          description: 'macOS only: App name to terminate',
+        },
       },
-      required: ['platform', 'bundleId'],
+      required: ['platform'],
     },
   },
   {
@@ -188,13 +196,13 @@ export const simulatorTools = [
   },
   {
     name: 'simulator_record',
-    description: 'Start/stop video recording of simulator',
+    description: 'Start/stop video recording of simulator or macOS screen',
     inputSchema: {
       type: 'object' as const,
       properties: {
         platform: {
           type: 'string',
-          enum: ['ios', 'android'],
+          enum: ['ios', 'android', 'macos'],
         },
         action: {
           type: 'string',
@@ -212,13 +220,13 @@ export const simulatorTools = [
   },
   {
     name: 'open_url',
-    description: 'Open a URL in the simulator/emulator',
+    description: 'Open a URL in the simulator/emulator or macOS',
     inputSchema: {
       type: 'object' as const,
       properties: {
         platform: {
           type: 'string',
-          enum: ['ios', 'android'],
+          enum: ['ios', 'android', 'macos'],
         },
         deviceId: {
           type: 'string',
@@ -226,6 +234,10 @@ export const simulatorTools = [
         url: {
           type: 'string',
           description: 'URL to open (can be deep link)',
+        },
+        appName: {
+          type: 'string',
+          description: 'macOS only: App to open URL with (optional, uses default browser if not specified)',
         },
       },
       required: ['platform', 'url'],
@@ -345,6 +357,65 @@ export const simulatorTools = [
       required: ['platform'],
     },
   },
+  {
+    name: 'list_running_apps',
+    description: 'List running applications on macOS',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        filter: {
+          type: 'string',
+          description: 'Filter apps by name (optional)',
+        },
+      },
+    },
+  },
+  {
+    name: 'build_macos_app',
+    description: 'Build a macOS app using Swift Package Manager or xcodebuild',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        projectPath: {
+          type: 'string',
+          description: 'Path to the macOS project directory',
+        },
+        scheme: {
+          type: 'string',
+          description: 'Xcode scheme name (for .xcodeproj/.xcworkspace)',
+        },
+        configuration: {
+          type: 'string',
+          enum: ['debug', 'release'],
+          description: 'Build configuration (default: debug)',
+        },
+      },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'run_macos_app',
+    description: 'Build and run a macOS app',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        projectPath: {
+          type: 'string',
+          description: 'Path to the macOS project directory',
+        },
+        scheme: {
+          type: 'string',
+          description: 'Xcode scheme name (optional)',
+        },
+        arguments: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Arguments to pass to the app',
+        },
+      },
+      required: ['projectPath'],
+    },
+  },
 ];
 
 // MARK: - Handler
@@ -384,6 +455,12 @@ export async function handleSimulatorTool(
       return clearAppData(params);
     case 'get_device_logs':
       return getDeviceLogs(params);
+    case 'list_running_apps':
+      return listRunningApps(params);
+    case 'build_macos_app':
+      return buildMacOSApp(params);
+    case 'run_macos_app':
+      return runMacOSApp(params);
     default:
       throw new Error(`Unknown simulator tool: ${name}`);
   }
@@ -621,11 +698,13 @@ async function installApp(params: Record<string, unknown>): Promise<unknown> {
 
 async function launchApp(params: Record<string, unknown>): Promise<unknown> {
   const platform = params.platform as string;
-  const bundleId = params.bundleId as string;
+  const bundleId = params.bundleId as string | undefined;
+  const appName = params.appName as string | undefined;
   let deviceId = params.deviceId as string | undefined;
   const args = params.arguments as string[] | undefined;
   
   if (platform === 'ios') {
+    if (!bundleId) throw new Error('bundleId is required for iOS');
     deviceId = deviceId || await getBootedIOSSimulator() || undefined;
     if (!deviceId) throw new Error('No booted iOS Simulator found');
     
@@ -636,7 +715,31 @@ async function launchApp(params: Record<string, unknown>): Promise<unknown> {
     
     await execAsync(cmd);
     return { success: true, message: `Launched ${bundleId} on iOS Simulator` };
+  } else if (platform === 'macos') {
+    const app = appName || bundleId || deviceId;
+    if (!app) throw new Error('appName, bundleId, or deviceId is required for macOS');
+    
+    let cmd: string;
+    if (app.endsWith('.app') || app.startsWith('/')) {
+      // Full path to app
+      cmd = `open "${app}"`;
+    } else if (app.includes('.')) {
+      // Bundle ID - use open -b
+      cmd = `open -b "${app}"`;
+    } else {
+      // App name - use open -a
+      cmd = `open -a "${app}"`;
+    }
+    
+    if (args?.length) {
+      cmd += ' --args ' + args.map(a => `"${a}"`).join(' ');
+    }
+    
+    await execAsync(cmd);
+    return { success: true, message: `Launched ${app} on macOS`, platform: 'macos' };
   } else {
+    // Android
+    if (!bundleId) throw new Error('bundleId is required for Android');
     deviceId = deviceId || await getBootedAndroidEmulator() || undefined;
     if (!deviceId) throw new Error('No running Android Emulator found');
     
@@ -647,16 +750,37 @@ async function launchApp(params: Record<string, unknown>): Promise<unknown> {
 
 async function terminateApp(params: Record<string, unknown>): Promise<unknown> {
   const platform = params.platform as string;
-  const bundleId = params.bundleId as string;
+  const bundleId = params.bundleId as string | undefined;
+  const appName = params.appName as string | undefined;
   let deviceId = params.deviceId as string | undefined;
   
   if (platform === 'ios') {
+    if (!bundleId) throw new Error('bundleId is required for iOS');
     deviceId = deviceId || await getBootedIOSSimulator() || undefined;
     if (!deviceId) throw new Error('No booted iOS Simulator found');
     
     await execAsync(`xcrun simctl terminate "${deviceId}" "${bundleId}"`);
     return { success: true, message: `Terminated ${bundleId}` };
+  } else if (platform === 'macos') {
+    const app = appName || bundleId;
+    if (!app) throw new Error('appName or bundleId is required for macOS');
+    
+    try {
+      // Try to quit gracefully first using AppleScript
+      await execAsync(`osascript -e 'tell application "${app}" to quit'`);
+      return { success: true, message: `Terminated ${app}`, platform: 'macos' };
+    } catch {
+      // If that fails, force kill using pkill
+      try {
+        await execAsync(`pkill -f "${app}"`);
+        return { success: true, message: `Force terminated ${app}`, platform: 'macos' };
+      } catch {
+        return { success: false, message: `Could not terminate ${app} - may not be running`, platform: 'macos' };
+      }
+    }
   } else {
+    // Android
+    if (!bundleId) throw new Error('bundleId is required for Android');
     deviceId = deviceId || await getBootedAndroidEmulator() || undefined;
     if (!deviceId) throw new Error('No running Android Emulator found');
     
@@ -818,7 +942,34 @@ async function recordVideo(params: Record<string, unknown>): Promise<unknown> {
       }
       return { success: false, message: 'No recording in progress' };
     }
+  } else if (platform === 'macos') {
+    const recordId = 'macos_screen';
+    
+    if (action === 'start') {
+      // Use screencapture for video recording on macOS
+      // -v = video mode, -V = video duration (we use process kill to stop)
+      const child = spawn('screencapture', ['-v', outputPath]);
+      recordingProcesses.set(recordId, { process: child, outputPath });
+      return { 
+        success: true, 
+        message: 'Screen recording started. Click on a window to record it, or press Space then click to record entire screen.',
+        outputPath,
+        platform: 'macos',
+        note: 'Use simulator_record with action: "stop" to finish recording'
+      };
+    } else {
+      const recording = recordingProcesses.get(recordId);
+      if (recording) {
+        recording.process.kill('SIGINT');
+        recordingProcesses.delete(recordId);
+        // Wait a moment for file to be written
+        await new Promise(r => setTimeout(r, 1000));
+        return { success: true, message: 'Recording stopped', path: recording.outputPath, platform: 'macos' };
+      }
+      return { success: false, message: 'No recording in progress', platform: 'macos' };
+    }
   } else {
+    // Android
     deviceId = deviceId || await getBootedAndroidEmulator() || undefined;
     if (!deviceId) throw new Error('No running Android Emulator found');
     
@@ -847,6 +998,7 @@ async function recordVideo(params: Record<string, unknown>): Promise<unknown> {
 async function openUrl(params: Record<string, unknown>): Promise<unknown> {
   const platform = params.platform as string;
   const url = params.url as string;
+  const appName = params.appName as string | undefined;
   let deviceId = params.deviceId as string | undefined;
   
   if (platform === 'ios') {
@@ -855,7 +1007,16 @@ async function openUrl(params: Record<string, unknown>): Promise<unknown> {
     
     await execAsync(`xcrun simctl openurl "${deviceId}" "${url}"`);
     return { success: true, message: `Opened URL: ${url}` };
+  } else if (platform === 'macos') {
+    let cmd = `open "${url}"`;
+    if (appName) {
+      cmd = `open -a "${appName}" "${url}"`;
+    }
+    
+    await execAsync(cmd);
+    return { success: true, message: `Opened URL: ${url}`, platform: 'macos', app: appName || 'default browser' };
   } else {
+    // Android
     deviceId = deviceId || await getBootedAndroidEmulator() || undefined;
     if (!deviceId) throw new Error('No running Android Emulator found');
     
@@ -986,5 +1147,248 @@ async function getDeviceLogs(params: Record<string, unknown>): Promise<unknown> 
     
     const { stdout } = await execAsync(cmd);
     return { logs: stdout.split('\n').filter(Boolean), count: lines };
+  }
+}
+
+// MARK: - macOS Specific Functions
+
+async function listRunningApps(params: Record<string, unknown>): Promise<unknown> {
+  const filter = params.filter as string | undefined;
+  
+  // Use AppleScript to get running applications
+  const script = `
+    set appList to {}
+    tell application "System Events"
+      repeat with proc in (every process whose background only is false)
+        set appInfo to {name:name of proc, bundle_id:bundle identifier of proc, pid:unix id of proc}
+        set end of appList to appInfo
+      end repeat
+    end tell
+    return appList
+  `;
+  
+  try {
+    const { stdout } = await execAsync(`osascript -e '${script}'`);
+    
+    // Parse AppleScript output
+    const apps: Array<{ name: string; bundleId: string; pid: number }> = [];
+    
+    // Alternative: use ps command for more reliable output
+    const { stdout: psOutput } = await execAsync('ps aux | grep -E "\.app/Contents/MacOS" | grep -v grep');
+    const lines = psOutput.trim().split('\n').filter(Boolean);
+    
+    for (const line of lines) {
+      const parts = line.split(/\s+/);
+      const pid = parseInt(parts[1], 10);
+      const appPath = parts.slice(10).join(' ');
+      const appMatch = appPath.match(/([^/]+)\.app/);
+      const appName = appMatch ? appMatch[1] : path.basename(appPath);
+      
+      if (!filter || appName.toLowerCase().includes(filter.toLowerCase())) {
+        apps.push({ name: appName, bundleId: appPath, pid });
+      }
+    }
+    
+    return {
+      success: true,
+      apps,
+      count: apps.length,
+      platform: 'macos',
+    };
+  } catch (error) {
+    // Fallback to simpler approach
+    const { stdout } = await execAsync('ls /Applications | grep -E "\\.app$" | sed "s/.app$//"');
+    const installedApps = stdout.trim().split('\n').filter(Boolean);
+    
+    return {
+      success: true,
+      note: 'Showing installed apps (could not get running apps)',
+      apps: installedApps.filter(app => !filter || app.toLowerCase().includes(filter.toLowerCase())),
+      platform: 'macos',
+    };
+  }
+}
+
+async function buildMacOSApp(params: Record<string, unknown>): Promise<unknown> {
+  const projectPath = params.projectPath as string;
+  const scheme = params.scheme as string | undefined;
+  const configuration = (params.configuration as string) || 'debug';
+  
+  if (!fs.existsSync(projectPath)) {
+    throw new Error(`Project path not found: ${projectPath}`);
+  }
+  
+  // Check for Swift Package Manager project
+  const packageSwiftPath = path.join(projectPath, 'Package.swift');
+  const hasPackageSwift = fs.existsSync(packageSwiftPath);
+  
+  // Check for Xcode project
+  const files = fs.readdirSync(projectPath);
+  const xcodeproj = files.find(f => f.endsWith('.xcodeproj'));
+  const xcworkspace = files.find(f => f.endsWith('.xcworkspace'));
+  
+  if (hasPackageSwift) {
+    // Build with Swift Package Manager
+    const config = configuration === 'release' ? '--configuration release' : '';
+    const cmd = `cd "${projectPath}" && swift build ${config}`;
+    
+    try {
+      const { stdout, stderr } = await execAsync(cmd, { timeout: 300000 });
+      return {
+        success: true,
+        buildSystem: 'swift-package-manager',
+        configuration,
+        output: stdout + stderr,
+        platform: 'macos',
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Build failed';
+      return {
+        success: false,
+        buildSystem: 'swift-package-manager',
+        error: message,
+        platform: 'macos',
+      };
+    }
+  } else if (xcworkspace || xcodeproj) {
+    // Build with xcodebuild
+    const projectFile = xcworkspace || xcodeproj!;
+    const project = xcworkspace 
+      ? `-workspace "${path.join(projectPath, projectFile)}"`
+      : `-project "${path.join(projectPath, projectFile)}"`;
+    
+    const schemeName = scheme || projectFile.replace(/\.(xcworkspace|xcodeproj)$/, '') || 'App';
+    const config = configuration === 'release' ? 'Release' : 'Debug';
+    
+    const cmd = `xcodebuild ${project} -scheme "${schemeName}" -configuration ${config} -destination 'platform=macOS' build`;
+    
+    try {
+      const { stdout, stderr } = await execAsync(cmd, { timeout: 600000 });
+      return {
+        success: true,
+        buildSystem: 'xcodebuild',
+        scheme: schemeName,
+        configuration: config,
+        output: (stdout + stderr).slice(-2000), // Last 2000 chars
+        platform: 'macos',
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Build failed';
+      return {
+        success: false,
+        buildSystem: 'xcodebuild',
+        error: message.slice(-2000),
+        platform: 'macos',
+      };
+    }
+  } else {
+    throw new Error('No Package.swift, .xcodeproj, or .xcworkspace found in project directory');
+  }
+}
+
+async function runMacOSApp(params: Record<string, unknown>): Promise<unknown> {
+  const projectPath = params.projectPath as string;
+  const scheme = params.scheme as string | undefined;
+  const args = params.arguments as string[] | undefined;
+  
+  if (!fs.existsSync(projectPath)) {
+    throw new Error(`Project path not found: ${projectPath}`);
+  }
+  
+  // First, build the app
+  const buildResult = await buildMacOSApp({ projectPath, scheme, configuration: 'debug' }) as { success: boolean; buildSystem?: string; error?: string };
+  
+  if (!buildResult.success) {
+    return {
+      success: false,
+      phase: 'build',
+      error: buildResult.error,
+      platform: 'macos',
+    };
+  }
+  
+  // Find and run the built app
+  const packageSwiftPath = path.join(projectPath, 'Package.swift');
+  const hasPackageSwift = fs.existsSync(packageSwiftPath);
+  
+  if (hasPackageSwift) {
+    // Run with swift run
+    let cmd = `cd "${projectPath}" && swift run`;
+    if (args?.length) {
+      cmd += ' -- ' + args.map(a => `"${a}"`).join(' ');
+    }
+    
+    try {
+      // Start the process in background
+      const child = spawn('sh', ['-c', cmd], { 
+        detached: true, 
+        stdio: 'ignore',
+        cwd: projectPath,
+      });
+      child.unref();
+      
+      return {
+        success: true,
+        phase: 'run',
+        buildSystem: 'swift-package-manager',
+        message: 'App started in background',
+        pid: child.pid,
+        platform: 'macos',
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Run failed';
+      return {
+        success: false,
+        phase: 'run',
+        error: message,
+        platform: 'macos',
+      };
+    }
+  } else {
+    // For Xcode projects, find the built .app and open it
+    const files = fs.readdirSync(projectPath);
+    const xcodeproj = files.find(f => f.endsWith('.xcodeproj'));
+    const appName = scheme || xcodeproj?.replace('.xcodeproj', '') || 'App';
+    
+    // Look for the app in DerivedData
+    const derivedDataPath = path.join(os.homedir(), 'Library/Developer/Xcode/DerivedData');
+    
+    try {
+      const { stdout } = await execAsync(`find "${derivedDataPath}" -name "${appName}.app" -path "*/Debug/*" 2>/dev/null | head -1`);
+      const appPath = stdout.trim();
+      
+      if (appPath) {
+        let cmd = `open "${appPath}"`;
+        if (args?.length) {
+          cmd += ' --args ' + args.map(a => `"${a}"`).join(' ');
+        }
+        
+        await execAsync(cmd);
+        return {
+          success: true,
+          phase: 'run',
+          buildSystem: 'xcodebuild',
+          appPath,
+          message: 'App launched',
+          platform: 'macos',
+        };
+      } else {
+        return {
+          success: false,
+          phase: 'run',
+          error: `Could not find built app: ${appName}.app`,
+          hint: 'Try building first, then launch manually',
+          platform: 'macos',
+        };
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Run failed';
+      return {
+        success: false,
+        phase: 'run',
+        error: message,
+        platform: 'macos',
+      };
+    }
   }
 }
