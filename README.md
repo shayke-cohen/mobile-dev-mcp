@@ -33,6 +33,7 @@ Mobile Dev MCP enables AI assistants in Cursor to understand and interact with y
 
 Add to your Cursor MCP settings (`~/.cursor/mcp.json`):
 
+**Option A: Via npx (after npm publish)**
 ```json
 {
   "mcpServers": {
@@ -44,16 +45,38 @@ Add to your Cursor MCP settings (`~/.cursor/mcp.json`):
 }
 ```
 
+**Option B: Local path (for development)**
+```json
+{
+  "mcpServers": {
+    "mobile-dev-mcp": {
+      "command": "node",
+      "args": ["/path/to/mobile-dev-mcp/packages/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+> **Note:** After editing `mcp.json`, restart Cursor to load the MCP server.
+
 ### 2. Install the SDK
 
 **React Native:**
 ```bash
+# From npm (after publish)
 yarn add @mobile-dev-mcp/react-native
+
+# Or local path (for development)
+yarn add file:/path/to/mobile-dev-mcp/packages/sdk-react-native
 ```
 
 **React Web:**
 ```bash
+# From npm (after publish)
 yarn add @mobile-dev-mcp/react
+
+# Or local path (for development)
+yarn add file:/path/to/mobile-dev-mcp/packages/sdk-react
 ```
 
 **iOS / macOS (Swift Package Manager):**
