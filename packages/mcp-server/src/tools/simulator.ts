@@ -162,20 +162,25 @@ export const simulatorTools = [
   },
   {
     name: 'simulator_screenshot',
-    description: 'Take a screenshot of the simulator/emulator',
+    description: 'Take a screenshot of the simulator/emulator or macOS app window',
     inputSchema: {
       type: 'object' as const,
       properties: {
         platform: {
           type: 'string',
-          enum: ['ios', 'android'],
+          enum: ['ios', 'android', 'macos'],
         },
         deviceId: {
           type: 'string',
+          description: 'Device ID for iOS/Android, or app name/bundle ID for macOS',
         },
         outputPath: {
           type: 'string',
           description: 'Where to save the screenshot (optional)',
+        },
+        windowTitle: {
+          type: 'string',
+          description: 'macOS only: Window title to capture (captures first matching window)',
         },
       },
       required: ['platform'],
@@ -699,7 +704,76 @@ async function takeScreenshot(params: Record<string, unknown>): Promise<unknown>
       image: data.toString('base64'),
       format: 'png',
     };
+  } else if (platform === 'macos') {
+    // macOS app screenshot using screencapture
+    const windowTitle = params.windowTitle as string | undefined;
+    const appName = deviceId; // deviceId is used as app name for macOS
+    
+    if (appName) {
+      // Activate the app first
+      await execAsync(`osascript -e 'tell application "${appName}" to activate'`).catch(() => {});
+      await new Promise(resolve => setTimeout(resolve, 500)); // Wait for app to come to front
+    }
+    
+    if (windowTitle || appName) {
+      // Get window ID and capture it using screencapture -l
+      const searchTerm = windowTitle || appName || '';
+      
+      // Get window list and find matching window ID
+      const getWindowIdScript = `
+        set windowId to 0
+        tell application "System Events"
+          repeat with proc in (every process whose background only is false)
+            try
+              if name of proc contains "${searchTerm}" then
+                tell proc
+                  if (count of windows) > 0 then
+                    set frontWin to front window
+                    -- Get window ID using accessibility
+                    set windowId to id of frontWin
+                  end if
+                end tell
+                exit repeat
+              end if
+            end try
+          end repeat
+        end tell
+        return windowId
+      `;
+      
+      try {
+        // Try to get window ID via AppleScript
+        const { stdout: windowIdStr } = await execAsync(`osascript -e '${getWindowIdScript}'`);
+        const windowId = parseInt(windowIdStr.trim(), 10);
+        
+        if (windowId && windowId > 0) {
+          // Capture specific window by ID
+          await execAsync(`screencapture -l ${windowId} -x "${outputPath}"`);
+        } else {
+          // Fallback: capture frontmost window
+          // Use a small delay then capture what's in front
+          await execAsync(`screencapture -x -o "${outputPath}"`);
+        }
+      } catch {
+        // Fallback: capture entire screen
+        await execAsync(`screencapture -x "${outputPath}"`);
+      }
+    } else {
+      // Capture entire screen
+      await execAsync(`screencapture -x "${outputPath}"`);
+    }
+    
+    const data = fs.readFileSync(outputPath);
+    return {
+      success: true,
+      path: outputPath,
+      image: data.toString('base64'),
+      format: 'png',
+      platform: 'macos',
+      note: appName ? `Captured ${appName} app` : 'Captured screen',
+    };
   } else {
+    // Android
     deviceId = deviceId || await getBootedAndroidEmulator() || undefined;
     if (!deviceId) throw new Error('No running Android Emulator found');
     
