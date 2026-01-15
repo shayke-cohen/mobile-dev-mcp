@@ -76,3 +76,5 @@ packages/sdk-ios/Package.resolved
 # Cursor internal files
 .cursorrules
 .cursor/
+*.xcuserdatad
+.swiftpm/
